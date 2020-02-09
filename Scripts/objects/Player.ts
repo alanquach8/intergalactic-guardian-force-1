@@ -71,6 +71,12 @@ module objects {
                         break;
                     default:
                         break;
+                     case "Space":
+                        Bullet = new Bullet() // same position as player
+                        Bullet.direction = this.-direction;
+                        // bullet's direction = this._direction
+                        // properties: direction:Vector2, speed= 20
+                        break;
                 }
                 console.log("x:" + this.direction.x + ", y:" + this.direction.y);
 
