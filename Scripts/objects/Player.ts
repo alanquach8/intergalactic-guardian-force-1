@@ -5,7 +5,7 @@ module objects {
         // PRIVATE INSTANCE MEMBERS
         private _direction:Vector2;
         private _speed:number = 1;
-        private _facing:number;
+        private _facing:number; // used in calculating direction player is facing (degrees)
         private _rotate:number = 1; // degrees
 
         // PUBLIC PROPERTIES
@@ -42,12 +42,12 @@ module objects {
         }
 
         // CONSTRUCTOR
-        constructor()
+        constructor(imagePath:string = "./Assets/images/placeholder.png", x:number = 0, y:number = 0, isCentered:boolean = true)
         {
-            super("./Assets/images/placeholder.png", 0, 0, true);
+            super(imagePath, x, y, isCentered);
             
             this._facing = 270; // initially looking up (-90degrees on canvas axis = 270degrees on normal axis)
-            this._direction = new Vector2(Math.cos(this.facing*Math.PI/180),Math.sin(this.facing*Math.PI/180));
+            this._direction = new Vector2(0, -1);
 
             window.addEventListener('keydown', (e) => {
                 switch(e.code) {
@@ -71,12 +71,14 @@ module objects {
                         break;
                     default:
                         break;
-                     case "Space":
-                        Bullet = new Bullet() // same position as player
-                        Bullet.direction = this.-direction;
-                        // bullet's direction = this._direction
-                        // properties: direction:Vector2, speed= 20
-                        break;
+                    //  case "Space":
+                    //      console.log("space pressed");
+                    //     let bullet:Bullet = new Bullet("./Assets/images/bulletPlaceHolder.png", this.x, this.y, true);
+                    //     bullet.direction = this.direction;
+                    //     createjs.Ticker.framerate = 60; // declare the framerate as 60FPS
+                    //     createjs.Ticker.on('tick', bullet.Update);
+                    //     this.parent.addChild(bullet);
+                    //     break;
                 }
                 console.log("x:" + this.direction.x + ", y:" + this.direction.y);
 

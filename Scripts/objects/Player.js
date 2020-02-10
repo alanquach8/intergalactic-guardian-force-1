@@ -17,12 +17,16 @@ var objects;
     var Player = /** @class */ (function (_super) {
         __extends(Player, _super);
         // CONSTRUCTOR
-        function Player() {
-            var _this = _super.call(this, "./Assets/images/placeholder.png", 0, 0, true) || this;
+        function Player(imagePath, x, y, isCentered) {
+            if (imagePath === void 0) { imagePath = "./Assets/images/placeholder.png"; }
+            if (x === void 0) { x = 0; }
+            if (y === void 0) { y = 0; }
+            if (isCentered === void 0) { isCentered = true; }
+            var _this = _super.call(this, imagePath, x, y, isCentered) || this;
             _this._speed = 1;
             _this._rotate = 1; // degrees
             _this._facing = 270; // initially looking up (-90degrees on canvas axis = 270degrees on normal axis)
-            _this._direction = new objects.Vector2(Math.cos(_this.facing * Math.PI / 180), Math.sin(_this.facing * Math.PI / 180));
+            _this._direction = new objects.Vector2(0, -1);
             window.addEventListener('keydown', function (e) {
                 switch (e.code) {
                     case "ArrowUp":
@@ -45,6 +49,14 @@ var objects;
                         break;
                     default:
                         break;
+                    //  case "Space":
+                    //      console.log("space pressed");
+                    //     let bullet:Bullet = new Bullet("./Assets/images/bulletPlaceHolder.png", this.x, this.y, true);
+                    //     bullet.direction = this.direction;
+                    //     createjs.Ticker.framerate = 60; // declare the framerate as 60FPS
+                    //     createjs.Ticker.on('tick', bullet.Update);
+                    //     this.parent.addChild(bullet);
+                    //     break;
                 }
                 console.log("x:" + _this.direction.x + ", y:" + _this.direction.y);
                 // window.addEventListener('keydown', (e) => {

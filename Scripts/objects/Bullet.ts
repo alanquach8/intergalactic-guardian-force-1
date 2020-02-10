@@ -1,12 +1,10 @@
 module objects {
 
-    export  abstract class Bullet extends GameObject {
+    export class Bullet extends GameObject {
+            
              //private instance members
              private _direction:Vector2;
              private _speed:number = 20;
-             private _facing:number;
-
-
 
              // public properties
 
@@ -26,41 +24,33 @@ module objects {
                 this._speed = newSpeed;
             }
 
-            get facing():number {
-                return this._facing;
-            }
-    
-            set facing(newFacing:number) {
-                this._facing = newFacing;
-            }
-
              
              // constructors
 
 
-             constructor()
+             constructor(imagePath:string = "./Assets/images/bulletPlaceHolder.png", x:number = 0, y:number = 0, isCentered:boolean = true)
              {
-                 super("./Assets/images/placeholder.png", 0, 0, true);
-                 
-                 this._facing = 270;
-                 this._direction = new Vector2(Math.cos(this.facing*Math.PI/180),Math.sin(this.facing*Math.PI/180));
+                 super(imagePath, x, y, isCentered);
+                this.position = new Vector2(-1,-1);
+                 this._direction = new Vector2(0,-1);
              }
             
             
             
-             //private methods
+            //private methods
+            protected _checkBounds(): void {
+                
+            }
 
             public Start(): void {
             
             }
             public Update(): void {
-                
+                this.x += this.direction.x * this.speed;
+                this.y += this.direction.y * this.speed;
             }
             public Reset(): void {
                 
             }
-
-
-
-
-    }
+        }
+}

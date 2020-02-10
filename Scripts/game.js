@@ -7,6 +7,7 @@ var game = (function () {
     var startLabel; // let helloLabel:createjs.Text;
     var startButton; // let clickMeButton:createjs.Bitmap;
     var player;
+    var bullet;
     /**
      * Perform Initialization in the Start function
      *
@@ -25,6 +26,7 @@ var game = (function () {
      */
     function Update() {
         player.Update();
+        bullet.Update();
         var sqrDistance = objects.Vector2.sqrDistance(player.position, startButton.position);
         var radii = player.halfWidth + startButton.halfWidth;
         // radii for halfHeights
@@ -57,6 +59,16 @@ var game = (function () {
         //player.regY = 0;//player.getBounds().height * 0.5; // DOES NOT WORK
         stage.addChild(player);
         console.log(startButton.position);
+        bullet = new objects.Bullet();
+        stage.addChild(bullet);
+        window.addEventListener('keydown', function (e) {
+            if (e.code == "Space") {
+                console.log("space pressed");
+                bullet.x = player.x;
+                bullet.y = player.y;
+                bullet.direction = player.direction;
+            }
+        });
     }
     window.addEventListener("load", Start);
 })();
