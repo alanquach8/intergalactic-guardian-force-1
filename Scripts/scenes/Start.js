@@ -25,6 +25,7 @@ var scenes;
             _this.startButton = new objects.Button();
             _this.player = new objects.Player();
             _this.enemy = new objects.Enemy();
+            _this.bullet = new objects.Bullet();
             _this.Start();
             return _this;
         }
@@ -34,22 +35,41 @@ var scenes;
             this.startButton = new objects.Button("./Assets/images/startButton.png", 320, 400, true);
             this.player = new objects.Player();
             this.enemy = new objects.Enemy();
+            this.bullet = new objects.Bullet();
             this.Main();
         };
         Start.prototype.Update = function () {
+            console.log("PLAYER X:" + this.player.x + " " + this.player.position.x); //position is never updated...
+            console.log("ENEMY X:" + this.enemy.x + " " + this.enemy.position.x);
             this.player.Update();
             this.enemy.Update(this.player.x, this.player.y);
+            this.bullet.Update();
             //managers.Collision.squaredRadiusCheck(player, startButton);
-            managers.Collision.AABBCheck(this.player, this.startButton);
+            managers.Collision.AABBCheck(this.player, this.enemy);
+            if (this.enemy.isColliding) {
+                this.enemy.position = new objects.Vector2(400, 400);
+                this.enemy.isColliding = false;
+            }
         };
         Start.prototype.Main = function () {
+            var _this = this;
             this.addChild(this.startLabel);
             this.addChild(this.startButton);
             this.startButton.on("click", function () {
                 config.Game.SCENE_STATE = scenes.State.PLAY;
             });
             this.addChild(this.player);
+            this.enemy.position = new objects.Vector2(300, 300);
             this.addChild(this.enemy);
+            this.addChild(this.bullet);
+            window.addEventListener('keydown', function (e) {
+                if (e.code == "Space") {
+                    console.log("space pressed");
+                    _this.bullet.x = _this.player.x;
+                    _this.bullet.y = _this.player.y;
+                    _this.bullet.direction = _this.player.direction;
+                }
+            });
         };
         return Start;
     }(objects.Scene));

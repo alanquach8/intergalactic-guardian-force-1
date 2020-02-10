@@ -7,6 +7,7 @@ module scenes
         startButton:objects.Button;
         player:objects.Player;
         enemy:objects.Enemy;
+        bullet:objects.Bullet;
 
         // PUBLIC PROPERTIES
 
@@ -20,6 +21,7 @@ module scenes
             this.startButton = new objects.Button();
             this.player = new objects.Player();
             this.enemy = new objects.Enemy();
+            this.bullet = new objects.Bullet();
 
             this.Start();
         }
@@ -32,17 +34,24 @@ module scenes
             this.startButton = new objects.Button("./Assets/images/startButton.png", 320, 400, true);
             this.player = new objects.Player();
             this.enemy = new objects.Enemy();
+            this.bullet = new objects.Bullet();
            
             this.Main();
         }        
         
         public Update(): void {
+            console.log("PLAYER X:" + this.player.x + " " + this.player.position.x); //position is never updated...
+            console.log("ENEMY X:" + this.enemy.x + " " + this.enemy.position.x); 
             this.player.Update();
-            
             this.enemy.Update(this.player.x, this.player.y);
+            this.bullet.Update();
             //managers.Collision.squaredRadiusCheck(player, startButton);
 
-            managers.Collision.AABBCheck(this.player, this.startButton);
+            managers.Collision.AABBCheck(this.player, this.enemy);
+            if(this.enemy.isColliding) {
+                this.enemy.position = new objects.Vector2(400, 400);
+                this.enemy.isColliding = false;
+            }
         }
         
         public Main(): void {
@@ -57,7 +66,17 @@ module scenes
     
             
             this.addChild(this.player);
+            this.enemy.position = new objects.Vector2(300, 300);
             this.addChild(this.enemy);
+            this.addChild(this.bullet);
+            window.addEventListener('keydown', (e) => { 
+                if(e.code == "Space") {
+                    console.log("space pressed");
+                    this.bullet.x = this.player.x;
+                    this.bullet.y = this.player.y;
+                    this.bullet.direction = this.player.direction;
+                }
+            });
         }
 
         
