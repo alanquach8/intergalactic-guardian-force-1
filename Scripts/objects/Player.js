@@ -22,7 +22,7 @@ var objects;
             if (x === void 0) { x = 0; }
             if (y === void 0) { y = 0; }
             if (isCentered === void 0) { isCentered = true; }
-            var _this = _super.call(this, imagePath, x, y, isCentered) || this;
+            var _this = _super.call(this, "./Assets/images/placeholder.png", 1, 1, true) || this;
             _this._speed = 1;
             _this._rotate = 1; // degrees
             _this._facing = 270; // initially looking up (-90degrees on canvas axis = 270degrees on normal axis)
@@ -129,6 +129,9 @@ var objects;
         Player.prototype.Start = function () {
         };
         Player.prototype.Update = function () {
+            //let mouseX = config.Game.STAGE.mouseX;
+            //let mouseY = config.Game.STAGE.mouseY;
+            //this.position = new Vector2(mouseX, mouseY);
         };
         Player.prototype.Reset = function () {
         };

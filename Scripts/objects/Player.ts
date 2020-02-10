@@ -44,7 +44,7 @@ module objects {
         // CONSTRUCTOR
         constructor(imagePath:string = "./Assets/images/placeholder.png", x:number = 0, y:number = 0, isCentered:boolean = true)
         {
-            super(imagePath, x, y, isCentered);
+            super("./Assets/images/placeholder.png", 1, 1, true);
             
             this._facing = 270; // initially looking up (-90degrees on canvas axis = 270degrees on normal axis)
             this._direction = new Vector2(0, -1);
@@ -115,7 +115,10 @@ module objects {
             
         }
         public Update(): void {
-            
+            //let mouseX = config.Game.STAGE.mouseX;
+            //let mouseY = config.Game.STAGE.mouseY;
+
+           //this.position = new Vector2(mouseX, mouseY);
         }
         public Reset(): void {
             

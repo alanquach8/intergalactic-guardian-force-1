@@ -16,8 +16,9 @@ var objects;
 (function (objects) {
     var Button = /** @class */ (function (_super) {
         __extends(Button, _super);
-        // constructor
+        //constructor
         function Button(imagePath, x, y, isCentered) {
+            if (imagePath === void 0) { imagePath = "./Assets/images/placeholder.png"; }
             if (x === void 0) { x = 0; }
             if (y === void 0) { y = 0; }
             if (isCentered === void 0) { isCentered = true; }
@@ -27,27 +28,23 @@ var objects;
             _this.Start();
             return _this;
         }
-        // PUBLIC Methods
+        // PUBLIC METHODS
         Button.prototype.HoverOver = function () {
             this.alpha = 0.7;
         };
         Button.prototype.HoverOut = function () {
             this.alpha = 1.0;
         };
-        // PRIVATE LIFE CYCLE METHODS
-        Button.prototype._checkBounds = function () {
-        };
         // PUBLIC LIFE CYCLE METHODS
-        /**
-         * Initialization happens here
-         *
-         * @memberof Button
-         */
+        // initialization method
         Button.prototype.Start = function () {
         };
         Button.prototype.Update = function () {
         };
         Button.prototype.Reset = function () {
+        };
+        // PRIVATE LIFE CYCLE METHODS
+        Button.prototype._checkBounds = function () {
         };
         return Button;
     }(objects.GameObject));

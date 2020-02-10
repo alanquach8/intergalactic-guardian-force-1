@@ -16,17 +16,16 @@ var objects;
 (function (objects) {
     var GameObject = /** @class */ (function (_super) {
         __extends(GameObject, _super);
-        // CONSTRUCTOR   
+        // CONSTRUCTOR
         /**
-         *Creates an instance of GameObject.
+         * Creates an instance of GameObject.
          * @param {string} [imagePath="./Assets/images/placeholder.png"]
          * @param {number} [x=0]
          * @param {number} [y=0]
          * @param {boolean} [centered=false]
          * @memberof GameObject
          */
-        function GameObject(imagePath, // "./" means to go to root folder
-        x, y, centered) {
+        function GameObject(imagePath, x, y, centered) {
             if (imagePath === void 0) { imagePath = "./Assets/images/placeholder.png"; }
             if (x === void 0) { x = 0; }
             if (y === void 0) { y = 0; }
@@ -38,11 +37,11 @@ var objects;
             _this._halfWidth = 0;
             _this._halfHeight = 0;
             _this._isColliding = false;
-            _this._position = new objects.Vector2();
             _this._isCentered = false;
+            _this._position = new objects.Vector2(0, 0);
             _this.isColliding = false;
-            // wait for the image to load before calculating its width and height
-            _this.image.addEventListener("load", function () {
+            // wait for the  image to load before calculating its width and height
+            _this.image.addEventListener('load', function () {
                 _this.width = _this.getBounds().width;
                 _this.height = _this.getBounds().height;
                 _this.halfWidth = _this.width * 0.5;
@@ -110,7 +109,6 @@ var objects;
             },
             set: function (newPosition) {
                 this._position = newPosition;
-                // change coordinates as position
                 this.x = newPosition.x;
                 this.y = newPosition.y;
             },
