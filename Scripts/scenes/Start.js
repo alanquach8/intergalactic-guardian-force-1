@@ -39,16 +39,17 @@ var scenes;
             this.Main();
         };
         Start.prototype.Update = function () {
-            console.log("PLAYER X:" + this.player.x + " " + this.player.position.x); //position is never updated...
-            console.log("ENEMY X:" + this.enemy.x + " " + this.enemy.position.x);
             this.player.Update();
             this.enemy.Update(this.player.x, this.player.y);
             this.bullet.Update();
             //managers.Collision.squaredRadiusCheck(player, startButton);
             managers.Collision.AABBCheck(this.player, this.enemy);
+            managers.Collision.squaredRadiusCheck(this.player, this.enemy);
+            managers.Collision.AABBCheck(this.bullet, this.enemy);
+            managers.Collision.squaredRadiusCheck(this.bullet, this.enemy);
             if (this.enemy.isColliding) {
-                this.enemy.position = new objects.Vector2(400, 400);
-                this.enemy.isColliding = false;
+                this.removeChild(this.enemy);
+                //this.enemy.isColliding = false;
             }
         };
         Start.prototype.Main = function () {

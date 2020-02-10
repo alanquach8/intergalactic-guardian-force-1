@@ -5,7 +5,7 @@ module objects
         // PRIVATE INSTANCE MEMBERS
         isAlive:boolean = true;
         step:number = 5;
-        movingSpeed:number = 200;
+        movingSpeed:number = 1000;
         playerPosition:Vector2 = new Vector2(10, 10);
         isMoving:boolean;
 
@@ -95,7 +95,6 @@ module objects
 
             let that = this;
             if(!that.isMoving){
-                console.log("in approach");
                 that.isMoving = true;
                 setTimeout(that.Move, that.movingSpeed, pX, pY);
             }
@@ -112,14 +111,18 @@ module objects
             let that = this;
 
             if(pX > that.x){
+                that.position.x += that.step;
                 that.x += that.step;
             } else {
+                that.position.x -= that.step;
                 that.x -= that.step;
             }
 
             if(pY > that.y){
+                that.position.y += that.step;
                 that.y += that.step;
             } else {
+                that.position.y -= that.step;
                 that.y -= that.step;
             }
 

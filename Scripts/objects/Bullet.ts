@@ -47,7 +47,9 @@ module objects {
             }
             public Update(): void {
                 this.x += this.direction.x * this.speed;
+                this.position.x += this.direction.x * this.speed;
                 this.y += this.direction.y * this.speed;
+                this.position.y += this.direction.x * this.speed;
             }
             public Reset(): void {
                 

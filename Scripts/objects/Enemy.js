@@ -25,7 +25,7 @@ var objects;
             // PRIVATE INSTANCE MEMBERS
             _this.isAlive = true;
             _this.step = 5;
-            _this.movingSpeed = 200;
+            _this.movingSpeed = 1000;
             _this.playerPosition = new objects.Vector2(10, 10);
             /**
              * This method will move the enemy towards to player
@@ -35,15 +35,19 @@ var objects;
             _this.Move = function (pX, pY) {
                 var that = _this;
                 if (pX > that.x) {
+                    that.position.x += that.step;
                     that.x += that.step;
                 }
                 else {
+                    that.position.x -= that.step;
                     that.x -= that.step;
                 }
                 if (pY > that.y) {
+                    that.position.y += that.step;
                     that.y += that.step;
                 }
                 else {
+                    that.position.y -= that.step;
                     that.y -= that.step;
                 }
                 that.isMoving = false;
@@ -135,7 +139,6 @@ var objects;
         Enemy.prototype.ApproachPlayer = function (pX, pY) {
             var that = this;
             if (!that.isMoving) {
-                console.log("in approach");
                 that.isMoving = true;
                 setTimeout(that.Move, that.movingSpeed, pX, pY);
             }
