@@ -44,7 +44,7 @@ module objects {
         // CONSTRUCTOR
         constructor()
         {
-            super("./Assets/images/placeholder.png", 0, 0, true);
+            super("./Assets/images/placeholder.png", 1, 1, true);
             
             this._facing = 270; // initially looking up (-90degrees on canvas axis = 270degrees on normal axis)
             this._direction = new Vector2(Math.cos(this.facing*Math.PI/180),Math.sin(this.facing*Math.PI/180));
@@ -107,7 +107,10 @@ module objects {
             
         }
         public Update(): void {
-            
+            //let mouseX = config.Game.STAGE.mouseX;
+            //let mouseY = config.Game.STAGE.mouseY;
+
+           //this.position = new Vector2(mouseX, mouseY);
         }
         public Reset(): void {
             

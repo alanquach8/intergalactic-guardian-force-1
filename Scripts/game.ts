@@ -1,79 +1,79 @@
-// IIFE - Immediately Invoked Function Expression
-// means? is an anonymous self-executing function
-
+//IIFE - Imediately Invoked Function Expression
+//Means: is an anonymous self-executing function
 let game = (function(){
-
     let canvas:HTMLCanvasElement = document.getElementsByTagName('canvas')[0];
     let stage:createjs.Stage;
-    let startLabel:objects.Label; // let helloLabel:createjs.Text;
-    let startButton:objects.Button; // let clickMeButton:createjs.Bitmap;
-    let player:objects.Player;
+
+    let currentSceneState:scenes.State;
+    let currentScene:objects.Scene;
+   
 
     /**
      * Perform Initialization in the Start function
      *
      */
-    function Start():void {
+    function Start():void
+    {
         console.log(`%c Game Started`, "color: blue; font-size:20px;");
         stage = new createjs.Stage(canvas);
+        stage.name = "Main Stage";
+        config.Game.STAGE = stage; // create a reference to the Global Stage
         createjs.Ticker.framerate = 60; // declare the framerate as 60FPS
         createjs.Ticker.on('tick', Update);
+        stage.enableMouseOver(20);
 
-        stage.enableMouseOver(20); // setting up collision detection between mouse and objects at 20 FPS
-
-        Main();
+        currentSceneState = scenes.State.NO_SCENE;
+        config.Game.SCENE_STATE = scenes.State.START;
     }
 
     /**
      * This is the main Game Loop
      * This function 'triggers' every frame
      */
-    function Update():void {
-        player.Update();
-
-        let sqrDistance = objects.Vector2.sqrDistance(player.position, startButton.position);
-        let radii = player.halfWidth + startButton.halfWidth;
-        // radii for halfHeights
-        // AABB collision detection
-
-        if(sqrDistance < (radii * radii) )
+    function Update():void
+    {
+        if(currentSceneState != config.Game.SCENE_STATE)
         {
-            console.log("COLLISION");
+            Main();
         }
 
+        currentScene.Update();
         stage.update();
     }
 
     /**
      * This function is the main function of the game
-     * 
+     *
      */
-    function Main():void {
-        console.log('%c Main Started', "color: green; font-size:16px;");
-        startLabel = new objects.Label("The Game", "80px", "Consolas", "#000000", 320, 200, true); //helloLabel = new createjs.Text("Hello World", "40px Consolas", "#000000");
-        // // sets the pivot point to the center
-        // helloLabel.regX = helloLabel.getBounds().width * 0.5;
-        // helloLabel.regY = helloLabel.getMeasuredLineHeight() * 0.5;
-        // helloLabel.x = 320;
-        // helloLabel.y = 240;
-        stage.addChild(startLabel);
+    function Main():void
+    {
+        console.log(`%c Switching Scenes`, "color: green; font-size:16px;");
 
-    
-        startButton = new objects.Button("./Assets/images/startButton.png", 320, 400, true);
-        stage.addChild(startButton);
+        // Clean Up
+        if(currentSceneState != scenes.State.NO_SCENE)
+        {
+            currentScene.removeAllChildren();
+            stage.removeAllChildren();
+        }
 
-        startButton.on("click", function() { // .on is like .addEventListener
-            console.log("Start Clicked");
-        });
+        // State Machine
+        switch(config.Game.SCENE_STATE)
+        {
+            case scenes.State.START:
+                currentScene = new scenes.Start();
+                break;
+            case scenes.State.PLAY:
+                currentScene = new scenes.Play();
+                break;
+            case scenes.State.END:
+                currentScene = new scenes.End();
+                break;
+        }
+        // add the scene to the stage and setup the current scene
+        stage.addChild(currentScene);
+        currentSceneState = config.Game.SCENE_STATE;
 
-        player = new objects.Player();
-        //player.regX = 0;//player.getBounds().width * 0.5; // DOES NOT WORK
-        //player.regY = 0;//player.getBounds().height * 0.5; // DOES NOT WORK
-        stage.addChild(player);
-
-        console.log(startButton.position);
     }
 
     window.addEventListener("load", Start);
-
 })();

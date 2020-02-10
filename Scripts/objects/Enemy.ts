@@ -3,9 +3,11 @@ module objects
     export class Enemy extends objects.GameObject
     {
         // PRIVATE INSTANCE MEMBERS
-        isAlive = false;
-        speed = 5;
-        playerPosition = new Vector2(0, 0);
+        isAlive:boolean = true;
+        step:number = 5;
+        movingSpeed:number = 200;
+        playerPosition:Vector2 = new Vector2(10, 10);
+        isMoving:boolean;
 
 
         // PUBLIC PROPERTIES
@@ -15,11 +17,11 @@ module objects
         set IsAllive(newState:boolean){
             this.isAlive = newState;
         }
-        get Speed(){
-            return this.speed;
+        get Step(){
+            return this.step;
         }
-        set Speed(newSpeed:number){
-            this.speed = newSpeed;
+        set Step(newStep:number){
+            this.step = newStep;
         }
         get PlayerPosition(){
             return this.playerPosition;
@@ -27,15 +29,23 @@ module objects
         set PlayerPosition(newPosition:Vector2){
             this.playerPosition = newPosition;
         }
+        get IsMoving(){
+            return this.isMoving;
+        }
+        set IsMoving(newState:boolean){
+            this.isMoving = newState;
+        }
 
         // CONSTRUCTOR
-        constructor(playerPosition:Vector2 = new Vector2(0, 0), containerWidth:number = 640, containerHeight:number = 720)
+        constructor(playerPosition:Vector2 = new Vector2(10, 10), containerWidth:number = 640, containerHeight:number = 480)
         {
-            super("./Assets/images/placeholder.png", 0, 0, true);
+
+            super("./Assets/images/enemy.png", 200, 200, true);
 
             // create enemy
             this.position = this.GetRandomPoints(playerPosition, containerWidth, containerHeight);
             this.playerPosition = playerPosition;
+            this.isMoving = false;
 
             this.Start();
         }
@@ -49,13 +59,17 @@ module objects
             
         }
 
-        public Update(playerNewPosition:Vector2 = new Vector2(0, 0)): void {
+        public Update(playerNewPositionX:number = 10, playerNewPositionY:number = 10): void {
 
-            this.playerPosition = playerNewPosition;
+            this.playerPosition = new Vector2(playerNewPositionX, playerNewPositionY);
+
+            if(this.isColliding){
+                this.Die();
+            }
 
             // Check if the Monster is still alive, catch the player, otherwise, die.
             if(this.isAlive){
-                this.ApproachPlayer(playerNewPosition);
+                this.ApproachPlayer(playerNewPositionX, playerNewPositionY);
             } else {
                 this.Die();
             }
@@ -70,13 +84,46 @@ module objects
             
         }
 
-        public ApproachPlayer(playerPosition:Vector2): void{
+        /**
+         * This method will approch the enemy to player by moving speed
+         *
+         * @param {number} pX player x
+         * @param {number} pY player y
+         * @memberof Enemy
+         */
+        public ApproachPlayer(pX:number, pY:number): void{
 
-            let angle = playerPosition.y - this.y / playerPosition.x - this.x;
+            let that = this;
+            if(!that.isMoving){
+                console.log("in approach");
+                that.isMoving = true;
+                setTimeout(that.Move, that.movingSpeed, pX, pY);
+            }
 
-            this.x +=   this.speed * Math.cos(angle * Math.PI / 180);
-            this.y -=   this.speed * Math.sin(angle * Math.PI / 180);
+        }
 
+        /**
+         * This method will move the enemy towards to player
+         *
+         * @memberof Enemy
+         */
+        Move = (pX:number, pY:number) => {
+
+            let that = this;
+
+            if(pX > that.x){
+                that.x += that.step;
+            } else {
+                that.x -= that.step;
+            }
+
+            if(pY > that.y){
+                that.y += that.step;
+            } else {
+                that.y -= that.step;
+            }
+
+            that.isMoving = false;
         }
 
         // Private Methods
@@ -95,13 +142,13 @@ module objects
         
             let px = playerPosition.x;
             let py = playerPosition.y;
-            let rx;
-            let ry;
+            let rx = 0;
+            let ry = 0;
              
             do{
                 // generate random point within the range of stage
-                rx = Math.floor(Math.random() * width) + 1;
-                ry = Math.floor(Math.random() * height) + 1;
+                rx = Math.floor(Math.random() * (width - 20)) + 1;
+                ry = Math.floor(Math.random() * (height - 20)) + 1;
                 
             }// check to make it far from player by 200 pixels radius
             while((rx > px + 100 || rx < px - 100) && ry > py + 100 || ry < py - 100 );

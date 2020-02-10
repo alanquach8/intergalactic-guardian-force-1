@@ -16,32 +16,105 @@ var objects;
 (function (objects) {
     var Enemy = /** @class */ (function (_super) {
         __extends(Enemy, _super);
-        // PUBLIC PROPERTIES
         // CONSTRUCTOR
-        function Enemy(playerPosition) {
-            if (playerPosition === void 0) { playerPosition = new objects.Vector2(0, 0); }
-            var _this = _super.call(this, "./Assets/images/placeholder.png", 0, 0, true) || this;
+        function Enemy(playerPosition, containerWidth, containerHeight) {
+            if (playerPosition === void 0) { playerPosition = new objects.Vector2(10, 10); }
+            if (containerWidth === void 0) { containerWidth = 640; }
+            if (containerHeight === void 0) { containerHeight = 480; }
+            var _this = _super.call(this, "./Assets/images/enemy.png", 200, 200, true) || this;
             // PRIVATE INSTANCE MEMBERS
-            _this.isAlive = false;
-            _this.speed = 5;
-            _this.playerPosition = new objects.Vector2(0, 0);
+            _this.isAlive = true;
+            _this.step = 5;
+            _this.movingSpeed = 200;
+            _this.playerPosition = new objects.Vector2(10, 10);
+            /**
+             * This method will move the enemy towards to player
+             *
+             * @memberof Enemy
+             */
+            _this.Move = function (pX, pY) {
+                var that = _this;
+                if (pX > that.x) {
+                    that.x += that.step;
+                }
+                else {
+                    that.x -= that.step;
+                }
+                if (pY > that.y) {
+                    that.y += that.step;
+                }
+                else {
+                    that.y -= that.step;
+                }
+                that.isMoving = false;
+            };
             // create enemy
-            _this.position = _this.GetRandomPoints(playerPosition, 640, 720);
+            _this.position = _this.GetRandomPoints(playerPosition, containerWidth, containerHeight);
             _this.playerPosition = playerPosition;
+            _this.isMoving = false;
             _this.Start();
             return _this;
         }
+        Object.defineProperty(Enemy.prototype, "IsAlive", {
+            // PUBLIC PROPERTIES
+            get: function () {
+                return this.isAlive;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(Enemy.prototype, "IsAllive", {
+            set: function (newState) {
+                this.isAlive = newState;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(Enemy.prototype, "Step", {
+            get: function () {
+                return this.step;
+            },
+            set: function (newStep) {
+                this.step = newStep;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(Enemy.prototype, "PlayerPosition", {
+            get: function () {
+                return this.playerPosition;
+            },
+            set: function (newPosition) {
+                this.playerPosition = newPosition;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(Enemy.prototype, "IsMoving", {
+            get: function () {
+                return this.isMoving;
+            },
+            set: function (newState) {
+                this.isMoving = newState;
+            },
+            enumerable: true,
+            configurable: true
+        });
         // Public Methods
         Enemy.prototype._checkBounds = function () {
         };
         Enemy.prototype.Start = function () {
         };
-        Enemy.prototype.Update = function (newPlayerPosition) {
-            if (newPlayerPosition === void 0) { newPlayerPosition = new objects.Vector2(0, 0); }
-            this.playerPosition = newPlayerPosition;
+        Enemy.prototype.Update = function (playerNewPositionX, playerNewPositionY) {
+            if (playerNewPositionX === void 0) { playerNewPositionX = 10; }
+            if (playerNewPositionY === void 0) { playerNewPositionY = 10; }
+            this.playerPosition = new objects.Vector2(playerNewPositionX, playerNewPositionY);
+            if (this.isColliding) {
+                this.Die();
+            }
             // Check if the Monster is still alive, catch the player, otherwise, die.
             if (this.isAlive) {
-                this.ApproachPlayer(newPlayerPosition);
+                this.ApproachPlayer(playerNewPositionX, playerNewPositionY);
             }
             else {
                 this.Die();
@@ -52,10 +125,20 @@ var objects;
         Enemy.prototype.Die = function () {
             this.visible = false;
         };
-        Enemy.prototype.ApproachPlayer = function (playerPosition) {
-            var angle = playerPosition.y - this.y / playerPosition.x - this.x;
-            this.x += this.speed * Math.cos(angle * Math.PI / 180);
-            this.y -= this.speed * Math.sin(angle * Math.PI / 180);
+        /**
+         * This method will approch the enemy to player by moving speed
+         *
+         * @param {number} pX player x
+         * @param {number} pY player y
+         * @memberof Enemy
+         */
+        Enemy.prototype.ApproachPlayer = function (pX, pY) {
+            var that = this;
+            if (!that.isMoving) {
+                console.log("in approach");
+                that.isMoving = true;
+                setTimeout(that.Move, that.movingSpeed, pX, pY);
+            }
         };
         // Private Methods
         /**
@@ -71,12 +154,12 @@ var objects;
         Enemy.prototype.GetRandomPoints = function (playerPosition, width, height) {
             var px = playerPosition.x;
             var py = playerPosition.y;
-            var rx;
-            var ry;
+            var rx = 0;
+            var ry = 0;
             do {
                 // generate random point within the range of stage
-                rx = Math.floor(Math.random() * width) + 1;
-                ry = Math.floor(Math.random() * height) + 1;
+                rx = Math.floor(Math.random() * (width - 20)) + 1;
+                ry = Math.floor(Math.random() * (height - 20)) + 1;
             } // check to make it far from player by 200 pixels radius
              while ((rx > px + 100 || rx < px - 100) && ry > py + 100 || ry < py - 100);
             return new objects.Vector2(rx, ry);

@@ -66,7 +66,7 @@ var objects;
             enumerable: true,
             configurable: true
         });
-        // PRIVATE METHODS
+        //PRIVATE METHODS
         // PUBLIC METHODS
         Vector2.prototype.add = function (rhs) {
             this.x += rhs.x;
@@ -114,32 +114,37 @@ var objects;
             return lhs.x * rhs.x + lhs.y * rhs.y;
         };
         /**
-         * This returns the Pythagorean distance between P1 and P2
+         * Returns the Pythogorean distance between P1 and P2
          *
          * @static
-         * @param {Vector2} P1
-         * @param {Vector2} P2
+         * @param {Vector2} p1
+         * @param {Vector2} p2
          * @returns {number}
          * @memberof Vector2
          */
-        Vector2.distance = function (P1, P2) {
-            var Xs = (P2.x - P1.x);
-            var Ys = (P2.y - P1.y);
+        Vector2.distance = function (p1, p2) {
+            var Xs = (p2.x - p1.x);
+            var Ys = (p2.y - p1.y);
             return Math.sqrt(Xs * Xs + Ys * Ys);
         };
         /**
-         * Returns the squared distance between P1 and P2
+         * Returns the Squared distance between P1 and P2
          *
          * @static
-         * @param {Vector2} P1
-         * @param {Vector2} P2
+         * @param {Vector2} p1
+         * @param {Vector2} p2
          * @returns {number}
          * @memberof Vector2
          */
-        Vector2.sqrDistance = function (P1, P2) {
-            var Xs = (P2.x - P1.x);
-            var Ys = (P2.y - P1.y);
+        Vector2.sqrDistance = function (p1, p2) {
+            var Xs = (p2.x - p1.x);
+            var Ys = (p2.y - p1.y);
             return Xs * Xs + Ys * Ys;
+        };
+        Vector2.subtract = function (lhs, rhs) {
+            var dx = lhs.x - rhs.x;
+            var dy = lhs.y - rhs.y;
+            return new Vector2(dx, dy);
         };
         return Vector2;
     }());
