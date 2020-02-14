@@ -18,65 +18,49 @@ var objects;
         __extends(Player, _super);
         // CONSTRUCTOR
         function Player(imagePath, x, y, isCentered) {
-            if (imagePath === void 0) { imagePath = "./Assets/images/placeholder.png"; }
             if (x === void 0) { x = 0; }
             if (y === void 0) { y = 0; }
             if (isCentered === void 0) { isCentered = true; }
             var _this = _super.call(this, "./Assets/images/placeholder.png", 1, 1, true) || this;
             _this._speed = 1;
             _this._rotate = 1; // degrees
+            _this.forward = false;
+            _this.backward = false;
+            _this.left = false;
+            _this.right = false;
             _this._facing = 270; // initially looking up (-90degrees on canvas axis = 270degrees on normal axis)
             _this._direction = new objects.Vector2(0, -1);
+            window.addEventListener('keyup', function (e) {
+                switch (e.code) {
+                    case "ArrowUp":
+                        _this.forward = false;
+                        break;
+                    case "ArrowDown":
+                        _this.backward = false;
+                        break;
+                    case "ArrowRight":
+                        _this.right = false;
+                        break;
+                    case "ArrowLeft":
+                        _this.left = false;
+                        break;
+                }
+            });
             window.addEventListener('keydown', function (e) {
                 switch (e.code) {
                     case "ArrowUp":
-                        _this.y += _this.direction.y * _this.speed;
-                        _this.x += _this.direction.x * _this.speed;
+                        _this.forward = true;
                         break;
                     case "ArrowDown":
-                        _this.y -= _this.direction.y * _this.speed;
-                        _this.x -= _this.direction.x * _this.speed;
+                        _this.backward = true;
                         break;
                     case "ArrowRight":
-                        _this.rotation += _this.rotate;
-                        _this.facing += _this.rotate;
-                        _this._direction = new objects.Vector2(Math.cos(_this.facing * Math.PI / 180), Math.sin(_this.facing * Math.PI / 180));
+                        _this.right = true;
                         break;
                     case "ArrowLeft":
-                        _this.rotation -= _this.rotate;
-                        _this.facing -= _this.rotate;
-                        _this._direction = new objects.Vector2(Math.cos(_this.facing * Math.PI / 180), Math.sin(_this.facing * Math.PI / 180));
+                        _this.left = true;
                         break;
-                    default:
-                        break;
-                    //  case "Space":
-                    //      console.log("space pressed");
-                    //     let bullet:Bullet = new Bullet("./Assets/images/bulletPlaceHolder.png", this.x, this.y, true);
-                    //     bullet.direction = this.direction;
-                    //     createjs.Ticker.framerate = 60; // declare the framerate as 60FPS
-                    //     createjs.Ticker.on('tick', bullet.Update);
-                    //     this.parent.addChild(bullet);
-                    //     break;
                 }
-                console.log("x:" + _this.direction.x + ", y:" + _this.direction.y);
-                // window.addEventListener('keydown', (e) => {
-                //     switch(e.keyCode) {
-                //         case 38: //ArrowUp
-                //             player.y -= 10;
-                //             break;
-                //         case 40: //ArrowDown
-                //             player.y += 10;
-                //             break;
-                //         case 39: //ArrowRight
-                //             player.rotation += 1;
-                //             break;
-                //         case 37: //ArrowLeft
-                //             player.rotation -= 1;
-                //             break;
-                //         default:
-                //             break;
-                //     }
-                // });
             });
             _this.Start();
             return _this;
@@ -125,13 +109,31 @@ var objects;
         // PRIVATE METHODS
         Player.prototype._checkBounds = function () {
         };
+        Player.prototype.RecalculateDirection = function () {
+            this._direction = new objects.Vector2(Math.cos(this.facing * Math.PI / 180), Math.sin(this.facing * Math.PI / 180));
+        };
         // PUBLIC METHODS
         Player.prototype.Start = function () {
         };
         Player.prototype.Update = function () {
-            //let mouseX = config.Game.STAGE.mouseX;
-            //let mouseY = config.Game.STAGE.mouseY;
-            //this.position = new Vector2(mouseX, mouseY);
+            if (this.forward) {
+                this.y += this.direction.y * this.speed;
+                this.x += this.direction.x * this.speed;
+            }
+            if (this.backward) {
+                this.y -= this.direction.y * this.speed;
+                this.x -= this.direction.x * this.speed;
+            }
+            if (this.right) {
+                this.rotation += this.rotate;
+                this.facing += this.rotate;
+                this.RecalculateDirection();
+            }
+            if (this.left) {
+                this.rotation -= this.rotate;
+                this.facing -= this.rotate;
+                this.RecalculateDirection();
+            }
         };
         Player.prototype.Reset = function () {
         };
