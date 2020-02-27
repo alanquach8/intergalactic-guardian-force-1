@@ -12,6 +12,9 @@ module objects {
         private backward:boolean = false;
         private left:boolean = false;
         private right:boolean = false;
+        private shoot:boolean = false;
+
+        private bullets:objects.Bullet[];
         
         // PUBLIC PROPERTIES
         get direction():Vector2 {
@@ -53,6 +56,7 @@ module objects {
             
             this._facing = 270; // initially looking up (-90degrees on canvas axis = 270degrees on normal axis)
             this._direction = new Vector2(0, -1);
+            this.bullets = [];
 
             window.addEventListener('keyup', (e) => {
                 switch(e.code) {
@@ -67,6 +71,9 @@ module objects {
                         break;
                     case "ArrowLeft":
                         this.left = false;
+                        break;
+                    case "Space":
+                        this.shoot = false;
                         break;
                 }
             });
@@ -84,6 +91,16 @@ module objects {
                         break;
                     case "ArrowLeft":
                         this.left = true;
+                        break;
+                    case "Space":
+                        console.log(this.parent);
+                        this.shoot = true;
+                        let bullet = new objects.Bullet();
+                        bullet.x = this.x;
+                        bullet.y = this.y;
+                        bullet.direction = this.direction;
+                        this.bullets.push(bullet);
+                        this.parent.addChild(bullet);
                         break;
                 }
             });
@@ -122,6 +139,9 @@ module objects {
                 this.rotation -= this.rotate;
                 this.facing -= this.rotate;
                 this.RecalculateDirection();
+            }
+            for(let i = 0; i<this.bullets.length; i++) {
+                this.bullets[i].Update();
             }
         }
         public Reset(): void {

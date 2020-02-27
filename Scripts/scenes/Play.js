@@ -16,6 +16,7 @@ var scenes;
 (function (scenes) {
     var Play = /** @class */ (function (_super) {
         __extends(Play, _super);
+        //bullet:objects.Bullet;
         // PUBLIC PROPERTIES
         // CONSTRUCTOR
         function Play() {
@@ -25,7 +26,7 @@ var scenes;
             _this.nextButton = new objects.Button();
             _this.player = new objects.Player();
             _this.enemy = new objects.Enemy();
-            _this.bullet = new objects.Bullet();
+            //this.bullet = new objects.Bullet();
             _this.Start();
             return _this;
         }
@@ -35,25 +36,24 @@ var scenes;
             this.nextButton = new objects.Button("./Assets/images/nextButton.png", 320, 400, true);
             this.player = new objects.Player();
             this.enemy = new objects.Enemy();
-            this.bullet = new objects.Bullet();
+            //this.bullet = new objects.Bullet();
             this.Main();
         };
         Play.prototype.Update = function () {
             this.player.Update();
             this.enemy.Update(this.player.x, this.player.y);
-            this.bullet.Update();
+            //this.bullet.Update();
             //managers.Collision.squaredRadiusCheck(player, startButton);
             managers.Collision.AABBCheck(this.player, this.enemy);
             managers.Collision.squaredRadiusCheck(this.player, this.enemy);
-            managers.Collision.AABBCheck(this.bullet, this.enemy);
-            managers.Collision.squaredRadiusCheck(this.bullet, this.enemy);
+            // managers.Collision.AABBCheck(this.bullet, this.enemy);
+            // managers.Collision.squaredRadiusCheck(this.bullet, this.enemy);
             if (this.enemy.isColliding) {
                 this.removeChild(this.enemy);
                 //this.enemy.isColliding = false;
             }
         };
         Play.prototype.Main = function () {
-            var _this = this;
             this.addChild(this.playLabel);
             this.addChild(this.nextButton);
             this.nextButton.on("click", function () {
@@ -62,15 +62,15 @@ var scenes;
             this.addChild(this.player);
             this.enemy.position = new objects.Vector2(300, 300);
             this.addChild(this.enemy);
-            this.addChild(this.bullet);
-            window.addEventListener('keydown', function (e) {
-                if (e.code == "Space") {
-                    console.log("space pressed");
-                    _this.bullet.x = _this.player.x;
-                    _this.bullet.y = _this.player.y;
-                    _this.bullet.direction = _this.player.direction;
-                }
-            });
+            // this.addChild(this.bullet);
+            // window.addEventListener('keydown', (e) => { 
+            //     if(e.code == "Space") {
+            //         console.log("space pressed");
+            //         this.bullet.x = this.player.x;
+            //         this.bullet.y = this.player.y;
+            //         this.bullet.direction = this.player.direction;
+            //     }
+            // });
         };
         return Play;
     }(objects.Scene));
