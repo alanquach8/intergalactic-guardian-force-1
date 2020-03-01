@@ -14,7 +14,7 @@ module objects {
         private right:boolean = false;
         private shoot:boolean = false;
 
-        private bullets:objects.Bullet[];
+        private _bullets:objects.Bullet[];
         
         // PUBLIC PROPERTIES
         get direction():Vector2 {
@@ -49,6 +49,10 @@ module objects {
             this._rotate = newRotate;
         }
 
+        get bullets():objects.Bullet[] {
+            return this._bullets;
+        }
+
         // CONSTRUCTOR
         constructor(imagePath:string="/Assets/images/player/top.png", x:number = 0, y:number = 0, isCentered:boolean = true)
         {
@@ -56,7 +60,7 @@ module objects {
             
             this._facing = 270; // initially looking up (-90degrees on canvas axis = 270degrees on normal axis)
             this._direction = new Vector2(0, -1);
-            this.bullets = [];
+            this._bullets = [];
 
             window.addEventListener('keyup', (e) => {
                 switch(e.code) {
@@ -93,14 +97,7 @@ module objects {
                         this.left = true;
                         break;
                     case "Space":
-                        console.log(this.parent);
                         this.shoot = true;
-                        let bullet = new objects.Bullet();
-                        bullet.x = this.x;
-                        bullet.y = this.y;
-                        bullet.direction = this.direction;
-                        this.bullets.push(bullet);
-                        this.parent.addChild(bullet);
                         break;
                 }
             });
@@ -140,8 +137,17 @@ module objects {
                 this.facing -= this.rotate;
                 this.RecalculateDirection();
             }
-            for(let i = 0; i<this.bullets.length; i++) {
-                this.bullets[i].Update();
+            this.position = new Vector2(this.x, this.y);
+            if (this.shoot){
+                let bullet = new objects.Bullet();
+                bullet.x = this.x;
+                bullet.y = this.y;
+                bullet.direction = this.direction;
+                this._bullets.push(bullet);
+                this.parent.addChild(bullet);
+            }
+            for(let i = 0; i<this._bullets.length; i++) {
+                this._bullets[i].Update();
             }
         }
         public Reset(): void {

@@ -7,7 +7,6 @@ module scenes
         nextButton:objects.Button;
         player:objects.Player;
         enemy:objects.Enemy;
-        //bullet:objects.Bullet;
 
         // PUBLIC PROPERTIES
 
@@ -21,7 +20,6 @@ module scenes
             this.nextButton = new objects.Button();
             this.player = new objects.Player();
             this.enemy = new objects.Enemy();
-            //this.bullet = new objects.Bullet();
 
             this.Start();
         }
@@ -34,7 +32,6 @@ module scenes
             this.nextButton = new objects.Button("./Assets/images/nextButton.png", 320, 400, true);
             this.player = new objects.Player();
             this.enemy = new objects.Enemy();
-            //this.bullet = new objects.Bullet();
            
             this.Main();
         }        
@@ -45,12 +42,24 @@ module scenes
             //this.bullet.Update();
             //managers.Collision.squaredRadiusCheck(player, startButton);
 
-            managers.Collision.AABBCheck(this.player, this.enemy);
-            managers.Collision.squaredRadiusCheck(this.player, this.enemy);
+            // managers.Collision.AABBCheck(this.player, this.enemy);
+            // managers.Collision.squaredRadiusCheck(this.player, this.enemy);
             // managers.Collision.AABBCheck(this.bullet, this.enemy);
             // managers.Collision.squaredRadiusCheck(this.bullet, this.enemy);
+            for(let i = 0; i<this.player.bullets.length; i++) {
+                managers.Collision.AABBCheck(this.player.bullets[i], this.enemy);
+            }
             if(this.enemy.isColliding) {
                 this.removeChild(this.enemy);
+                // console.log(this.player.bullets[0].position);
+                // console.log("BULLET (x,y): (" + this.player.bullets[0].x + ", " + this.player.bullets[0].y + ")");
+                // console.log("BULLET (regX,regY): (" + this.player.bullets[0].regX + ", " + this.player.bullets[0].regY + ")");
+                // console.log(this.enemy.position);
+                // console.log("ENEMY (x,y): (" + this.enemy.x + ", " + this.enemy.y + ")");
+                // console.log("ENEMY (regX,regY): (" + this.enemy.regX + ", " + this.enemy.regY + ")");
+                // console.log(this.player.position);
+                // console.log("PLAYER (x,y): (" + this.player.x + ", " + this.player.y + ")");
+                // console.log("PLAYER (regX,regY): (" + this.player.regX + ", " + this.player.regY + ")");
                 //this.enemy.isColliding = false;
             }
 
@@ -69,15 +78,6 @@ module scenes
             this.addChild(this.player);
             this.enemy.position = new objects.Vector2(300, 300);
             this.addChild(this.enemy);
-            // this.addChild(this.bullet);
-            // window.addEventListener('keydown', (e) => { 
-            //     if(e.code == "Space") {
-            //         console.log("space pressed");
-            //         this.bullet.x = this.player.x;
-            //         this.bullet.y = this.player.y;
-            //         this.bullet.direction = this.player.direction;
-            //     }
-            // });
     
         }
 

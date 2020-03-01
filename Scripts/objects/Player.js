@@ -32,7 +32,7 @@ var objects;
             _this.shoot = false;
             _this._facing = 270; // initially looking up (-90degrees on canvas axis = 270degrees on normal axis)
             _this._direction = new objects.Vector2(0, -1);
-            _this.bullets = [];
+            _this._bullets = [];
             window.addEventListener('keyup', function (e) {
                 switch (e.code) {
                     case "ArrowUp":
@@ -67,14 +67,7 @@ var objects;
                         _this.left = true;
                         break;
                     case "Space":
-                        console.log(_this.parent);
                         _this.shoot = true;
-                        var bullet = new objects.Bullet();
-                        bullet.x = _this.x;
-                        bullet.y = _this.y;
-                        bullet.direction = _this.direction;
-                        _this.bullets.push(bullet);
-                        _this.parent.addChild(bullet);
                         break;
                 }
             });
@@ -122,6 +115,13 @@ var objects;
             enumerable: true,
             configurable: true
         });
+        Object.defineProperty(Player.prototype, "bullets", {
+            get: function () {
+                return this._bullets;
+            },
+            enumerable: true,
+            configurable: true
+        });
         // PRIVATE METHODS
         Player.prototype._checkBounds = function () {
         };
@@ -150,8 +150,17 @@ var objects;
                 this.facing -= this.rotate;
                 this.RecalculateDirection();
             }
-            for (var i = 0; i < this.bullets.length; i++) {
-                this.bullets[i].Update();
+            this.position = new objects.Vector2(this.x, this.y);
+            if (this.shoot) {
+                var bullet = new objects.Bullet();
+                bullet.x = this.x;
+                bullet.y = this.y;
+                bullet.direction = this.direction;
+                this._bullets.push(bullet);
+                this.parent.addChild(bullet);
+            }
+            for (var i = 0; i < this._bullets.length; i++) {
+                this._bullets[i].Update();
             }
         };
         Player.prototype.Reset = function () {
