@@ -42,7 +42,13 @@ var scenes;
         Play.prototype.Update = function () {
             // Reference to the Play Scene Object
             var that = this;
-            this.player.Update();
+            if (this.player.visible) {
+                this.player.Update();
+            }
+            else {
+                // game over
+                config.Game.SCENE_STATE = scenes.State.END;
+            }
             this.enemies.forEach(function (enemy) {
                 enemy.Update(that.player.x, that.player.y);
                 // Bullets and Enemy Collision Check
@@ -52,6 +58,7 @@ var scenes;
                         // remove the enemy
                         that.enemies.splice(that.enemies.indexOf(enemy), 1);
                         that.removeChild(enemy);
+                        console.log(that.enemies.length);
                         // remove the bullet
                         that.player.bullets.splice(that.player.bullets.indexOf(bullet), 1);
                         that.removeChild(bullet);
@@ -60,7 +67,12 @@ var scenes;
                 // Enemy and Player Collision Check
                 managers.Collision.AABBCheck(enemy, that.player);
                 if (that.player.isColliding) {
-                    that.player.Reset();
+                    that.player.life--;
+                    console.log(that.player.life);
+                    if (that.player.life == 0) {
+                        that.removeChild(that.player);
+                        that.player.Die();
+                    }
                 }
             });
         };
