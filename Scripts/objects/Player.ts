@@ -7,6 +7,9 @@ module objects {
         private _speed:number = 1;
         private _facing:number; // used in calculating direction player is facing (degrees)
         private _rotate:number = 1; // degrees
+        private _life:number = 10;
+        private _reloadSpeed:number = 10;
+        private _reloadCounter:number = 0;
 
         private forward:boolean = false;
         private backward:boolean = false;
@@ -51,6 +54,22 @@ module objects {
 
         get bullets():objects.Bullet[] {
             return this._bullets;
+        }
+
+        set life(newLife:number) {
+            this._life = newLife;
+        }
+
+        get life():number {
+            return this._life;
+        }
+
+        set reloadSpeed(newReloadSpeed:number) {
+            this._reloadSpeed = newReloadSpeed;
+        }
+
+        get reloadSpeed():number {
+            return this._reloadSpeed;
         }
 
         // CONSTRUCTOR
@@ -139,12 +158,19 @@ module objects {
             }
             this.position = new Vector2(this.x, this.y);
             if (this.shoot){
-                let bullet = new objects.Bullet();
-                bullet.x = this.x;
-                bullet.y = this.y;
-                bullet.direction = this.direction;
-                this._bullets.push(bullet);
-                this.parent.addChild(bullet);
+                if(this._reloadCounter == 0) {
+                    let bullet = new objects.Bullet();
+                    bullet.x = this.x;
+                    bullet.y = this.y;
+                    bullet.direction = this.direction;
+                    this._bullets.push(bullet);
+                    this.parent.addChild(bullet);
+                    this._reloadCounter = this._reloadSpeed;
+                } else {
+                    this._reloadCounter--;
+                }
+            } else {
+                this._reloadCounter = 0;
             }
             for(let i = 0; i<this._bullets.length; i++) {
                 this._bullets[i].Update();

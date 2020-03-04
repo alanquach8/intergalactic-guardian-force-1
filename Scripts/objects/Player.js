@@ -25,6 +25,9 @@ var objects;
             var _this = _super.call(this, imagePath, x, y, true) || this;
             _this._speed = 1;
             _this._rotate = 1; // degrees
+            _this._life = 10;
+            _this._reloadSpeed = 10;
+            _this._reloadCounter = 0;
             _this.forward = false;
             _this.backward = false;
             _this.left = false;
@@ -122,6 +125,26 @@ var objects;
             enumerable: true,
             configurable: true
         });
+        Object.defineProperty(Player.prototype, "life", {
+            get: function () {
+                return this._life;
+            },
+            set: function (newLife) {
+                this._life = newLife;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(Player.prototype, "reloadSpeed", {
+            get: function () {
+                return this._reloadSpeed;
+            },
+            set: function (newReloadSpeed) {
+                this._reloadSpeed = newReloadSpeed;
+            },
+            enumerable: true,
+            configurable: true
+        });
         // PRIVATE METHODS
         Player.prototype._checkBounds = function () {
         };
@@ -152,12 +175,21 @@ var objects;
             }
             this.position = new objects.Vector2(this.x, this.y);
             if (this.shoot) {
-                var bullet = new objects.Bullet();
-                bullet.x = this.x;
-                bullet.y = this.y;
-                bullet.direction = this.direction;
-                this._bullets.push(bullet);
-                this.parent.addChild(bullet);
+                if (this._reloadCounter == 0) {
+                    var bullet = new objects.Bullet();
+                    bullet.x = this.x;
+                    bullet.y = this.y;
+                    bullet.direction = this.direction;
+                    this._bullets.push(bullet);
+                    this.parent.addChild(bullet);
+                    this._reloadCounter = this._reloadSpeed;
+                }
+                else {
+                    this._reloadCounter--;
+                }
+            }
+            else {
+                this._reloadCounter = 0;
             }
             for (var i = 0; i < this._bullets.length; i++) {
                 this._bullets[i].Update();
