@@ -24,8 +24,8 @@ var objects;
             var _this = _super.call(this, "./Assets/images/enemy.png", 200, 200, true) || this;
             // PRIVATE INSTANCE MEMBERS
             _this.isAlive = true;
-            _this.step = 5;
-            _this.movingSpeed = 1000;
+            _this.step = 1;
+            _this.movingSpeed = 500;
             _this.playerPosition = new objects.Vector2(10, 10);
             /**
              * This method will move the enemy towards to player
@@ -53,9 +53,11 @@ var objects;
                 that.isMoving = false;
             };
             // create enemy
-            _this.position = _this.GetRandomPoints(playerPosition, containerWidth, containerHeight);
+            _this.position = _this._getRandomPoints(playerPosition, containerWidth, containerHeight);
             _this.playerPosition = playerPosition;
             _this.isMoving = false;
+            // Set the random moving speed
+            _this.movingSpeed = _this._getRandomSpeed();
             _this.Start();
             return _this;
         }
@@ -104,9 +106,49 @@ var objects;
             enumerable: true,
             configurable: true
         });
-        // Public Methods
         Enemy.prototype._checkBounds = function () {
         };
+        // Private Methods
+        /**
+         * Create random point far from player by at least 100 pixels
+         *
+         * @protected
+         * @param {Vector2} playerPosition
+         * @param {number} width
+         * @param {number} height
+         * @returns {Vector2}
+         * @memberof Enemy
+         */
+        Enemy.prototype._getRandomPoints = function (playerPosition, width, height) {
+            var px = playerPosition.x;
+            var py = playerPosition.y;
+            var rx = 0;
+            var ry = 0;
+            do {
+                // generate random point within the range of stage
+                rx = Math.floor(Math.random() * (width - 20)) + 1;
+                ry = Math.floor(Math.random() * (height - 20)) + 1;
+            } // check to make it far from player by 200 pixels radius
+             while ((rx > px + 100 || rx < px - 100) && ry > py + 100 || ry < py - 100);
+            return new objects.Vector2(rx, ry);
+        };
+        /**
+         * Method to generate random number for the speed adjustments
+         *
+         * @protected
+         * @returns {number}
+         * @memberof Enemy
+         */
+        Enemy.prototype._getRandomSpeed = function () {
+            var rnd = 0;
+            do {
+                // generate random point less than 1000
+                rnd = Math.floor(Math.random() * 1000);
+            } // check to make sure it is more than 100 milisecond and 1 second
+             while (rnd < 100 && rnd < 1000);
+            return rnd;
+        };
+        // Public Methods
         Enemy.prototype.Start = function () {
         };
         Enemy.prototype.Update = function (playerNewPositionX, playerNewPositionY) {
@@ -140,32 +182,9 @@ var objects;
             var that = this;
             if (!that.isMoving) {
                 that.isMoving = true;
+                // Moving by step number per random time
                 setTimeout(that.Move, that.movingSpeed, pX, pY);
             }
-        };
-        // Private Methods
-        /**
-         * Create random point far from player by at least 100 pixels
-         *
-         * @protected
-         * @param {Vector2} playerPosition
-         * @param {number} width
-         * @param {number} height
-         * @returns {Vector2}
-         * @memberof Enemy
-         */
-        Enemy.prototype.GetRandomPoints = function (playerPosition, width, height) {
-            var px = playerPosition.x;
-            var py = playerPosition.y;
-            var rx = 0;
-            var ry = 0;
-            do {
-                // generate random point within the range of stage
-                rx = Math.floor(Math.random() * (width - 20)) + 1;
-                ry = Math.floor(Math.random() * (height - 20)) + 1;
-            } // check to make it far from player by 200 pixels radius
-             while ((rx > px + 100 || rx < px - 100) && ry > py + 100 || ry < py - 100);
-            return new objects.Vector2(rx, ry);
         };
         return Enemy;
     }(objects.GameObject));
