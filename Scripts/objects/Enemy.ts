@@ -98,11 +98,11 @@ module objects
         
             let rnd = 0;
             do{
-                // generate random point less than 1000
+                // generate random number up to 1000
                 rnd = Math.floor(Math.random() * 1000);
                 
-            }// check to make sure it is more than 100 milisecond and 1 second
-            while(rnd < 100 && rnd < 1000); 
+            }// check to make sure it is more than 100 milisecond
+            while(rnd < 100); 
 
             return rnd;
         }
