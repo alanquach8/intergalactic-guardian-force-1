@@ -19,8 +19,8 @@ var objects;
         // CONSTRUCTOR
         function Player(imagePath, x, y, isCentered) {
             if (imagePath === void 0) { imagePath = "/Assets/images/player/top.png"; }
-            if (x === void 0) { x = 200; }
-            if (y === void 0) { y = 200; }
+            if (x === void 0) { x = 320; }
+            if (y === void 0) { y = 250; }
             if (isCentered === void 0) { isCentered = true; }
             var _this = _super.call(this, imagePath, x, y, true) || this;
             _this._speed = 1;
@@ -164,6 +164,11 @@ var objects;
             }
         };
         Player.prototype.Reset = function () {
+            // TODO here we can add an IF to check if player still has life to continue
+            this.x = 320; // TODO values should come from a variable
+            this.y = 250; // TODO values should come from a variable
+            this.visible = true;
+            this.isColliding = false;
         };
         Player.prototype.Die = function () {
             this.visible = false;

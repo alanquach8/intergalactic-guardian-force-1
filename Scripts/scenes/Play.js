@@ -24,7 +24,7 @@ var scenes;
             _this.playLabel = new objects.Label();
             _this.nextButton = new objects.Button();
             _this.player = new objects.Player();
-            _this.enemy = new objects.Enemy();
+            _this.enemies = new Array();
             _this.Start();
             return _this;
         }
@@ -33,36 +33,48 @@ var scenes;
             this.playLabel = new objects.Label("Game Started", "10px", "Consolas", "#000000", 320, 200, true);
             this.nextButton = new objects.Button("./Assets/images/nextButton.png", 320, 400, true);
             this.player = new objects.Player();
-            this.enemy = new objects.Enemy();
+            // Add Enemies to the array
+            for (var i = 0; i < 5; i++) { //TODO add a Variable for number of enemies currently hardcoded to 5
+                this.enemies.push(new objects.Enemy());
+            }
             this.Main();
         };
         Play.prototype.Update = function () {
+            // Reference to the Play Scene Object
+            var that = this;
             this.player.Update();
-            this.enemy.Update(this.player.x, this.player.y);
-            // Bullets and Enemy Collision Check
-            for (var i = 0; i < this.player.bullets.length; i++) {
-                managers.Collision.AABBCheck(this.player.bullets[i], this.enemy);
-            }
-            if (this.enemy.isColliding) {
-                this.removeChild(this.enemy);
-                this.enemy.Die();
-            }
-            // Enemy and Player Collision Check
-            managers.Collision.AABBCheck(this.enemy, this.player);
-            if (this.player.isColliding) {
-                this.removeChild(this.player);
-                this.player.Die();
-            }
+            this.enemies.forEach(function (enemy) {
+                enemy.Update(that.player.x, that.player.y);
+                // Bullets and Enemy Collision Check
+                that.player.bullets.forEach(function (bullet) {
+                    managers.Collision.AABBCheck(bullet, enemy);
+                    if (enemy.isColliding) {
+                        // remove the enemy
+                        that.enemies.splice(that.enemies.indexOf(enemy), 1);
+                        that.removeChild(enemy);
+                        // remove the bullet
+                        that.player.bullets.splice(that.player.bullets.indexOf(bullet), 1);
+                        that.removeChild(bullet);
+                    }
+                });
+                // Enemy and Player Collision Check
+                managers.Collision.AABBCheck(enemy, that.player);
+                if (that.player.isColliding) {
+                    that.player.Reset();
+                }
+            });
         };
         Play.prototype.Main = function () {
+            var that = this;
             this.addChild(this.playLabel);
             this.addChild(this.nextButton);
             this.nextButton.on("click", function () {
                 config.Game.SCENE_STATE = scenes.State.END;
             });
             this.addChild(this.player);
-            this.enemy.position = new objects.Vector2(300, 300);
-            this.addChild(this.enemy);
+            this.enemies.forEach(function (enemy) {
+                that.addChild(enemy);
+            });
         };
         return Play;
     }(objects.Scene));

@@ -3,10 +3,10 @@ module scenes
     export class Play extends objects.Scene
     {
         // PRIVATE INSTANCE MEMBERS
-        playLabel:objects.Label;
-        nextButton:objects.Button;
-        player:objects.Player;
-        enemy:objects.Enemy;
+        private playLabel:objects.Label;
+        private nextButton:objects.Button;
+        private player:objects.Player;
+        private enemies:objects.Enemy[];
 
         // PUBLIC PROPERTIES
 
@@ -19,7 +19,7 @@ module scenes
             this.playLabel = new objects.Label();
             this.nextButton = new objects.Button();
             this.player = new objects.Player();
-            this.enemy = new objects.Enemy();
+            this.enemies = new Array();
 
             this.Start();
         }
@@ -31,34 +31,49 @@ module scenes
             this.playLabel = new objects.Label("Game Started", "10px","Consolas", "#000000", 320, 200, true);
             this.nextButton = new objects.Button("./Assets/images/nextButton.png", 320, 400, true);
             this.player = new objects.Player();
-            this.enemy = new objects.Enemy();
+            // Add Enemies to the array
+            for(let i = 0; i < 5; i++){ //TODO add a Variable for number of enemies currently hardcoded to 5
+                this.enemies.push(new objects.Enemy());
+            }
            
             this.Main();
         }        
         
         public Update(): void {
+            // Reference to the Play Scene Object
+            let that = this;
+
             this.player.Update();
-            this.enemy.Update(this.player.x, this.player.y);
 
-            // Bullets and Enemy Collision Check
-            for(let i = 0; i<this.player.bullets.length; i++) {
-                managers.Collision.AABBCheck(this.player.bullets[i], this.enemy);
-            }
-            if(this.enemy.isColliding) {
-                this.removeChild(this.enemy);
-                this.enemy.Die();
-            }
+            this.enemies.forEach((enemy)=>{
+                enemy.Update(that.player.x, that.player.y);
 
-            // Enemy and Player Collision Check
-            managers.Collision.AABBCheck(this.enemy, this.player);
-            if(this.player.isColliding){
-                this.removeChild(this.player);
-                this.player.Die();
-            }
+                // Bullets and Enemy Collision Check
+                that.player.bullets.forEach((bullet)=>{
+                    managers.Collision.AABBCheck(bullet, enemy);
+                    if(enemy.isColliding) {
+                        // remove the enemy
+                        that.enemies.splice(that.enemies.indexOf(enemy), 1);
+                        that.removeChild(enemy);
+                        // remove the bullet
+                        that.player.bullets.splice(that.player.bullets.indexOf(bullet), 1);
+                        that.removeChild(bullet);
+                    }
+                });
+
+                // Enemy and Player Collision Check
+                managers.Collision.AABBCheck(enemy, that.player);
+                if(that.player.isColliding){
+                    that.player.Reset();
+                }
+            })
+
+            
 
         }
         
         public Main(): void {
+            let that = this;
             
             this.addChild(this.playLabel);
     
@@ -69,11 +84,10 @@ module scenes
             });
 
             this.addChild(this.player);
-            this.enemy.position = new objects.Vector2(300, 300);
-            this.addChild(this.enemy);
-    
-        }
 
-        
+            this.enemies.forEach((enemy)=>{
+                that.addChild(enemy);
+            })
+        }
     }
 }

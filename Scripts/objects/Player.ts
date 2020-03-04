@@ -54,7 +54,7 @@ module objects {
         }
 
         // CONSTRUCTOR
-        constructor(imagePath:string="/Assets/images/player/top.png", x:number = 200, y:number = 200, isCentered:boolean = true)
+        constructor(imagePath:string="/Assets/images/player/top.png", x:number = 320, y:number = 250, isCentered:boolean = true) //TODO x, y Variables
         {
             super(imagePath, x, y, true);
             
@@ -151,7 +151,12 @@ module objects {
             }
         }
         public Reset(): void {
-            
+
+            // TODO here we can add an IF to check if player still has life to continue
+            this.x = 320; // TODO values should come from a variable
+            this.y = 250; // TODO values should come from a variable
+            this.visible = true;
+            this.isColliding = false;
         }
 
         public Die():void{
