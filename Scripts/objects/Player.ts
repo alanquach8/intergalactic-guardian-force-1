@@ -54,9 +54,9 @@ module objects {
         }
 
         // CONSTRUCTOR
-        constructor(imagePath:string="/Assets/images/player/top.png", x:number = 0, y:number = 0, isCentered:boolean = true)
+        constructor(imagePath:string="/Assets/images/player/top.png", x:number = 200, y:number = 200, isCentered:boolean = true)
         {
-            super(imagePath, 1, 1, true);
+            super(imagePath, x, y, true);
             
             this._facing = 270; // initially looking up (-90degrees on canvas axis = 270degrees on normal axis)
             this._direction = new Vector2(0, -1);
@@ -152,6 +152,10 @@ module objects {
         }
         public Reset(): void {
             
+        }
+
+        public Die():void{
+            this.visible = false;
         }
     }
 

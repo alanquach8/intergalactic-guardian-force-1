@@ -81,7 +81,6 @@ module objects
 
         public Die(): void{
             this.visible = false;
-            
         }
 
         /**

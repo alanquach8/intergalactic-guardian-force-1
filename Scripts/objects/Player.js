@@ -19,10 +19,10 @@ var objects;
         // CONSTRUCTOR
         function Player(imagePath, x, y, isCentered) {
             if (imagePath === void 0) { imagePath = "/Assets/images/player/top.png"; }
-            if (x === void 0) { x = 0; }
-            if (y === void 0) { y = 0; }
+            if (x === void 0) { x = 200; }
+            if (y === void 0) { y = 200; }
             if (isCentered === void 0) { isCentered = true; }
-            var _this = _super.call(this, imagePath, 1, 1, true) || this;
+            var _this = _super.call(this, imagePath, x, y, true) || this;
             _this._speed = 1;
             _this._rotate = 1; // degrees
             _this.forward = false;
@@ -164,6 +164,9 @@ var objects;
             }
         };
         Player.prototype.Reset = function () {
+        };
+        Player.prototype.Die = function () {
+            this.visible = false;
         };
         return Player;
     }(objects.GameObject));
