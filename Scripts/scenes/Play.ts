@@ -3,10 +3,11 @@ module scenes
     export class Play extends objects.Scene
     {
         // PRIVATE INSTANCE MEMBERS
-        private playLabel:objects.Label;
-        private nextButton:objects.Button;
-        private player:objects.Player;
-        private enemies:objects.Enemy[];
+        private _playLabel:objects.Label;
+        private _nextButton:objects.Button;
+        private _player:objects.Player;
+        private _enemies:objects.Enemy[];
+        private _noOfEnemies:number;
 
         // PUBLIC PROPERTIES
 
@@ -16,10 +17,11 @@ module scenes
             super();
 
             // initialization
-            this.playLabel = new objects.Label();
-            this.nextButton = new objects.Button();
-            this.player = new objects.Player();
-            this.enemies = new Array();
+            this._playLabel = new objects.Label();
+            this._nextButton = new objects.Button();
+            this._player = new objects.Player();
+            this._enemies = new Array();
+            this._noOfEnemies = 5;
 
             this.Start();
         }
@@ -28,12 +30,12 @@ module scenes
 
         public Start(): void 
         {
-            this.playLabel = new objects.Label("Game Started", "10px","Consolas", "#000000", 320, 200, true);
-            this.nextButton = new objects.Button("./Assets/images/nextButton.png", 320, 400, true);
-            this.player = new objects.Player();
+            this._playLabel = new objects.Label("Game Started", "10px","Consolas", "#000000", 320, 200, true);
+            this._nextButton = new objects.Button("./Assets/images/nextButton.png", 320, 400, true);
+            this._player = new objects.Player();
             // Add Enemies to the array
-            for(let i = 0; i < 5; i++){ //TODO add a Variable for number of enemies currently hardcoded to 5
-                this.enemies.push(new objects.Enemy());
+            for(let i = 0; i < this._noOfEnemies; i++){ //TODO add a Variable for number of enemies currently hardcoded to 5
+                this._enemies.push(new objects.Enemy());
             }
            
             this.Main();
@@ -43,41 +45,50 @@ module scenes
             // Reference to the Play Scene Object
             let that = this;
 
-            if(this.player.visible){
-                this.player.Update();
+            // add more enemies if one dies
+            if(this._enemies.length < this._noOfEnemies){
+                this._enemies.push(new objects.Enemy());
+                this.addChild(this._enemies[this._enemies.length-1]);
+            }
+
+            if(this._player.visible){
+                this._player.Update();
             } else {
                 // game over
                 config.Game.SCENE_STATE = scenes.State.END;
             }
             
-            this.enemies.forEach((enemy)=>{
-                enemy.Update(that.player.x, that.player.y);
+            this._enemies.forEach((enemy)=>{
+                enemy.Update(that._player.x, that._player.y);
 
                 // Bullets and Enemy Collision Check
-                that.player.bullets.forEach((bullet)=>{
+                that._player.bullets.forEach((bullet)=>{
                     managers.Collision.AABBCheck(bullet, enemy);
                     if(enemy.isColliding) {
                         enemy.hitPoints--;
                         console.log(enemy.hitPoints);
                         if(enemy.hitPoints == 0) {
                             // remove the enemy
-                            that.enemies.splice(that.enemies.indexOf(enemy), 1);
+                            that._enemies.splice(that._enemies.indexOf(enemy), 1);
                             that.removeChild(enemy);
+                            //that._enemies.push(new objects.Enemy());
+                            //that.addChild(that._enemies[that._enemies.length-1]);
+
                         }
                         // remove the bullet
-                        that.player.bullets.splice(that.player.bullets.indexOf(bullet), 1);
+                        that._player.bullets.splice(that._player.bullets.indexOf(bullet), 1);
                         that.removeChild(bullet);
                     }
                 });
 
                 // Enemy and Player Collision Check
-                managers.Collision.AABBCheck(enemy, that.player);
-                if(that.player.isColliding){
-                    that.player.life--;
-                    console.log(that.player.life);
-                    if(that.player.life == 0) {
-                        that.removeChild(that.player);
-                        that.player.Die();
+                managers.Collision.AABBCheck(enemy, that._player);
+                if(that._player.isColliding){
+                    that._player.life--;
+                    console.log(that._player.life);
+                    if(that._player.life == 0) {
+                        that.removeChild(that._player);
+                        that._player.Die();
                     }
                 }
             })
@@ -89,17 +100,17 @@ module scenes
         public Main(): void {
             let that = this;
             
-            this.addChild(this.playLabel);
+            this.addChild(this._playLabel);
     
-            this.addChild(this.nextButton);
+            this.addChild(this._nextButton);
     
-            this.nextButton.on("click", function() {
+            this._nextButton.on("click", function() {
                config.Game.SCENE_STATE = scenes.State.END;
             });
 
-            this.addChild(this.player);
+            this.addChild(this._player);
 
-            this.enemies.forEach((enemy)=>{
+            this._enemies.forEach((enemy)=>{
                 that.addChild(enemy);
             })
         }
