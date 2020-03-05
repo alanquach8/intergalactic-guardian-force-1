@@ -27,12 +27,9 @@ var objects;
             _this.step = 1;
             _this.movingSpeed = 500;
             _this.playerPosition = new objects.Vector2(10, 10);
-<<<<<<< HEAD
             _this._hitPoints = 5;
-=======
             _this.isDying = false;
             _this.isDead = false;
->>>>>>> master
             /**
              * This method will move the enemy towards to player
              *

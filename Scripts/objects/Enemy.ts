@@ -8,12 +8,9 @@ module objects
         movingSpeed:number = 500;
         playerPosition:Vector2 = new Vector2(10, 10);
         isMoving:boolean;
-<<<<<<< HEAD
         _hitPoints:number = 5;
-=======
         isDying:boolean = false;
         isDead:boolean = false;
->>>>>>> master
 
 
         // PUBLIC PROPERTIES
