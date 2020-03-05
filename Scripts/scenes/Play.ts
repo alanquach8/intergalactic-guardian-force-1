@@ -52,9 +52,11 @@ module scenes
                 that.player.bullets.forEach((bullet)=>{
                     managers.Collision.AABBCheck(bullet, enemy);
                     if(enemy.isColliding) {
-                        // remove the enemy
-                        that.enemies.splice(that.enemies.indexOf(enemy), 1);
-                        that.removeChild(enemy);
+                        if (enemy.isDead){
+                            // remove the enemy
+                            that.enemies.splice(that.enemies.indexOf(enemy), 1);
+                            that.removeChild(enemy);
+                        }
                         // remove the bullet
                         that.player.bullets.splice(that.player.bullets.indexOf(bullet), 1);
                         that.removeChild(bullet);
