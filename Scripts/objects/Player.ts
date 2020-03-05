@@ -10,65 +10,74 @@ module objects {
         private _life:number = 10;
         private _reloadSpeed:number = 10;
         private _reloadCounter:number = 0;
+        private _isReviving:boolean = false;
 
-        private forward:boolean = false;
-        private backward:boolean = false;
-        private left:boolean = false;
-        private right:boolean = false;
-        private shoot:boolean = false;
+        private _forward:boolean = false;
+        private _backward:boolean = false;
+        private _left:boolean = false;
+        private _right:boolean = false;
+        private _shoot:boolean = false;
 
         private _bullets:objects.Bullet[];
         
         // PUBLIC PROPERTIES
-        get direction():Vector2 {
+        get IsReviving():boolean{
+            return this._isReviving;
+        }
+
+        set IsReviving(newState:boolean){
+            this._isReviving = newState;
+        }
+
+        get Direction():Vector2 {
             return this._direction;
         }
 
-        set direction(newDirection:Vector2) {
+        set Direction(newDirection:Vector2) {
             this._direction = newDirection;
         }
 
-        get speed():number {
-            return this._speed
+        get Speed():number {
+            return this._speed;
         }
 
-        set speed(newSpeed:number) {
+        set Speed(newSpeed:number) {
             this._speed = newSpeed;
         }
 
-        get facing():number {
+        get Facing():number {
             return this._facing;
         }
 
-        set facing(newFacing:number) {
+        set Facing(newFacing:number) {
             this._facing = newFacing;
         }
 
-        get rotate():number {
+        get Rotate():number {
             return this._rotate;
         }
 
-        set rotate(newRotate:number) {
+        set Rotate(newRotate:number) {
             this._rotate = newRotate;
         }
 
-        get bullets():objects.Bullet[] {
+        get Bullets():objects.Bullet[] {
             return this._bullets;
         }
 
-        set life(newLife:number) {
+        set Life(newLife:number) {
             this._life = newLife;
         }
 
-        get life():number {
+        get Life():number {
             return this._life;
         }
 
-        set reloadSpeed(newReloadSpeed:number) {
+        set ReloadSpeed(newReloadSpeed:number) {
             this._reloadSpeed = newReloadSpeed;
         }
 
-        get reloadSpeed():number {
+        get ReloadSpeed():number {
             return this._reloadSpeed;
         }
 
@@ -84,19 +93,19 @@ module objects {
             window.addEventListener('keyup', (e) => {
                 switch(e.code) {
                     case "ArrowUp":
-                        this.forward = false;
+                        this._forward = false;
                         break;
                     case "ArrowDown":
-                        this.backward = false;
+                        this._backward = false;
                         break;
                     case "ArrowRight":
-                        this.right = false;
+                        this._right = false;
                         break;
                     case "ArrowLeft":
-                        this.left = false;
+                        this._left = false;
                         break;
                     case "Space":
-                        this.shoot = false;
+                        this._shoot = false;
                         break;
                 }
             });
@@ -104,19 +113,19 @@ module objects {
             window.addEventListener('keydown', (e) => {
                 switch(e.code) {
                     case "ArrowUp":
-                        this.forward = true;
+                        this._forward = true;
                         break;
                     case "ArrowDown":
-                        this.backward = true;
+                        this._backward = true;
                         break;
                     case "ArrowRight":
-                        this.right = true;
+                        this._right = true;
                         break;
                     case "ArrowLeft":
-                        this.left = true;
+                        this._left = true;
                         break;
                     case "Space":
-                        this.shoot = true;
+                        this._shoot = true;
                         break;
                 }
             });
@@ -130,7 +139,7 @@ module objects {
         }    
 
         public RecalculateDirection():void{
-            this._direction = new Vector2(Math.cos(this.facing*Math.PI/180),Math.sin(this.facing*Math.PI/180));
+            this._direction = new Vector2(Math.cos(this.Facing*Math.PI/180),Math.sin(this.Facing*Math.PI/180));
         }
 
         // PUBLIC METHODS
@@ -138,31 +147,31 @@ module objects {
             
         }
         public Update(): void {
-            if (this.forward){
-                this.y += this.direction.y * this.speed;
-                this.x += this.direction.x * this.speed;
+            if (this._forward){
+                this.y += this.Direction.y * this.Speed;
+                this.x += this.Direction.x * this.Speed;
             }
-            if (this.backward){
-                this.y -= this.direction.y * this.speed;
-                this.x -= this.direction.x * this.speed;
+            if (this._backward){
+                this.y -= this.Direction.y * this.Speed;
+                this.x -= this.Direction.x * this.Speed;
             }
-            if (this.right){
-                this.rotation += this.rotate;
-                this.facing += this.rotate;
+            if (this._right){
+                this.rotation += this.Rotate;
+                this.Facing += this.Rotate;
                 this.RecalculateDirection();
             }
-            if (this.left){
-                this.rotation -= this.rotate;
-                this.facing -= this.rotate;
+            if (this._left){
+                this.rotation -= this.Rotate;
+                this.Facing -= this.Rotate;
                 this.RecalculateDirection();
             }
             this.position = new Vector2(this.x, this.y);
-            if (this.shoot){
+            if (this._shoot){
                 if(this._reloadCounter == 0) {
                     let bullet = new objects.Bullet();
                     bullet.x = this.x;
                     bullet.y = this.y;
-                    bullet.direction = this.direction;
+                    bullet.direction = this.Direction;
                     this._bullets.push(bullet);
                     this.parent.addChild(bullet);
                     this._reloadCounter = this._reloadSpeed;
@@ -178,11 +187,23 @@ module objects {
         }
         public Reset(): void {
 
+            let that = this;
+            let revivalInterval = setInterval(()=>{
+                that.alpha = 0;
+                setTimeout(() => {
+                    that.alpha = 1;
+                }, 50);
+            }, 100);
             // TODO here we can add an IF to check if player still has life to continue
             this.x = 320; // TODO values should come from a variable
             this.y = 250; // TODO values should come from a variable
             this.visible = true;
             this.isColliding = false;
+            this._isReviving = true;
+            setTimeout(() => {
+                clearInterval(revivalInterval);
+                that._isReviving = false;
+            }, 3000);
         }
 
         public Die():void{

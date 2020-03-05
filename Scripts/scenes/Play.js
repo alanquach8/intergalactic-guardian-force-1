@@ -58,7 +58,7 @@ var scenes;
             this._enemies.forEach(function (enemy) {
                 enemy.Update(that._player.x, that._player.y);
                 // Bullets and Enemy Collision Check
-                that._player.bullets.forEach(function (bullet) {
+                that._player.Bullets.forEach(function (bullet) {
                     managers.Collision.AABBCheck(bullet, enemy);
                     if (enemy.isColliding) {
                         enemy.hitPoints--;
@@ -67,22 +67,23 @@ var scenes;
                             // remove the enemy
                             that._enemies.splice(that._enemies.indexOf(enemy), 1);
                             that.removeChild(enemy);
-                            //that._enemies.push(new objects.Enemy());
-                            //that.addChild(that._enemies[that._enemies.length-1]);
                         }
                         // remove the bullet
-                        that._player.bullets.splice(that._player.bullets.indexOf(bullet), 1);
+                        that._player.Bullets.splice(that._player.Bullets.indexOf(bullet), 1);
                         that.removeChild(bullet);
                     }
                 });
                 // Enemy and Player Collision Check
                 managers.Collision.AABBCheck(enemy, that._player);
-                if (that._player.isColliding) {
-                    that._player.life--;
-                    console.log(that._player.life);
-                    if (that._player.life == 0) {
+                if (that._player.isColliding && !that._player.IsReviving) {
+                    that._player.Life--;
+                    console.log(that._player.Life);
+                    if (that._player.Life == 0) {
                         that.removeChild(that._player);
                         that._player.Die();
+                    }
+                    else {
+                        that._player.Reset();
                     }
                 }
             });
