@@ -21,13 +21,18 @@ var objects;
             if (playerPosition === void 0) { playerPosition = new objects.Vector2(10, 10); }
             if (containerWidth === void 0) { containerWidth = 640; }
             if (containerHeight === void 0) { containerHeight = 480; }
-            var _this = _super.call(this, "./Assets/images/enemy.png", 200, 200, true) || this;
+            var _this = _super.call(this, "./Assets/images/enemy/minion/minion.png", 200, 200, true) || this;
             // PRIVATE INSTANCE MEMBERS
             _this.isAlive = true;
             _this.step = 1;
             _this.movingSpeed = 500;
             _this.playerPosition = new objects.Vector2(10, 10);
+<<<<<<< HEAD
             _this._hitPoints = 5;
+=======
+            _this.isDying = false;
+            _this.isDead = false;
+>>>>>>> master
             /**
              * This method will move the enemy towards to player
              *
@@ -175,12 +180,17 @@ var objects;
             }
             else {
                 this.Die();
+                this.alpha -= 0.01;
+                if (this.alpha <= 0) {
+                    this.isDead = true;
+                }
             }
         };
         Enemy.prototype.Reset = function () {
         };
         Enemy.prototype.Die = function () {
-            this.visible = false;
+            this.image = new createjs.Bitmap("./Assets/images/enemy/minion/minion_dead.png").image;
+            this.isAlive = false;
         };
         /**
          * This method will approch the enemy to player by moving speed

@@ -8,7 +8,12 @@ module objects
         movingSpeed:number = 500;
         playerPosition:Vector2 = new Vector2(10, 10);
         isMoving:boolean;
+<<<<<<< HEAD
         _hitPoints:number = 5;
+=======
+        isDying:boolean = false;
+        isDead:boolean = false;
+>>>>>>> master
 
 
         // PUBLIC PROPERTIES
@@ -47,7 +52,7 @@ module objects
         constructor(playerPosition:Vector2 = new Vector2(10, 10), containerWidth:number = 640, containerHeight:number = 480)
         {
 
-            super("./Assets/images/enemy.png", 200, 200, true);
+            super("./Assets/images/enemy/minion/minion.png", 200, 200, true);
 
             // create enemy
             this.position = this._getRandomPoints(playerPosition, containerWidth, containerHeight);
@@ -133,6 +138,10 @@ module objects
                 this.ApproachPlayer(playerNewPositionX, playerNewPositionY);
             } else {
                 this.Die();
+                this.alpha -= 0.01;
+                if (this.alpha <= 0){
+                    this.isDead = true;
+                }
             }
         }
 
@@ -141,7 +150,8 @@ module objects
         }
 
         public Die(): void{
-            this.visible = false;
+            this.image = new createjs.Bitmap("./Assets/images/enemy/minion/minion_dead.png").image;
+            this.isAlive = false;
         }
 
         /**

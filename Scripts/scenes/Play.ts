@@ -65,6 +65,7 @@ module scenes
                 that._player.Bullets.forEach((bullet)=>{
                     managers.Collision.AABBCheck(bullet, enemy);
                     if(enemy.isColliding) {
+<<<<<<< HEAD
                         enemy.hitPoints--;
                         console.log(enemy.hitPoints);
                         if(enemy.hitPoints == 0) {
@@ -72,6 +73,12 @@ module scenes
                             that._enemies.splice(that._enemies.indexOf(enemy), 1);
                             that.removeChild(enemy);
 
+=======
+                        if (enemy.isDead){
+                            // remove the enemy
+                            that.enemies.splice(that.enemies.indexOf(enemy), 1);
+                            that.removeChild(enemy);
+>>>>>>> master
                         }
                         // remove the bullet
                         that._player.Bullets.splice(that._player.Bullets.indexOf(bullet), 1);
