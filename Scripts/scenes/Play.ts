@@ -5,7 +5,12 @@ module scenes
         // PRIVATE INSTANCE MEMBERS
         private _player:objects.Player;
         private _enemies:objects.Enemy[];
+        private _deadEnemies:objects.Enemy[];
+        private _explosion:objects.Explosion[];
         private _noOfEnemies:number;
+        private _gernadeManager:objects.GrenadeManager;
+        private _playerLivesThumbs: createjs.Bitmap[];
+        private _powerups:objects.Powerup[];
 
         // PUBLIC PROPERTIES
 
@@ -17,8 +22,16 @@ module scenes
             // initialization
             this._player = new objects.Player();
             this._enemies = new Array();
+            this._deadEnemies = new Array();
+            this._powerups = new Array();
+            this._explosion = [];
+            this._playerLivesThumbs = [];
             this._noOfEnemies = 5;
+            this._gernadeManager = new objects.GrenadeManager();
 
+            this.addEventListener("click", (evt: createjs.MouseEvent) => {
+                this.SendGrenade(evt.stageX, evt.stageY);
+            });
             this.Start();
         }
 
@@ -33,8 +46,100 @@ module scenes
             }
            
             this.Main();
-        }        
+        }  
+
+        private getRandomInt(max:number) {
+            return Math.floor(Math.random() * Math.floor(max));
+        }
+
+        public CreatePowerup(x:number, y:number, id:number=-1){
+
+            if(id == -1){
+                // n cases (in the switch statement below) + 1
+                id = this.getRandomInt(2)
+            }
+
+            // default is a grenade (ID: 0)
+            let p = new objects.Powerup("./Assets/images/ui/grenade.png", x, y);
+            p.ActivationEvent = () => {
+                this.ChangeGrenades(1);
+            };;
+
+            switch (id){
+                case 1: 
+                    p = new objects.Powerup("./Assets/images/player/front.png", x, y);
+                    p.Scale = 0.5;
+                    p.ActivationEvent = () => {
+                        this._player.Life += 1;
+                        this.UpdatePlayerLivesIndicator();
+                    };
+                    break;    
+            }
+            if(p != undefined){
+                this._powerups.push(p);
+                this.addChild(p);
+            }
+
+        }
         
+        public SendGrenade(x:number, y:number){
+            if (this._gernadeManager.GrenadeCount <= 0)
+                return
+
+            this.ChangeGrenades(-1);
+
+            let exp = new objects.Explosion(x, y);
+            this._explosion.push(exp);
+            this.addChild(exp);
+        }
+
+        public UpdatePlayerLivesIndicator():void{
+            this._playerLivesThumbs.forEach(p => {
+                this.removeChild(p);
+            });
+
+            let x = 640;
+
+            for (let i = 0; i < this._player.Life; i++) {
+                let img = new createjs.Bitmap("./Assets/images/player/front.png")
+                img.scaleX = 0.5;
+                img.scaleY = 0.5;
+                x -= (img.getBounds().width * 0.5) + 5
+                img.x = x;
+                img.y = 460;
+                this._playerLivesThumbs.push(img)
+                this.addChild(img)
+            }
+        }
+        
+        public SetGrenades(count:number){
+            this._gernadeManager.GrenadeCount = count;
+            let grenadeThumbs = this._gernadeManager.GrenadeThumbs;            
+
+            grenadeThumbs.forEach(grenade => {
+                this.removeChild(grenade);
+            });
+
+            for (let i = 0; i < count; i++) {
+                let img = new createjs.Bitmap("./Assets/images/ui/grenade.png")
+                img.x += i * img.getBounds().width + 10;
+                img.y = 460;
+                grenadeThumbs.push(img)
+                this.addChild(img)
+            }
+        }
+
+        public ChangeGrenades(delta:number){
+            console.log(delta, this._gernadeManager.GrenadeCount)
+            this.SetGrenades(this._gernadeManager.GrenadeCount + delta);
+        }
+
+        public KillEnemy(enemy:objects.Enemy): void{
+            enemy.Die();
+            this._deadEnemies.push(enemy);
+            this._enemies.splice(this._enemies.indexOf(enemy), 1);
+        }
+
         public Update(): void {
             // Reference to the Play Scene Object
             let that = this;
@@ -52,6 +157,24 @@ module scenes
                 config.Game.SCENE_STATE = scenes.State.END;
             }
             
+            this._explosion.forEach(exp => {
+                if (exp.Done){
+                    this._explosion.splice(this._explosion.indexOf(exp), 1);
+                    this.removeChild(exp);
+                }
+                exp.Update();
+            });
+
+            this._powerups.forEach((p) => {
+                managers.Collision.AABBCheck(this._player, p);
+                if(p.isColliding){
+                    p.ActivationEvent();
+                    this._powerups.splice(this._powerups.indexOf(p), 1);
+                    this.removeChild(p);
+                }
+
+            })
+
             this._enemies.forEach((enemy)=>{
                 enemy.Update(that._player.x, that._player.y);
 
@@ -62,7 +185,7 @@ module scenes
                         enemy.hitPoints--;
                         console.log(enemy.hitPoints);
                         if(enemy.hitPoints == 0) {
-                            enemy.Die();
+                            that.KillEnemy(enemy);
                         }
                         // remove the bullet
 
@@ -73,16 +196,19 @@ module scenes
                     }
                 });
 
-                if (enemy.isDead){
-                    that._enemies.splice(that._enemies.indexOf(enemy), 1);
-                    that.removeChild(enemy);
-                }
+                that._explosion.forEach((exp) => {
+                    managers.Collision.AABBCheck(exp, enemy);
+                    if(enemy.isColliding) 
+                    that.KillEnemy(enemy);
+                })
+
+
 
                 // Enemy and Player Collision Check
                 managers.Collision.AABBCheck(enemy, that._player);
                 if(that._player.isColliding && !that._player.IsReviving){
                     that._player.Life--;
-                    console.log(that._player.Life);
+                    this.UpdatePlayerLivesIndicator();
                     if(that._player.Life == 0) {
                         that.removeChild(that._player);
                         that._player.Die();
@@ -91,6 +217,14 @@ module scenes
                     }
                 }
             })
+
+            this._deadEnemies.forEach(enemy => {
+                enemy.Update();
+                if (enemy.isDead){
+                    that._deadEnemies.splice(that._deadEnemies.indexOf(enemy), 1);
+                    that.removeChild(enemy);
+                }
+            });
 
             
 
@@ -104,6 +238,12 @@ module scenes
             this.addChild(new objects.Rectangle(15, 0, 610, 480, "GhostWhite"))
             
             this.addChild(this._player);
+
+            this.SetGrenades(2);
+            this.UpdatePlayerLivesIndicator();
+            this.CreatePowerup(200, 10);
+
+            this._gernadeManager.GrenadeCount = 2;
 
             this._enemies.forEach((enemy)=>{
                 that.addChild(enemy);

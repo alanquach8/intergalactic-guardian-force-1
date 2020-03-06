@@ -35,6 +35,8 @@ var scenes;
         End.prototype.Update = function () {
         };
         End.prototype.Main = function () {
+            // a hacky way to set the screen's background color
+            this.addChild(new objects.Rectangle(0, 0, 640, 480, "#FFF"));
             this.addChild(this.endLabel);
             this.addChild(this.endButton);
             this.endButton.on("click", function () {
