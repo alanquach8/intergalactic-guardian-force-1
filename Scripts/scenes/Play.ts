@@ -79,7 +79,6 @@ module scenes
                 this._powerups.push(p);
                 this.addChild(p);
             }
-
         }
         
         public SendGrenade(x:number, y:number){

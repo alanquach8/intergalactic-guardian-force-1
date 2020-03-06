@@ -13,6 +13,7 @@ module objects {
         private _reloadSpeed:number = 10;
         private _reloadCounter:number = 0;
         private _isReviving:boolean = false;
+        private _wallBuffer = 30;
 
         private _forward:boolean = false;
         private _backward:boolean = false;
@@ -158,10 +159,24 @@ module objects {
             if (this._forward){
                 this.y += this.Direction.y * this.Speed;
                 this.x += this.Direction.x * this.Speed;
+
+                if (this.x <= this._wallBuffer)
+                    this.x -= this.Direction.x * this.Speed;
+
+                if (this.x >= 640 - this._wallBuffer)
+                    this.x -= this.Direction.x * this.Speed;
+
             }
             if (this._backward){
                 this.y -= this.Direction.y * this.Speed;
                 this.x -= this.Direction.x * this.Speed;
+
+                if (this.x <= this._wallBuffer)
+                    this.x += this.Direction.x * this.Speed;
+
+                if (this.x >= 640 - this._wallBuffer)
+                    this.x += this.Direction.x * this.Speed;
+
             }
             if (this._right){
                 this.rotation += this.Rotate;
