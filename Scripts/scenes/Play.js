@@ -21,60 +21,80 @@ var scenes;
         function Play() {
             var _this = _super.call(this) || this;
             // initialization
-            _this.playLabel = new objects.Label();
-            _this.nextButton = new objects.Button();
-            _this.player = new objects.Player();
-            _this.enemies = new Array();
+            _this._player = new objects.Player();
+            _this._enemies = new Array();
+            _this._noOfEnemies = 5;
             _this.Start();
             return _this;
         }
         // PUBLIC METHODS
         Play.prototype.Start = function () {
-            this.playLabel = new objects.Label("Game Started", "10px", "Consolas", "#000000", 320, 200, true);
-            this.nextButton = new objects.Button("./Assets/images/nextButton.png", 320, 400, true);
-            this.player = new objects.Player();
+            this._player = new objects.Player();
             // Add Enemies to the array
-            for (var i = 0; i < 5; i++) { //TODO add a Variable for number of enemies currently hardcoded to 5
-                this.enemies.push(new objects.Enemy());
+            for (var i = 0; i < this._noOfEnemies; i++) { //TODO add a Variable for number of enemies currently hardcoded to 5
+                this._enemies.push(new objects.Enemy());
             }
             this.Main();
         };
         Play.prototype.Update = function () {
             // Reference to the Play Scene Object
             var that = this;
-            this.player.Update();
-            this.enemies.forEach(function (enemy) {
-                enemy.Update(that.player.x, that.player.y);
+            // add more enemies if one dies
+            if (this._enemies.length < this._noOfEnemies) {
+                this._enemies.push(new objects.Enemy());
+                this.addChild(this._enemies[this._enemies.length - 1]);
+            }
+            if (this._player.visible) {
+                this._player.Update();
+            }
+            else {
+                // game over
+                config.Game.SCENE_STATE = scenes.State.END;
+            }
+            this._enemies.forEach(function (enemy) {
+                enemy.Update(that._player.x, that._player.y);
                 // Bullets and Enemy Collision Check
-                that.player.bullets.forEach(function (bullet) {
+                that._player.Bullets.forEach(function (bullet) {
                     managers.Collision.AABBCheck(bullet, enemy);
                     if (enemy.isColliding) {
-                        if (enemy.isDead) {
-                            // remove the enemy
-                            that.enemies.splice(that.enemies.indexOf(enemy), 1);
-                            that.removeChild(enemy);
+                        enemy.hitPoints--;
+                        console.log(enemy.hitPoints);
+                        if (enemy.hitPoints == 0) {
+                            enemy.Die();
                         }
                         // remove the bullet
-                        that.player.bullets.splice(that.player.bullets.indexOf(bullet), 1);
-                        that.removeChild(bullet);
+                        if (enemy.IsAlive) {
+                            that._player.Bullets.splice(that._player.Bullets.indexOf(bullet), 1);
+                            that.removeChild(bullet);
+                        }
                     }
                 });
+                if (enemy.isDead) {
+                    that._enemies.splice(that._enemies.indexOf(enemy), 1);
+                    that.removeChild(enemy);
+                }
                 // Enemy and Player Collision Check
-                managers.Collision.AABBCheck(enemy, that.player);
-                if (that.player.isColliding) {
-                    that.player.Reset();
+                managers.Collision.AABBCheck(enemy, that._player);
+                if (that._player.isColliding && !that._player.IsReviving) {
+                    that._player.Life--;
+                    console.log(that._player.Life);
+                    if (that._player.Life == 0) {
+                        that.removeChild(that._player);
+                        that._player.Die();
+                    }
+                    else {
+                        that._player.Reset();
+                    }
                 }
             });
         };
         Play.prototype.Main = function () {
             var that = this;
-            this.addChild(this.playLabel);
-            this.addChild(this.nextButton);
-            this.nextButton.on("click", function () {
-                config.Game.SCENE_STATE = scenes.State.END;
-            });
-            this.addChild(this.player);
-            this.enemies.forEach(function (enemy) {
+            this.addChild(new objects.Rectangle(0, 0, 15, 480, "DarkGrey"));
+            this.addChild(new objects.Rectangle(625, 0, 15, 480, "DarkGrey"));
+            this.addChild(new objects.Rectangle(15, 0, 610, 480, "GhostWhite"));
+            this.addChild(this._player);
+            this._enemies.forEach(function (enemy) {
                 that.addChild(enemy);
             });
         };

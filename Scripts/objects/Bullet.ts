@@ -28,7 +28,7 @@ module objects {
              // constructors
 
 
-             constructor(imagePath:string = "./Assets/images/bulletPlaceHolder.png", x:number = 0, y:number = 0, isCentered:boolean = true)
+             constructor(imagePath:string = "./Assets/images/bullet/bullet_small.png", x:number = 0, y:number = 0, isCentered:boolean = true)
              {
                  super(imagePath, x, y, isCentered);
                 this.position = new Vector2(-1,-1);

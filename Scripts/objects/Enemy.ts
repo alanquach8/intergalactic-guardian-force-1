@@ -8,6 +8,7 @@ module objects
         movingSpeed:number = 500;
         playerPosition:Vector2 = new Vector2(10, 10);
         isMoving:boolean;
+        _hitPoints:number = 5;
         isDying:boolean = false;
         isDead:boolean = false;
 
@@ -36,6 +37,12 @@ module objects
         }
         set IsMoving(newState:boolean){
             this.isMoving = newState;
+        }
+        get hitPoints():number{
+            return this._hitPoints;
+        }
+        set hitPoints(newHitPoints) {
+            this._hitPoints = newHitPoints;
         }
 
         // CONSTRUCTOR
@@ -119,9 +126,9 @@ module objects
 
             this.playerPosition = new Vector2(playerNewPositionX, playerNewPositionY);
 
-            if(this.isColliding){
-                this.Die();
-            }
+            // if(this.isColliding){
+            //     this.Die();
+            // }
 
             // Check if the Monster is still alive, catch the player, otherwise, die.
             if(this.isAlive){
@@ -168,6 +175,10 @@ module objects
          * @memberof Enemy
          */
         public Move = (pX:number, pY:number) => {
+
+            if (!this.IsAlive){
+                return;
+            }
 
             let that = this;
 

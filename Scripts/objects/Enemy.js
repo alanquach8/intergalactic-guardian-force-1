@@ -27,6 +27,7 @@ var objects;
             _this.step = 1;
             _this.movingSpeed = 500;
             _this.playerPosition = new objects.Vector2(10, 10);
+            _this._hitPoints = 5;
             _this.isDying = false;
             _this.isDead = false;
             /**
@@ -35,6 +36,9 @@ var objects;
              * @memberof Enemy
              */
             _this.Move = function (pX, pY) {
+                if (!_this.IsAlive) {
+                    return;
+                }
                 var that = _this;
                 if (pX > that.x) {
                     that.position.x += that.step;
@@ -108,6 +112,16 @@ var objects;
             enumerable: true,
             configurable: true
         });
+        Object.defineProperty(Enemy.prototype, "hitPoints", {
+            get: function () {
+                return this._hitPoints;
+            },
+            set: function (newHitPoints) {
+                this._hitPoints = newHitPoints;
+            },
+            enumerable: true,
+            configurable: true
+        });
         Enemy.prototype._checkBounds = function () {
         };
         // Private Methods
@@ -157,9 +171,9 @@ var objects;
             if (playerNewPositionX === void 0) { playerNewPositionX = 10; }
             if (playerNewPositionY === void 0) { playerNewPositionY = 10; }
             this.playerPosition = new objects.Vector2(playerNewPositionX, playerNewPositionY);
-            if (this.isColliding) {
-                this.Die();
-            }
+            // if(this.isColliding){
+            //     this.Die();
+            // }
             // Check if the Monster is still alive, catch the player, otherwise, die.
             if (this.isAlive) {
                 this.ApproachPlayer(playerNewPositionX, playerNewPositionY);
