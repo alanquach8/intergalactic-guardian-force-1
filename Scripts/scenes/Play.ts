@@ -5,6 +5,7 @@ module scenes
         // PRIVATE INSTANCE MEMBERS
         private _player:objects.Player;
         private _enemies:objects.Enemy[];
+        private _deadEnemies:objects.Enemy[];
         private _explosion:objects.Explosion[];
         private _noOfEnemies:number;
         private _gernadeManager:objects.GrenadeManager;
@@ -19,6 +20,7 @@ module scenes
             // initialization
             this._player = new objects.Player();
             this._enemies = new Array();
+            this._deadEnemies = new Array();
             this._explosion = [];
             this._noOfEnemies = 5;
             this._gernadeManager = new objects.GrenadeManager();
@@ -109,6 +111,8 @@ module scenes
                         console.log(enemy.hitPoints);
                         if(enemy.hitPoints == 0) {
                             enemy.Die();
+                            that._deadEnemies.push(enemy);
+                            that._enemies.splice(that._enemies.indexOf(enemy), 1);
                         }
                         // remove the bullet
 
@@ -125,10 +129,7 @@ module scenes
                         enemy.Die();
                 })
 
-                if (enemy.isDead){
-                    that._enemies.splice(that._enemies.indexOf(enemy), 1);
-                    that.removeChild(enemy);
-                }
+
 
                 // Enemy and Player Collision Check
                 managers.Collision.AABBCheck(enemy, that._player);
@@ -143,6 +144,14 @@ module scenes
                     }
                 }
             })
+
+            this._deadEnemies.forEach(enemy => {
+                enemy.Update();
+                if (enemy.isDead){
+                    that._deadEnemies.splice(that._deadEnemies.indexOf(enemy), 1);
+                    that.removeChild(enemy);
+                }
+            });
 
             
 

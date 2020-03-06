@@ -23,6 +23,7 @@ var scenes;
             // initialization
             _this._player = new objects.Player();
             _this._enemies = new Array();
+            _this._deadEnemies = new Array();
             _this._explosion = [];
             _this._noOfEnemies = 5;
             _this._gernadeManager = new objects.GrenadeManager();
@@ -99,6 +100,8 @@ var scenes;
                         console.log(enemy.hitPoints);
                         if (enemy.hitPoints == 0) {
                             enemy.Die();
+                            that._deadEnemies.push(enemy);
+                            that._enemies.splice(that._enemies.indexOf(enemy), 1);
                         }
                         // remove the bullet
                         if (enemy.IsAlive) {
@@ -112,10 +115,6 @@ var scenes;
                     if (enemy.isColliding)
                         enemy.Die();
                 });
-                if (enemy.isDead) {
-                    that._enemies.splice(that._enemies.indexOf(enemy), 1);
-                    that.removeChild(enemy);
-                }
                 // Enemy and Player Collision Check
                 managers.Collision.AABBCheck(enemy, that._player);
                 if (that._player.isColliding && !that._player.IsReviving) {
@@ -128,6 +127,13 @@ var scenes;
                     else {
                         that._player.Reset();
                     }
+                }
+            });
+            this._deadEnemies.forEach(function (enemy) {
+                enemy.Update();
+                if (enemy.isDead) {
+                    that._deadEnemies.splice(that._deadEnemies.indexOf(enemy), 1);
+                    that.removeChild(enemy);
                 }
             });
         };
