@@ -36,6 +36,9 @@ var objects;
              * @memberof Enemy
              */
             _this.Move = function (pX, pY) {
+                if (!_this.IsAlive) {
+                    return;
+                }
                 var that = _this;
                 if (pX > that.x) {
                     that.position.x += that.step;

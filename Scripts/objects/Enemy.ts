@@ -176,6 +176,10 @@ module objects
          */
         public Move = (pX:number, pY:number) => {
 
+            if (!this.IsAlive){
+                return;
+            }
+
             let that = this;
 
             if(pX > that.x){

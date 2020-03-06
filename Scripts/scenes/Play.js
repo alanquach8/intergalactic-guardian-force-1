@@ -67,8 +67,10 @@ var scenes;
                             enemy.Die();
                         }
                         // remove the bullet
-                        that._player.Bullets.splice(that._player.Bullets.indexOf(bullet), 1);
-                        that.removeChild(bullet);
+                        if (enemy.IsAlive) {
+                            that._player.Bullets.splice(that._player.Bullets.indexOf(bullet), 1);
+                            that.removeChild(bullet);
+                        }
                     }
                 });
                 if (enemy.isDead) {

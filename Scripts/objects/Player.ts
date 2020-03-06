@@ -172,6 +172,7 @@ module objects {
                     bullet.x = this.x;
                     bullet.y = this.y;
                     bullet.direction = this.Direction;
+                    bullet.rotation = this.rotation;
                     this._bullets.push(bullet);
                     this.parent.addChild(bullet);
                     this._reloadCounter = this._reloadSpeed;
