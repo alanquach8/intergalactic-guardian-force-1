@@ -24,6 +24,7 @@ var scenes;
             _this._player = new objects.Player();
             _this._enemies = new Array();
             _this._deadEnemies = new Array();
+            _this._powerups = new Array();
             _this._explosion = [];
             _this._playerLivesThumbs = [];
             _this._noOfEnemies = 5;
@@ -42,6 +43,37 @@ var scenes;
                 this._enemies.push(new objects.Enemy());
             }
             this.Main();
+        };
+        Play.prototype.getRandomInt = function (max) {
+            return Math.floor(Math.random() * Math.floor(max));
+        };
+        Play.prototype.CreatePowerup = function (x, y, id) {
+            var _this = this;
+            if (id === void 0) { id = -1; }
+            if (id == -1) {
+                // n cases (in the switch statement below) + 1
+                id = this.getRandomInt(2);
+            }
+            // default is a grenade (ID: 0)
+            var p = new objects.Powerup("./Assets/images/ui/grenade.png", x, y);
+            p.ActivationEvent = function () {
+                _this.ChangeGrenades(1);
+            };
+            ;
+            switch (id) {
+                case 1:
+                    p = new objects.Powerup("./Assets/images/player/front.png", x, y);
+                    p.Scale = 0.5;
+                    p.ActivationEvent = function () {
+                        _this._player.Life += 1;
+                        _this.UpdatePlayerLivesIndicator();
+                    };
+                    break;
+            }
+            if (p != undefined) {
+                this._powerups.push(p);
+                this.addChild(p);
+            }
         };
         Play.prototype.SendGrenade = function (x, y) {
             if (this._gernadeManager.GrenadeCount <= 0)
@@ -115,6 +147,14 @@ var scenes;
                 }
                 exp.Update();
             });
+            this._powerups.forEach(function (p) {
+                managers.Collision.AABBCheck(_this._player, p);
+                if (p.isColliding) {
+                    p.ActivationEvent();
+                    _this._powerups.splice(_this._powerups.indexOf(p), 1);
+                    _this.removeChild(p);
+                }
+            });
             this._enemies.forEach(function (enemy) {
                 enemy.Update(that._player.x, that._player.y);
                 // Bullets and Enemy Collision Check
@@ -168,6 +208,7 @@ var scenes;
             this.addChild(this._player);
             this.SetGrenades(2);
             this.UpdatePlayerLivesIndicator();
+            this.CreatePowerup(200, 10);
             this._gernadeManager.GrenadeCount = 2;
             this._enemies.forEach(function (enemy) {
                 that.addChild(enemy);

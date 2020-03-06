@@ -10,6 +10,7 @@ module scenes
         private _noOfEnemies:number;
         private _gernadeManager:objects.GrenadeManager;
         private _playerLivesThumbs: createjs.Bitmap[];
+        private _powerups:objects.Powerup[];
 
         // PUBLIC PROPERTIES
 
@@ -22,6 +23,7 @@ module scenes
             this._player = new objects.Player();
             this._enemies = new Array();
             this._deadEnemies = new Array();
+            this._powerups = new Array();
             this._explosion = [];
             this._playerLivesThumbs = [];
             this._noOfEnemies = 5;
@@ -45,6 +47,40 @@ module scenes
            
             this.Main();
         }  
+
+        private getRandomInt(max:number) {
+            return Math.floor(Math.random() * Math.floor(max));
+        }
+
+        public CreatePowerup(x:number, y:number, id:number=-1){
+
+            if(id == -1){
+                // n cases (in the switch statement below) + 1
+                id = this.getRandomInt(2)
+            }
+
+            // default is a grenade (ID: 0)
+            let p = new objects.Powerup("./Assets/images/ui/grenade.png", x, y);
+            p.ActivationEvent = () => {
+                this.ChangeGrenades(1);
+            };;
+
+            switch (id){
+                case 1: 
+                    p = new objects.Powerup("./Assets/images/player/front.png", x, y);
+                    p.Scale = 0.5;
+                    p.ActivationEvent = () => {
+                        this._player.Life += 1;
+                        this.UpdatePlayerLivesIndicator();
+                    };
+                    break;    
+            }
+            if(p != undefined){
+                this._powerups.push(p);
+                this.addChild(p);
+            }
+
+        }
         
         public SendGrenade(x:number, y:number){
             if (this._gernadeManager.GrenadeCount <= 0)
@@ -129,6 +165,16 @@ module scenes
                 exp.Update();
             });
 
+            this._powerups.forEach((p) => {
+                managers.Collision.AABBCheck(this._player, p);
+                if(p.isColliding){
+                    p.ActivationEvent();
+                    this._powerups.splice(this._powerups.indexOf(p), 1);
+                    this.removeChild(p);
+                }
+
+            })
+
             this._enemies.forEach((enemy)=>{
                 enemy.Update(that._player.x, that._player.y);
 
@@ -195,6 +241,7 @@ module scenes
 
             this.SetGrenades(2);
             this.UpdatePlayerLivesIndicator();
+            this.CreatePowerup(200, 10);
 
             this._gernadeManager.GrenadeCount = 2;
 
