@@ -62,6 +62,7 @@ var scenes;
         };
         Quote.prototype.Main = function () {
             var _this = this;
+            // a hacky way to set the screen's background color
             this.addChild(new objects.Rectangle(0, 0, 640, 480, "#000"));
             this.startLabel.forEach(function (label) {
                 _this.addChild(label);

@@ -37,6 +37,9 @@ module scenes
         }
         
         public Main(): void {
+
+            // a hacky way to set the screen's background color
+            this.addChild(new objects.Rectangle(0, 0, 640, 480, "#FFF"));
             
             this.addChild(this.startLabel);
     
