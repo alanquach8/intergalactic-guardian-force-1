@@ -41,7 +41,7 @@ module scenes
             this.addChild(this.endButton);
     
             this.endButton.on("click", function() {
-               config.Game.SCENE_STATE = scenes.State.PLAY;
+               config.Game.SCENE_STATE = scenes.State.START;
             });
         }
 

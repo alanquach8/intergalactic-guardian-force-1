@@ -180,7 +180,7 @@ var objects;
             }
             else {
                 this.Die();
-                this.alpha -= 0.005;
+                this.alpha -= 0.01;
                 if (this.alpha <= 0) {
                     this.isDead = true;
                 }

@@ -98,7 +98,11 @@ module scenes
         
         public Main(): void {
             let that = this;
-               
+
+            this.addChild(new objects.Rectangle(0, 0, 15, 480, "DarkGrey"))
+            this.addChild(new objects.Rectangle(625, 0, 15, 480, "DarkGrey"))
+            this.addChild(new objects.Rectangle(15, 0, 610, 480, "GhostWhite"))
+            
             this.addChild(this._player);
 
             this._enemies.forEach((enemy)=>{
