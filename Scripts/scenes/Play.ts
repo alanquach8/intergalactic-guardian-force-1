@@ -5,7 +5,9 @@ module scenes
         // PRIVATE INSTANCE MEMBERS
         private _player:objects.Player;
         private _enemies:objects.Enemy[];
+        private _explosion:objects.Explosion[];
         private _noOfEnemies:number;
+        private _gernadeManager:objects.GrenadeManager;
 
         // PUBLIC PROPERTIES
 
@@ -17,8 +19,13 @@ module scenes
             // initialization
             this._player = new objects.Player();
             this._enemies = new Array();
+            this._explosion = [];
             this._noOfEnemies = 5;
+            this._gernadeManager = new objects.GrenadeManager();
 
+            this.addEventListener("click", (evt: createjs.MouseEvent) => {
+                this.SendGrenade(evt.stageX, evt.stageY);
+            });
             this.Start();
         }
 
@@ -33,8 +40,41 @@ module scenes
             }
            
             this.Main();
-        }        
+        }  
         
+        public SendGrenade(x:number, y:number){
+            if (this._gernadeManager.GrenadeCount <= 0)
+                return
+
+            this.ChangeGrenades(-1);
+
+            let exp = new objects.Explosion(x, y);
+            this._explosion.push(exp);
+            this.addChild(exp);
+        }
+        
+        public SetGrenades(count:number){
+            this._gernadeManager.GrenadeCount = count;
+            let grenadeThumbs = this._gernadeManager.GrenadeThumbs;            
+
+            grenadeThumbs.forEach(grenade => {
+                this.removeChild(grenade);
+            });
+
+            for (let i = 0; i < count; i++) {
+                let img = new createjs.Bitmap("./Assets/images/ui/grenade.png")
+                img.x += i * img.getBounds().width + 10;
+                img.y = 460;
+                grenadeThumbs.push(img)
+                this.addChild(img)
+            }
+        }
+
+        public ChangeGrenades(delta:number){
+            console.log(delta, this._gernadeManager.GrenadeCount)
+            this.SetGrenades(this._gernadeManager.GrenadeCount + delta);
+        }
+
         public Update(): void {
             // Reference to the Play Scene Object
             let that = this;
@@ -52,6 +92,12 @@ module scenes
                 config.Game.SCENE_STATE = scenes.State.END;
             }
             
+            this._explosion.forEach(exp => {
+                if (exp.Done)
+                    this.removeChild(exp);
+                exp.Update();
+            });
+
             this._enemies.forEach((enemy)=>{
                 enemy.Update(that._player.x, that._player.y);
 
@@ -72,6 +118,12 @@ module scenes
                         }
                     }
                 });
+
+                that._explosion.forEach((exp) => {
+                    managers.Collision.AABBCheck(exp, enemy);
+                    if(enemy.isColliding) 
+                        enemy.Die();
+                })
 
                 if (enemy.isDead){
                     that._enemies.splice(that._enemies.indexOf(enemy), 1);
@@ -104,6 +156,10 @@ module scenes
             this.addChild(new objects.Rectangle(15, 0, 610, 480, "GhostWhite"))
             
             this.addChild(this._player);
+
+            this.SetGrenades(2);
+
+            this._gernadeManager.GrenadeCount = 2;
 
             this._enemies.forEach((enemy)=>{
                 that.addChild(enemy);
