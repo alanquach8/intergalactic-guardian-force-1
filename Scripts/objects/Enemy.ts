@@ -135,7 +135,7 @@ module objects
                 this.ApproachPlayer(playerNewPositionX, playerNewPositionY);
             } else {
                 this.Die();
-                this.alpha -= 0.01;
+                this.alpha -= 0.005;
                 if (this.alpha <= 0){
                     this.isDead = true;
                 }

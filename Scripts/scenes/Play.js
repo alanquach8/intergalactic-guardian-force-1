@@ -64,15 +64,17 @@ var scenes;
                         enemy.hitPoints--;
                         console.log(enemy.hitPoints);
                         if (enemy.hitPoints == 0) {
-                            // remove the enemy
-                            that._enemies.splice(that._enemies.indexOf(enemy), 1);
-                            that.removeChild(enemy);
+                            enemy.Die();
                         }
                         // remove the bullet
                         that._player.Bullets.splice(that._player.Bullets.indexOf(bullet), 1);
                         that.removeChild(bullet);
                     }
                 });
+                if (enemy.isDead) {
+                    that._enemies.splice(that._enemies.indexOf(enemy), 1);
+                    that.removeChild(enemy);
+                }
                 // Enemy and Player Collision Check
                 managers.Collision.AABBCheck(enemy, that._player);
                 if (that._player.isColliding && !that._player.IsReviving) {
