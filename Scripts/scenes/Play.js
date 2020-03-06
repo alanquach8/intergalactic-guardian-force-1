@@ -25,6 +25,7 @@ var scenes;
             _this._enemies = new Array();
             _this._deadEnemies = new Array();
             _this._explosion = [];
+            _this._playerLivesThumbs = [];
             _this._noOfEnemies = 5;
             _this._gernadeManager = new objects.GrenadeManager();
             _this.addEventListener("click", function (evt) {
@@ -49,6 +50,23 @@ var scenes;
             var exp = new objects.Explosion(x, y);
             this._explosion.push(exp);
             this.addChild(exp);
+        };
+        Play.prototype.UpdatePlayerLivesIndicator = function () {
+            var _this = this;
+            this._playerLivesThumbs.forEach(function (p) {
+                _this.removeChild(p);
+            });
+            var x = 640;
+            for (var i = 0; i < this._player.Life; i++) {
+                var img = new createjs.Bitmap("./Assets/images/player/front.png");
+                img.scaleX = 0.5;
+                img.scaleY = 0.5;
+                x -= (img.getBounds().width * 0.5) + 5;
+                img.x = x;
+                img.y = 460;
+                this._playerLivesThumbs.push(img);
+                this.addChild(img);
+            }
         };
         Play.prototype.SetGrenades = function (count) {
             var _this = this;
@@ -124,7 +142,7 @@ var scenes;
                 managers.Collision.AABBCheck(enemy, that._player);
                 if (that._player.isColliding && !that._player.IsReviving) {
                     that._player.Life--;
-                    console.log(that._player.Life);
+                    _this.UpdatePlayerLivesIndicator();
                     if (that._player.Life == 0) {
                         that.removeChild(that._player);
                         that._player.Die();
@@ -149,6 +167,7 @@ var scenes;
             this.addChild(new objects.Rectangle(15, 0, 610, 480, "GhostWhite"));
             this.addChild(this._player);
             this.SetGrenades(2);
+            this.UpdatePlayerLivesIndicator();
             this._gernadeManager.GrenadeCount = 2;
             this._enemies.forEach(function (enemy) {
                 that.addChild(enemy);

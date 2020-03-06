@@ -9,6 +9,7 @@ module scenes
         private _explosion:objects.Explosion[];
         private _noOfEnemies:number;
         private _gernadeManager:objects.GrenadeManager;
+        private _playerLivesThumbs: createjs.Bitmap[];
 
         // PUBLIC PROPERTIES
 
@@ -22,6 +23,7 @@ module scenes
             this._enemies = new Array();
             this._deadEnemies = new Array();
             this._explosion = [];
+            this._playerLivesThumbs = [];
             this._noOfEnemies = 5;
             this._gernadeManager = new objects.GrenadeManager();
 
@@ -53,6 +55,25 @@ module scenes
             let exp = new objects.Explosion(x, y);
             this._explosion.push(exp);
             this.addChild(exp);
+        }
+
+        public UpdatePlayerLivesIndicator():void{
+            this._playerLivesThumbs.forEach(p => {
+                this.removeChild(p);
+            });
+
+            let x = 640;
+
+            for (let i = 0; i < this._player.Life; i++) {
+                let img = new createjs.Bitmap("./Assets/images/player/front.png")
+                img.scaleX = 0.5;
+                img.scaleY = 0.5;
+                x -= (img.getBounds().width * 0.5) + 5
+                img.x = x;
+                img.y = 460;
+                this._playerLivesThumbs.push(img)
+                this.addChild(img)
+            }
         }
         
         public SetGrenades(count:number){
@@ -141,7 +162,7 @@ module scenes
                 managers.Collision.AABBCheck(enemy, that._player);
                 if(that._player.isColliding && !that._player.IsReviving){
                     that._player.Life--;
-                    console.log(that._player.Life);
+                    this.UpdatePlayerLivesIndicator();
                     if(that._player.Life == 0) {
                         that.removeChild(that._player);
                         that._player.Die();
@@ -173,6 +194,7 @@ module scenes
             this.addChild(this._player);
 
             this.SetGrenades(2);
+            this.UpdatePlayerLivesIndicator();
 
             this._gernadeManager.GrenadeCount = 2;
 
