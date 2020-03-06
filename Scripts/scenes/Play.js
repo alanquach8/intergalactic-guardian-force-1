@@ -21,8 +21,6 @@ var scenes;
         function Play() {
             var _this = _super.call(this) || this;
             // initialization
-            _this._playLabel = new objects.Label();
-            _this._nextButton = new objects.Button();
             _this._player = new objects.Player();
             _this._enemies = new Array();
             _this._noOfEnemies = 5;
@@ -31,8 +29,6 @@ var scenes;
         }
         // PUBLIC METHODS
         Play.prototype.Start = function () {
-            this._playLabel = new objects.Label("Game Started", "10px", "Consolas", "#000000", 320, 200, true);
-            this._nextButton = new objects.Button("./Assets/images/nextButton.png", 320, 400, true);
             this._player = new objects.Player();
             // Add Enemies to the array
             for (var i = 0; i < this._noOfEnemies; i++) { //TODO add a Variable for number of enemies currently hardcoded to 5
@@ -94,11 +90,6 @@ var scenes;
         };
         Play.prototype.Main = function () {
             var that = this;
-            this.addChild(this._playLabel);
-            this.addChild(this._nextButton);
-            this._nextButton.on("click", function () {
-                config.Game.SCENE_STATE = scenes.State.END;
-            });
             this.addChild(this._player);
             this._enemies.forEach(function (enemy) {
                 that.addChild(enemy);

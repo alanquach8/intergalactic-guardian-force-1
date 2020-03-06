@@ -3,8 +3,6 @@ module scenes
     export class Play extends objects.Scene
     {
         // PRIVATE INSTANCE MEMBERS
-        private _playLabel:objects.Label;
-        private _nextButton:objects.Button;
         private _player:objects.Player;
         private _enemies:objects.Enemy[];
         private _noOfEnemies:number;
@@ -17,8 +15,6 @@ module scenes
             super();
 
             // initialization
-            this._playLabel = new objects.Label();
-            this._nextButton = new objects.Button();
             this._player = new objects.Player();
             this._enemies = new Array();
             this._noOfEnemies = 5;
@@ -30,8 +26,6 @@ module scenes
 
         public Start(): void 
         {
-            this._playLabel = new objects.Label("Game Started", "10px","Consolas", "#000000", 320, 200, true);
-            this._nextButton = new objects.Button("./Assets/images/nextButton.png", 320, 400, true);
             this._player = new objects.Player();
             // Add Enemies to the array
             for(let i = 0; i < this._noOfEnemies; i++){ //TODO add a Variable for number of enemies currently hardcoded to 5
@@ -104,15 +98,7 @@ module scenes
         
         public Main(): void {
             let that = this;
-            
-            this.addChild(this._playLabel);
-    
-            this.addChild(this._nextButton);
-    
-            this._nextButton.on("click", function() {
-               config.Game.SCENE_STATE = scenes.State.END;
-            });
-
+               
             this.addChild(this._player);
 
             this._enemies.forEach((enemy)=>{
