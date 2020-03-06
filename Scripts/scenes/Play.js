@@ -20,6 +20,9 @@ var scenes;
         // CONSTRUCTOR
         function Play() {
             var _this = _super.call(this) || this;
+            _this._scrollBuffer = 100;
+            _this._movingForward = false;
+            _this._movingBackward = false;
             // initialization
             _this._player = new objects.Player();
             _this._enemies = new Array();
@@ -31,6 +34,26 @@ var scenes;
             _this._gernadeManager = new objects.GrenadeManager();
             _this.addEventListener("click", function (evt) {
                 _this.SendGrenade(evt.stageX, evt.stageY);
+            });
+            window.addEventListener('keyup', function (e) {
+                switch (e.code) {
+                    case "ArrowUp":
+                        _this._movingForward = false;
+                        break;
+                    case "ArrowDown":
+                        _this._movingBackward = false;
+                        break;
+                }
+            });
+            window.addEventListener('keydown', function (e) {
+                switch (e.code) {
+                    case "ArrowUp":
+                        _this._movingForward = true;
+                        break;
+                    case "ArrowDown":
+                        _this._movingBackward = true;
+                        break;
+                }
             });
             _this.Start();
             return _this;
@@ -199,6 +222,28 @@ var scenes;
                     that.removeChild(enemy);
                 }
             });
+            if ((this._movingForward || this._movingBackward) && this._player.y < this._scrollBuffer) {
+                var y_delta_1 = this._player.Direction.y * this._player.Speed;
+                if (this._movingBackward)
+                    y_delta_1 *= -1;
+                this._player.y = this._scrollBuffer;
+                this._powerups.forEach(function (power) {
+                    power.y -= y_delta_1;
+                    power.position = new objects.Vector2(power.x, power.y);
+                });
+                this._explosion.forEach(function (exp) {
+                    exp.y -= y_delta_1;
+                    exp.position = new objects.Vector2(exp.x, exp.y);
+                });
+                this._enemies.forEach(function (enemy) {
+                    enemy.y -= y_delta_1;
+                    enemy.position = new objects.Vector2(enemy.x, enemy.y);
+                    if (enemy.y > 520) {
+                        _this.removeChild(enemy);
+                        _this._enemies.splice(_this._enemies.indexOf(enemy), 1);
+                    }
+                });
+            }
         };
         Play.prototype.Main = function () {
             var that = this;

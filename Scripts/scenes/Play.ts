@@ -11,6 +11,9 @@ module scenes
         private _gernadeManager:objects.GrenadeManager;
         private _playerLivesThumbs: createjs.Bitmap[];
         private _powerups:objects.Powerup[];
+        private _scrollBuffer=100;
+        private _movingForward=false;
+        private _movingBackward=false;
 
         // PUBLIC PROPERTIES
 
@@ -32,6 +35,28 @@ module scenes
             this.addEventListener("click", (evt: createjs.MouseEvent) => {
                 this.SendGrenade(evt.stageX, evt.stageY);
             });
+            window.addEventListener('keyup', (e) => {
+                switch(e.code) {
+                    case "ArrowUp":
+                        this._movingForward = false;
+                        break;
+                    case "ArrowDown":
+                        this._movingBackward = false;
+                        break;
+                }
+            });
+
+            window.addEventListener('keydown', (e) => {
+                switch(e.code) {
+                    case "ArrowUp":
+                        this._movingForward = true;
+                        break;
+                    case "ArrowDown":
+                        this._movingBackward = true;
+                        break;
+                }
+            });
+
             this.Start();
         }
 
@@ -225,7 +250,33 @@ module scenes
                 }
             });
 
-            
+            if ((this._movingForward || this._movingBackward) && this._player.y < this._scrollBuffer){
+                let y_delta = this._player.Direction.y * this._player.Speed;
+
+                if (this._movingBackward)
+                    y_delta *= -1;
+
+                this._player.y = this._scrollBuffer;
+                
+                this._powerups.forEach(power => {
+                    power.y -= y_delta;
+                    power.position = new objects.Vector2(power.x, power.y);
+                });
+
+                this._explosion.forEach(exp => {
+                    exp.y -= y_delta;
+                    exp.position = new objects.Vector2(exp.x, exp.y);
+                });
+
+                this._enemies.forEach(enemy => {
+                    enemy.y -= y_delta;
+                    enemy.position = new objects.Vector2(enemy.x, enemy.y);
+                    if (enemy.y > 520){
+                        this.removeChild(enemy);
+                        this._enemies.splice(this._enemies.indexOf(enemy), 1);
+                    }
+                });
+            }
 
         }
         
