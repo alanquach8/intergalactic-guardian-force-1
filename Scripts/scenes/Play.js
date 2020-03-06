@@ -69,6 +69,11 @@ var scenes;
             console.log(delta, this._gernadeManager.GrenadeCount);
             this.SetGrenades(this._gernadeManager.GrenadeCount + delta);
         };
+        Play.prototype.KillEnemy = function (enemy) {
+            enemy.Die();
+            this._deadEnemies.push(enemy);
+            this._enemies.splice(this._enemies.indexOf(enemy), 1);
+        };
         Play.prototype.Update = function () {
             var _this = this;
             // Reference to the Play Scene Object
@@ -86,8 +91,10 @@ var scenes;
                 config.Game.SCENE_STATE = scenes.State.END;
             }
             this._explosion.forEach(function (exp) {
-                if (exp.Done)
+                if (exp.Done) {
+                    _this._explosion.splice(_this._explosion.indexOf(exp), 1);
                     _this.removeChild(exp);
+                }
                 exp.Update();
             });
             this._enemies.forEach(function (enemy) {
@@ -99,9 +106,7 @@ var scenes;
                         enemy.hitPoints--;
                         console.log(enemy.hitPoints);
                         if (enemy.hitPoints == 0) {
-                            enemy.Die();
-                            that._deadEnemies.push(enemy);
-                            that._enemies.splice(that._enemies.indexOf(enemy), 1);
+                            that.KillEnemy(enemy);
                         }
                         // remove the bullet
                         if (enemy.IsAlive) {
@@ -113,7 +118,7 @@ var scenes;
                 that._explosion.forEach(function (exp) {
                     managers.Collision.AABBCheck(exp, enemy);
                     if (enemy.isColliding)
-                        enemy.Die();
+                        that.KillEnemy(enemy);
                 });
                 // Enemy and Player Collision Check
                 managers.Collision.AABBCheck(enemy, that._player);

@@ -77,6 +77,12 @@ module scenes
             this.SetGrenades(this._gernadeManager.GrenadeCount + delta);
         }
 
+        public KillEnemy(enemy:objects.Enemy): void{
+            enemy.Die();
+            this._deadEnemies.push(enemy);
+            this._enemies.splice(this._enemies.indexOf(enemy), 1);
+        }
+
         public Update(): void {
             // Reference to the Play Scene Object
             let that = this;
@@ -95,8 +101,10 @@ module scenes
             }
             
             this._explosion.forEach(exp => {
-                if (exp.Done)
+                if (exp.Done){
+                    this._explosion.splice(this._explosion.indexOf(exp), 1);
                     this.removeChild(exp);
+                }
                 exp.Update();
             });
 
@@ -110,9 +118,7 @@ module scenes
                         enemy.hitPoints--;
                         console.log(enemy.hitPoints);
                         if(enemy.hitPoints == 0) {
-                            enemy.Die();
-                            that._deadEnemies.push(enemy);
-                            that._enemies.splice(that._enemies.indexOf(enemy), 1);
+                            that.KillEnemy(enemy);
                         }
                         // remove the bullet
 
@@ -126,7 +132,7 @@ module scenes
                 that._explosion.forEach((exp) => {
                     managers.Collision.AABBCheck(exp, enemy);
                     if(enemy.isColliding) 
-                        enemy.Die();
+                    that.KillEnemy(enemy);
                 })
 
 
