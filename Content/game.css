@@ -31,7 +31,6 @@ body{
     text-align: center;
     vertical-align: top;
     padding: 10px;
-    height: 480px;
 }
 .over-panel{
     height: 100px;
@@ -42,6 +41,7 @@ body{
     width: 640px;
     background-color: white;
     vertical-align: top;
+
 }
 .info{
     text-align: left;

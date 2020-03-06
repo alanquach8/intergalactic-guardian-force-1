@@ -23,8 +23,10 @@ var objects;
             if (y === void 0) { y = 250; }
             if (isCentered === void 0) { isCentered = true; }
             var _this = _super.call(this, imagePath, x, y, true) || this;
-            _this._speed = 1;
-            _this._rotate = 1; // degrees
+            _this._speed = 0.5;
+            _this._stationarySpeed = 1;
+            _this._rotate = 0.5; // degrees
+            _this._stationaryRotate = 1;
             _this._life = 10;
             _this._reloadSpeed = 10;
             _this._reloadCounter = 0;
@@ -101,6 +103,9 @@ var objects;
         });
         Object.defineProperty(Player.prototype, "Speed", {
             get: function () {
+                if (!this._shoot) {
+                    return this._stationarySpeed;
+                }
                 return this._speed;
             },
             set: function (newSpeed) {
@@ -121,6 +126,9 @@ var objects;
         });
         Object.defineProperty(Player.prototype, "Rotate", {
             get: function () {
+                if (!this._shoot) {
+                    return this._stationaryRotate;
+                }
                 return this._rotate;
             },
             set: function (newRotate) {

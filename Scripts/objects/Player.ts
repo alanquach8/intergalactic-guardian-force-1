@@ -4,9 +4,11 @@ module objects {
             
         // PRIVATE INSTANCE MEMBERS
         private _direction:Vector2;
-        private _speed:number = 1;
+        private _speed:number = 0.5;
+        private _stationarySpeed:number = 1;
         private _facing:number; // used in calculating direction player is facing (degrees)
-        private _rotate:number = 1; // degrees
+        private _rotate:number = 0.5; // degrees
+        private _stationaryRotate:number = 1;
         private _life:number = 10;
         private _reloadSpeed:number = 10;
         private _reloadCounter:number = 0;
@@ -38,6 +40,9 @@ module objects {
         }
 
         get Speed():number {
+            if (!this._shoot){
+                return this._stationarySpeed;
+            }
             return this._speed;
         }
 
@@ -54,6 +59,9 @@ module objects {
         }
 
         get Rotate():number {
+            if (!this._shoot){
+                return this._stationaryRotate;
+            }
             return this._rotate;
         }
 
