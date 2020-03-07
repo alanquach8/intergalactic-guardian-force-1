@@ -20,10 +20,10 @@ var scenes;
         // CONSTRUCTOR
         function LevelParent(next) {
             var _this = _super.call(this) || this;
-            _this._scrollBuffer = 100;
+            _this._scrollBuffer = 150;
             _this._movingForward = false;
             _this._movingBackward = false;
-            _this._distance_left = 1000;
+            _this._distance_left = 200;
             _this._canFinish = true;
             _this._endEventFired = false;
             // initialization
@@ -195,6 +195,8 @@ var scenes;
         };
         LevelParent.prototype.UpdateLevel = function () {
         };
+        LevelParent.prototype.PlayerMovementUpdate = function (y_delta) {
+        };
         LevelParent.prototype.Update = function () {
             var _this = this;
             // Reference to the Play Scene Object
@@ -312,6 +314,7 @@ var scenes;
                             _this._enemies.splice(_this._enemies.indexOf(enemy), 1);
                         }
                     });
+                    this.PlayerMovementUpdate(y_delta_1);
                 }
             }
             this.UpdateLevel();

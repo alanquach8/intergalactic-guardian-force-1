@@ -11,10 +11,10 @@ module scenes
         private _gernadeManager:objects.GrenadeManager;
         private _playerLivesThumbs: createjs.Bitmap[];
         private _powerups:objects.Powerup[];
-        private _scrollBuffer=100;
+        private _scrollBuffer=150;
         private _movingForward=false;
         private _movingBackward=false;
-        private _distance_left = 1000;
+        private _distance_left = 200;
         private _nextLevel: scenes.State;
         private _canFinish = true;
         private _endEventFired = false;
@@ -205,6 +205,11 @@ module scenes
 
         }
 
+        
+        public PlayerMovementUpdate(y_delta:number){
+
+        }
+        
         public Update(): void {
             // Reference to the Play Scene Object
             let that = this;
@@ -338,11 +343,13 @@ module scenes
                             this._enemies.splice(this._enemies.indexOf(enemy), 1);
                         }
                     });
+
+                    this.PlayerMovementUpdate(y_delta);
                 }
             }
             this.UpdateLevel();
         }
-        
+
         public Main(): void {
             let that = this;
 
