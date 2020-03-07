@@ -331,6 +331,11 @@ module scenes
                         exp.y -= y_delta;
                         exp.position = new objects.Vector2(exp.x, exp.y);
                     });
+
+                    this._deadEnemies.forEach(enemy => {
+                        enemy.y -= y_delta;
+                        enemy.position = new objects.Vector2(enemy.x, enemy.y);
+                    });
     
                     this._enemies.forEach(enemy => {
                         enemy.y -= y_delta;

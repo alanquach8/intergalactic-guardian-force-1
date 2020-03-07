@@ -303,6 +303,10 @@ var scenes;
                         exp.y -= y_delta_1;
                         exp.position = new objects.Vector2(exp.x, exp.y);
                     });
+                    this._deadEnemies.forEach(function (enemy) {
+                        enemy.y -= y_delta_1;
+                        enemy.position = new objects.Vector2(enemy.x, enemy.y);
+                    });
                     this._enemies.forEach(function (enemy) {
                         enemy.y -= y_delta_1;
                         enemy.position = new objects.Vector2(enemy.x, enemy.y);
