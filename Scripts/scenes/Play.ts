@@ -14,6 +14,7 @@ module scenes
         private _scrollBuffer=100;
         private _movingForward=false;
         private _movingBackward=false;
+        private _distance_left = 1000;
 
         // PUBLIC PROPERTIES
 
@@ -77,11 +78,15 @@ module scenes
             return Math.floor(Math.random() * Math.floor(max));
         }
 
-        public CreatePowerup(x:number, y:number, id:number=-1){
+        public CreatePowerup(x:number=-1, y:number=0, id:number=-1){
 
             if(id == -1){
                 // n cases (in the switch statement below) + 1
                 id = this.getRandomInt(2)
+            }
+
+            if(x == -1){
+                x = this.getRandomInt(480)
             }
 
             // default is a grenade (ID: 0)
@@ -256,28 +261,39 @@ module scenes
                 if (this._movingBackward)
                     y_delta *= -1;
 
-                this._player.y = this._scrollBuffer;
                 
-                this._powerups.forEach(power => {
-                    power.y -= y_delta;
-                    power.position = new objects.Vector2(power.x, power.y);
-                });
-
-                this._explosion.forEach(exp => {
-                    exp.y -= y_delta;
-                    exp.position = new objects.Vector2(exp.x, exp.y);
-                });
-
-                this._enemies.forEach(enemy => {
-                    enemy.y -= y_delta;
-                    enemy.position = new objects.Vector2(enemy.x, enemy.y);
-                    if (enemy.y > 520){
-                        this.removeChild(enemy);
-                        this._enemies.splice(this._enemies.indexOf(enemy), 1);
+                this._distance_left += y_delta;
+                if (this._distance_left <= 0){
+                    this._scrollBuffer = 0;
+                    if (this._player.y <= 0){
+                        config.Game.SCENE_STATE = scenes.State.END;
                     }
-                });
+                } else {
+                    if(this._distance_left % 200 < 1){
+                        this.CreatePowerup();
+                    }
+                    this._player.y = this._scrollBuffer;
+                
+                    this._powerups.forEach(power => {
+                        power.y -= y_delta;
+                        power.position = new objects.Vector2(power.x, power.y);
+                    });
+    
+                    this._explosion.forEach(exp => {
+                        exp.y -= y_delta;
+                        exp.position = new objects.Vector2(exp.x, exp.y);
+                    });
+    
+                    this._enemies.forEach(enemy => {
+                        enemy.y -= y_delta;
+                        enemy.position = new objects.Vector2(enemy.x, enemy.y);
+                        if (enemy.y > 520){
+                            this.removeChild(enemy);
+                            this._enemies.splice(this._enemies.indexOf(enemy), 1);
+                        }
+                    });
+                }
             }
-
         }
         
         public Main(): void {
@@ -291,7 +307,6 @@ module scenes
 
             this.SetGrenades(2);
             this.UpdatePlayerLivesIndicator();
-            this.CreatePowerup(200, 10);
 
             this._gernadeManager.GrenadeCount = 2;
 
