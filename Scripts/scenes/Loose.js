@@ -14,38 +14,37 @@ var __extends = (this && this.__extends) || (function () {
 })();
 var scenes;
 (function (scenes) {
-    var Start = /** @class */ (function (_super) {
-        __extends(Start, _super);
+    var Loose = /** @class */ (function (_super) {
+        __extends(Loose, _super);
         // PUBLIC PROPERTIES
         // CONSTRUCTOR
-        function Start() {
+        function Loose() {
             var _this = _super.call(this) || this;
             // initialization
-            _this.startLabel = new objects.Label();
-            _this.startButton = new objects.Button();
+            _this.endLabel = new objects.Label();
+            _this.endButton = new objects.Button();
             _this.Start();
             return _this;
         }
         // PUBLIC METHODS
-        Start.prototype.Start = function () {
-            this.startLabel = new objects.Label("The Game", "80px", "Consolas", "#000000", 320, 200, true);
-            this.startButton = new objects.Button("./Assets/images/startButton.png", 320, 400, true);
+        Loose.prototype.Start = function () {
+            this.endLabel = new objects.Label("You Loose!", "80px", "Consolas", "#000000", 320, 200, true);
+            this.endButton = new objects.Button("./Assets/images/backButton.png", 320, 400, true);
             this.Main();
         };
-        Start.prototype.Update = function () {
+        Loose.prototype.Update = function () {
         };
-        Start.prototype.Main = function () {
+        Loose.prototype.Main = function () {
             // a hacky way to set the screen's background color
             this.addChild(new objects.Rectangle(0, 0, 640, 480, "#FFF"));
-            this.addChild(this.startLabel);
-            this.addChild(this.startButton);
-            this.startButton.on("click", function () {
-                // config.Game.SCENE_STATE = scenes.State.QUOTE;
-                config.Game.SCENE_STATE = scenes.State.QUOTE;
+            this.addChild(this.endLabel);
+            this.addChild(this.endButton);
+            this.endButton.on("click", function () {
+                config.Game.SCENE_STATE = scenes.State.START;
             });
         };
-        return Start;
+        return Loose;
     }(objects.Scene));
-    scenes.Start = Start;
+    scenes.Loose = Loose;
 })(scenes || (scenes = {}));
-//# sourceMappingURL=Start.js.map
+//# sourceMappingURL=Loose.js.map

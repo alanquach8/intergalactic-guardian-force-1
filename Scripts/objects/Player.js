@@ -31,6 +31,7 @@ var objects;
             _this._reloadSpeed = 10;
             _this._reloadCounter = 0;
             _this._isReviving = false;
+            _this._wallBuffer = 30;
             _this._forward = false;
             _this._backward = false;
             _this._left = false;
@@ -177,10 +178,20 @@ var objects;
             if (this._forward) {
                 this.y += this.Direction.y * this.Speed;
                 this.x += this.Direction.x * this.Speed;
+                if (this.x <= this._wallBuffer)
+                    this.x -= this.Direction.x * this.Speed;
+                if (this.x >= 640 - this._wallBuffer)
+                    this.x -= this.Direction.x * this.Speed;
+                if (this.y >= 470)
+                    this.y -= this.Direction.y * this.Speed;
             }
             if (this._backward) {
                 this.y -= this.Direction.y * this.Speed;
                 this.x -= this.Direction.x * this.Speed;
+                if (this.x <= this._wallBuffer)
+                    this.x += this.Direction.x * this.Speed;
+                if (this.x >= 640 - this._wallBuffer)
+                    this.x += this.Direction.x * this.Speed;
             }
             if (this._right) {
                 this.rotation += this.Rotate;

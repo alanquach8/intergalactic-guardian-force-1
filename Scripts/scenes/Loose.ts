@@ -1,6 +1,6 @@
 module scenes
 {
-    export class End extends objects.Scene
+    export class Loose extends objects.Scene
     {
         // PRIVATE INSTANCE MEMBERS
         endLabel:objects.Label;
@@ -24,7 +24,7 @@ module scenes
 
         public Start(): void 
         {
-            this.endLabel = new objects.Label("You Win!", "80px","Consolas", "#000000", 320, 200, true);
+            this.endLabel = new objects.Label("You Loose!", "80px","Consolas", "#000000", 320, 200, true);
             this.endButton = new objects.Button("./Assets/images/backButton.png", 320, 400, true);
            
             this.Main();

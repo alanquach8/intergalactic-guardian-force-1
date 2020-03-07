@@ -14,9 +14,16 @@ module scenes
         constructor()
         {
             super();
-
             // initialization
             this.startLabel = [];
+
+            
+            window.addEventListener('keydown', (e: KeyboardEvent) => {
+                if (config.Game.SCENE_STATE == scenes.State.QUOTE)
+                    config.Game.SCENE_STATE = scenes.State.LEVEL1;
+            });
+
+
             this.Start();
         }
 
@@ -37,11 +44,6 @@ module scenes
                 new objects.Label("Both are equally terrifying.",           fontSize, font, fontColor, xPos, 230, isCentered),
                 new objects.Label("  ― Arthur C. Clarke ",                  fontSize, font, fontColor, xPos, 270, isCentered)
             ];      
-            
-            window.addEventListener('keydown', (e) => {
-                config.Game.SCENE_STATE = scenes.State.PLAY;
-            });
-
 
             this.Main();
         }        
@@ -57,7 +59,7 @@ module scenes
             }
             // -10 used to allow for some delay on animation completion
             if (this.quote_alpha <= -0.25){
-                config.Game.SCENE_STATE = scenes.State.PLAY;
+                config.Game.SCENE_STATE = scenes.State.LEVEL1;
             } 
             
         }

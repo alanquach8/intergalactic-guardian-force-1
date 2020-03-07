@@ -14,12 +14,18 @@ var __extends = (this && this.__extends) || (function () {
 })();
 var scenes;
 (function (scenes) {
-    var Play = /** @class */ (function (_super) {
-        __extends(Play, _super);
+    var LevelParent = /** @class */ (function (_super) {
+        __extends(LevelParent, _super);
         // PUBLIC PROPERTIES
         // CONSTRUCTOR
-        function Play() {
+        function LevelParent(next) {
             var _this = _super.call(this) || this;
+            _this._scrollBuffer = 100;
+            _this._movingForward = false;
+            _this._movingBackward = false;
+            _this._distance_left = 1000;
+            _this._canFinish = true;
+            _this._endEventFired = false;
             // initialization
             _this._player = new objects.Player();
             _this._enemies = new Array();
@@ -29,14 +35,54 @@ var scenes;
             _this._playerLivesThumbs = [];
             _this._noOfEnemies = 5;
             _this._gernadeManager = new objects.GrenadeManager();
+            _this._nextLevel = next;
             _this.addEventListener("click", function (evt) {
                 _this.SendGrenade(evt.stageX, evt.stageY);
             });
+            window.addEventListener('keyup', function (e) {
+                switch (e.code) {
+                    case "ArrowUp":
+                        _this._movingForward = false;
+                        break;
+                    case "ArrowDown":
+                        _this._movingBackward = false;
+                        break;
+                }
+            });
+            window.addEventListener('keydown', function (e) {
+                switch (e.code) {
+                    case "ArrowUp":
+                        _this._movingForward = true;
+                        break;
+                    case "ArrowDown":
+                        _this._movingBackward = true;
+                        break;
+                }
+            });
+            // every 20s
+            setInterval(function () { _this.CreatePowerup(); }, 20000);
             _this.Start();
             return _this;
         }
+        Object.defineProperty(LevelParent.prototype, "MaximumEnemies", {
+            set: function (amount) {
+                this._noOfEnemies = amount;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(LevelParent.prototype, "DistanceLeft", {
+            get: function () {
+                return this._distance_left;
+            },
+            set: function (amount) {
+                this._distance_left = amount;
+            },
+            enumerable: true,
+            configurable: true
+        });
         // PUBLIC METHODS
-        Play.prototype.Start = function () {
+        LevelParent.prototype.Start = function () {
             this._player = new objects.Player();
             // Add Enemies to the array
             for (var i = 0; i < this._noOfEnemies; i++) { //TODO add a Variable for number of enemies currently hardcoded to 5
@@ -44,15 +90,20 @@ var scenes;
             }
             this.Main();
         };
-        Play.prototype.getRandomInt = function (max) {
+        LevelParent.prototype.getRandomInt = function (max) {
             return Math.floor(Math.random() * Math.floor(max));
         };
-        Play.prototype.CreatePowerup = function (x, y, id) {
+        LevelParent.prototype.CreatePowerup = function (x, y, id) {
             var _this = this;
+            if (x === void 0) { x = -1; }
+            if (y === void 0) { y = 0; }
             if (id === void 0) { id = -1; }
             if (id == -1) {
                 // n cases (in the switch statement below) + 1
                 id = this.getRandomInt(2);
+            }
+            if (x == -1) {
+                x = this.getRandomInt(480);
             }
             // default is a grenade (ID: 0)
             var p = new objects.Powerup("./Assets/images/ui/grenade.png", x, y);
@@ -75,7 +126,14 @@ var scenes;
                 this.addChild(p);
             }
         };
-        Play.prototype.SendGrenade = function (x, y) {
+        Object.defineProperty(LevelParent.prototype, "Player", {
+            get: function () {
+                return this._player;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        LevelParent.prototype.SendGrenade = function (x, y) {
             if (this._gernadeManager.GrenadeCount <= 0)
                 return;
             this.ChangeGrenades(-1);
@@ -83,7 +141,7 @@ var scenes;
             this._explosion.push(exp);
             this.addChild(exp);
         };
-        Play.prototype.UpdatePlayerLivesIndicator = function () {
+        LevelParent.prototype.UpdatePlayerLivesIndicator = function () {
             var _this = this;
             this._playerLivesThumbs.forEach(function (p) {
                 _this.removeChild(p);
@@ -100,7 +158,7 @@ var scenes;
                 this.addChild(img);
             }
         };
-        Play.prototype.SetGrenades = function (count) {
+        LevelParent.prototype.SetGrenades = function (count) {
             var _this = this;
             this._gernadeManager.GrenadeCount = count;
             var grenadeThumbs = this._gernadeManager.GrenadeThumbs;
@@ -115,16 +173,29 @@ var scenes;
                 this.addChild(img);
             }
         };
-        Play.prototype.ChangeGrenades = function (delta) {
-            console.log(delta, this._gernadeManager.GrenadeCount);
+        LevelParent.prototype.ChangeGrenades = function (delta) {
             this.SetGrenades(this._gernadeManager.GrenadeCount + delta);
         };
-        Play.prototype.KillEnemy = function (enemy) {
+        LevelParent.prototype.KillEnemy = function (enemy) {
             enemy.Die();
             this._deadEnemies.push(enemy);
             this._enemies.splice(this._enemies.indexOf(enemy), 1);
         };
-        Play.prototype.Update = function () {
+        Object.defineProperty(LevelParent.prototype, "CanFinish", {
+            get: function () {
+                return this._canFinish;
+            },
+            set: function (state) {
+                this._canFinish = state;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        LevelParent.prototype.ReachedLevelEnd = function () {
+        };
+        LevelParent.prototype.UpdateLevel = function () {
+        };
+        LevelParent.prototype.Update = function () {
             var _this = this;
             // Reference to the Play Scene Object
             var that = this;
@@ -162,7 +233,6 @@ var scenes;
                     managers.Collision.AABBCheck(bullet, enemy);
                     if (enemy.isColliding) {
                         enemy.hitPoints--;
-                        console.log(enemy.hitPoints);
                         if (enemy.hitPoints == 0) {
                             that.KillEnemy(enemy);
                         }
@@ -186,6 +256,7 @@ var scenes;
                     if (that._player.Life == 0) {
                         that.removeChild(that._player);
                         that._player.Die();
+                        config.Game.SCENE_STATE = scenes.State.LOOSE;
                     }
                     else {
                         that._player.Reset();
@@ -199,8 +270,53 @@ var scenes;
                     that.removeChild(enemy);
                 }
             });
+            if ((this._movingForward || this._movingBackward) && this._player.y < this._scrollBuffer) {
+                var y_delta_1 = this._player.Direction.y * this._player.Speed;
+                if (this._movingBackward)
+                    y_delta_1 *= -1;
+                this._distance_left += y_delta_1;
+                if (this._distance_left <= 0) {
+                    if (!this._endEventFired) {
+                        this._endEventFired = true;
+                        this.ReachedLevelEnd();
+                    }
+                    this._scrollBuffer = 0;
+                    if (this._player.y <= 0) {
+                        console.log(this._canFinish);
+                        if (this._canFinish) {
+                            config.Game.SCENE_STATE = this._nextLevel;
+                        }
+                        else {
+                            this._player.y = 1;
+                        }
+                    }
+                }
+                else {
+                    if (this._distance_left % 200 < 1) {
+                        this.CreatePowerup();
+                    }
+                    this._player.y = this._scrollBuffer;
+                    this._powerups.forEach(function (power) {
+                        power.y -= y_delta_1;
+                        power.position = new objects.Vector2(power.x, power.y);
+                    });
+                    this._explosion.forEach(function (exp) {
+                        exp.y -= y_delta_1;
+                        exp.position = new objects.Vector2(exp.x, exp.y);
+                    });
+                    this._enemies.forEach(function (enemy) {
+                        enemy.y -= y_delta_1;
+                        enemy.position = new objects.Vector2(enemy.x, enemy.y);
+                        if (enemy.y > 520) {
+                            _this.removeChild(enemy);
+                            _this._enemies.splice(_this._enemies.indexOf(enemy), 1);
+                        }
+                    });
+                }
+            }
+            this.UpdateLevel();
         };
-        Play.prototype.Main = function () {
+        LevelParent.prototype.Main = function () {
             var that = this;
             this.addChild(new objects.Rectangle(0, 0, 15, 480, "DarkGrey"));
             this.addChild(new objects.Rectangle(625, 0, 15, 480, "DarkGrey"));
@@ -208,14 +324,13 @@ var scenes;
             this.addChild(this._player);
             this.SetGrenades(2);
             this.UpdatePlayerLivesIndicator();
-            this.CreatePowerup(200, 10);
             this._gernadeManager.GrenadeCount = 2;
             this._enemies.forEach(function (enemy) {
                 that.addChild(enemy);
             });
         };
-        return Play;
+        return LevelParent;
     }(objects.Scene));
-    scenes.Play = Play;
+    scenes.LevelParent = LevelParent;
 })(scenes || (scenes = {}));
-//# sourceMappingURL=Play.js.map
+//# sourceMappingURL=LevelParent.js.map

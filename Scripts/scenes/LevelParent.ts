@@ -1,6 +1,6 @@
 module scenes
 {
-    export class Play extends objects.Scene
+    export class LevelParent extends objects.Scene
     {
         // PRIVATE INSTANCE MEMBERS
         private _player:objects.Player;
@@ -11,11 +11,19 @@ module scenes
         private _gernadeManager:objects.GrenadeManager;
         private _playerLivesThumbs: createjs.Bitmap[];
         private _powerups:objects.Powerup[];
+        private _scrollBuffer=100;
+        private _movingForward=false;
+        private _movingBackward=false;
+        private _distance_left = 1000;
+        private _nextLevel: scenes.State;
+        private _canFinish = true;
+        private _endEventFired = false;
+
 
         // PUBLIC PROPERTIES
 
         // CONSTRUCTOR
-        constructor()
+        constructor(next:scenes.State)
         {
             super();
 
@@ -28,11 +36,48 @@ module scenes
             this._playerLivesThumbs = [];
             this._noOfEnemies = 5;
             this._gernadeManager = new objects.GrenadeManager();
+            this._nextLevel = next;
+
 
             this.addEventListener("click", (evt: createjs.MouseEvent) => {
                 this.SendGrenade(evt.stageX, evt.stageY);
             });
+            window.addEventListener('keyup', (e: KeyboardEvent) => {
+                switch(e.code) {
+                    case "ArrowUp":
+                        this._movingForward = false;
+                        break;
+                    case "ArrowDown":
+                        this._movingBackward = false;
+                        break;
+                }
+            });
+
+            window.addEventListener('keydown', (e: KeyboardEvent) => {
+                switch(e.code) {
+                    case "ArrowUp":
+                        this._movingForward = true;
+                        break;
+                    case "ArrowDown":
+                        this._movingBackward = true;
+                        break;
+                }
+            });
+            // every 20s
+            setInterval(()=> { this.CreatePowerup() }, 20000);
+
             this.Start();
+        }
+
+        public set MaximumEnemies(amount:number){
+            this._noOfEnemies = amount;
+        }
+
+        public get DistanceLeft(){
+            return this._distance_left;
+        }
+        public set DistanceLeft(amount:number){
+            this._distance_left = amount;
         }
 
         // PUBLIC METHODS
@@ -52,11 +97,15 @@ module scenes
             return Math.floor(Math.random() * Math.floor(max));
         }
 
-        public CreatePowerup(x:number, y:number, id:number=-1){
+        public CreatePowerup(x:number=-1, y:number=0, id:number=-1){
 
             if(id == -1){
                 // n cases (in the switch statement below) + 1
                 id = this.getRandomInt(2)
+            }
+
+            if(x == -1){
+                x = this.getRandomInt(480)
             }
 
             // default is a grenade (ID: 0)
@@ -79,9 +128,12 @@ module scenes
                 this._powerups.push(p);
                 this.addChild(p);
             }
-
         }
-        
+
+        public get Player(){
+            return this._player;
+        }
+       
         public SendGrenade(x:number, y:number){
             if (this._gernadeManager.GrenadeCount <= 0)
                 return
@@ -130,7 +182,6 @@ module scenes
         }
 
         public ChangeGrenades(delta:number){
-            console.log(delta, this._gernadeManager.GrenadeCount)
             this.SetGrenades(this._gernadeManager.GrenadeCount + delta);
         }
 
@@ -138,6 +189,20 @@ module scenes
             enemy.Die();
             this._deadEnemies.push(enemy);
             this._enemies.splice(this._enemies.indexOf(enemy), 1);
+        }
+
+        public get CanFinish(){
+            return this._canFinish;
+        }
+        public set CanFinish(state:boolean){
+            this._canFinish = state;
+        }
+
+        public ReachedLevelEnd():void{
+            
+        }
+        public UpdateLevel():void{
+
         }
 
         public Update(): void {
@@ -183,7 +248,6 @@ module scenes
                     managers.Collision.AABBCheck(bullet, enemy);
                     if(enemy.isColliding) {
                         enemy.hitPoints--;
-                        console.log(enemy.hitPoints);
                         if(enemy.hitPoints == 0) {
                             that.KillEnemy(enemy);
                         }
@@ -212,6 +276,7 @@ module scenes
                     if(that._player.Life == 0) {
                         that.removeChild(that._player);
                         that._player.Die();
+                        config.Game.SCENE_STATE = scenes.State.LOOSE;
                     } else {
                         that._player.Reset();
                     }
@@ -226,8 +291,56 @@ module scenes
                 }
             });
 
-            
+            if ((this._movingForward || this._movingBackward) && this._player.y < this._scrollBuffer){
+                let y_delta = this._player.Direction.y * this._player.Speed;
 
+                if (this._movingBackward)
+                    y_delta *= -1;
+
+                
+                this._distance_left += y_delta;
+                if (this._distance_left <= 0){
+                    if(!this._endEventFired){
+                        this._endEventFired = true;
+                        this.ReachedLevelEnd();
+                    }
+
+                    this._scrollBuffer = 0;
+                    if (this._player.y <= 0){
+                        console.log(this._canFinish)
+                        if(this._canFinish){
+                            config.Game.SCENE_STATE = this._nextLevel;
+                        } else {
+                            this._player.y = 1
+                        }
+                    }
+                } else {
+                    if(this._distance_left % 200 < 1){
+                        this.CreatePowerup();
+                    }
+                    this._player.y = this._scrollBuffer;
+                
+                    this._powerups.forEach(power => {
+                        power.y -= y_delta;
+                        power.position = new objects.Vector2(power.x, power.y);
+                    });
+    
+                    this._explosion.forEach(exp => {
+                        exp.y -= y_delta;
+                        exp.position = new objects.Vector2(exp.x, exp.y);
+                    });
+    
+                    this._enemies.forEach(enemy => {
+                        enemy.y -= y_delta;
+                        enemy.position = new objects.Vector2(enemy.x, enemy.y);
+                        if (enemy.y > 520){
+                            this.removeChild(enemy);
+                            this._enemies.splice(this._enemies.indexOf(enemy), 1);
+                        }
+                    });
+                }
+            }
+            this.UpdateLevel();
         }
         
         public Main(): void {
@@ -241,7 +354,6 @@ module scenes
 
             this.SetGrenades(2);
             this.UpdatePlayerLivesIndicator();
-            this.CreatePowerup(200, 10);
 
             this._gernadeManager.GrenadeCount = 2;
 

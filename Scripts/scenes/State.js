@@ -5,10 +5,13 @@ var scenes;
     (function (State) {
         State[State["NO_SCENE"] = -1] = "NO_SCENE";
         State[State["START"] = 0] = "START";
-        State[State["PLAY"] = 1] = "PLAY";
-        State[State["END"] = 2] = "END";
-        State[State["NUM_OF_SCENES"] = 3] = "NUM_OF_SCENES";
-        State[State["QUOTE"] = 4] = "QUOTE";
+        State[State["LEVEL1"] = 1] = "LEVEL1";
+        State[State["LEVEL2"] = 2] = "LEVEL2";
+        State[State["LEVEL3"] = 3] = "LEVEL3";
+        State[State["END"] = 4] = "END";
+        State[State["QUOTE"] = 5] = "QUOTE";
+        State[State["LOOSE"] = 6] = "LOOSE";
+        State[State["NUM_OF_SCENES"] = 7] = "NUM_OF_SCENES";
     })(State = scenes.State || (scenes.State = {}));
 })(scenes || (scenes = {}));
 //# sourceMappingURL=State.js.map
