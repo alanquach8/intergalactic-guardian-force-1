@@ -162,11 +162,11 @@ var objects;
                     break;
             }
             this._bullets.forEach(function (bullet) {
+                bullet.Update();
                 if (bullet.IsOffScreen()) {
                     _this.parent.removeChild(bullet);
                     _this._bullets.splice(_this._bullets.indexOf(bullet), 1);
                 }
-                bullet.Update();
             });
         };
         SubBoss.prototype.LateralMovement = function () {
@@ -184,7 +184,6 @@ var objects;
                     bullet.x = this.x;
                     bullet.y = this.y;
                     bullet.direction = this.Direction;
-                    bullet.rotation = this.rotation;
                     this.parent.addChild(bullet);
                     this._bullets.push(bullet);
                     this._reloadCounter = this._reloadSpeed;

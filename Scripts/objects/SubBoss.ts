@@ -149,11 +149,11 @@ module objects {
             }
 
             this._bullets.forEach(bullet => {
+                bullet.Update();
                 if (bullet.IsOffScreen()){
                     this.parent.removeChild(bullet);
                     this._bullets.splice(this._bullets.indexOf(bullet), 1);
                 }
-                bullet.Update();
             });
         }
         public LateralMovement(): void{
@@ -171,7 +171,7 @@ module objects {
                     bullet.x = this.x;
                     bullet.y = this.y;
                     bullet.direction = this.Direction;
-                    bullet.rotation = this.rotation;
+
                     this.parent.addChild(bullet);
                     this._bullets.push(bullet);
                     this._reloadCounter = this._reloadSpeed;
