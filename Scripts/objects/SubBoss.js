@@ -42,6 +42,13 @@ var objects;
             enumerable: true,
             configurable: true
         });
+        Object.defineProperty(SubBoss.prototype, "Bullets", {
+            get: function () {
+                return this._bullets;
+            },
+            enumerable: true,
+            configurable: true
+        });
         Object.defineProperty(SubBoss.prototype, "Facing", {
             get: function () {
                 return this._facing;

@@ -34,6 +34,10 @@ module objects {
             return this._damageMultiplier
         }
 
+        get Bullets():BulletSlime[]{
+            return this._bullets
+        }
+
         get Facing():number {
             return this._facing;
         }

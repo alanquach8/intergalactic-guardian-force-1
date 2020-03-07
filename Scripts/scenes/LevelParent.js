@@ -256,8 +256,6 @@ var scenes;
                     that._player.Life--;
                     _this.UpdatePlayerLivesIndicator();
                     if (that._player.Life == 0) {
-                        that.removeChild(that._player);
-                        that._player.Die();
                         config.Game.SCENE_STATE = scenes.State.LOOSE;
                     }
                     else {

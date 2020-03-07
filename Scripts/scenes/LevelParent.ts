@@ -279,8 +279,6 @@ module scenes
                     that._player.Life--;
                     this.UpdatePlayerLivesIndicator();
                     if(that._player.Life == 0) {
-                        that.removeChild(that._player);
-                        that._player.Die();
                         config.Game.SCENE_STATE = scenes.State.LOOSE;
                     } else {
                         that._player.Reset();

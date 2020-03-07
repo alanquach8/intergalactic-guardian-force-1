@@ -50,8 +50,20 @@ module scenes
                 });
             }
 
-
+            this._subBoss.Bullets.forEach(bullet => {
+                managers.Collision.AABBCheck(this.Player, bullet);
+                if(bullet.isColliding  && !this.Player.IsReviving){
+                    this._subBoss.Bullets.splice(this._subBoss.Bullets.indexOf(bullet), 1);
+                    this.removeChild(bullet);
+                    this.Player.Life--;
+                    this.UpdatePlayerLivesIndicator();
+                    if(this.Player.Life == 0) {
+                        config.Game.SCENE_STATE = scenes.State.LOOSE;
+                    } else {
+                        this.Player.Reset();
+                    }
+                }
+            });
         }
-
     }
 }

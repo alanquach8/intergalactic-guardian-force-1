@@ -61,6 +61,21 @@ var scenes;
                     }
                 });
             }
+            this._subBoss.Bullets.forEach(function (bullet) {
+                managers.Collision.AABBCheck(_this.Player, bullet);
+                if (bullet.isColliding && !_this.Player.IsReviving) {
+                    _this._subBoss.Bullets.splice(_this._subBoss.Bullets.indexOf(bullet), 1);
+                    _this.removeChild(bullet);
+                    _this.Player.Life--;
+                    _this.UpdatePlayerLivesIndicator();
+                    if (_this.Player.Life == 0) {
+                        config.Game.SCENE_STATE = scenes.State.LOOSE;
+                    }
+                    else {
+                        _this.Player.Reset();
+                    }
+                }
+            });
         };
         return Level1;
     }(scenes.LevelParent));
