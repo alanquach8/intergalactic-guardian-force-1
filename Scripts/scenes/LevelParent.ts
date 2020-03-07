@@ -14,7 +14,7 @@ module scenes
         private _scrollBuffer=100;
         private _movingForward=false;
         private _movingBackward=false;
-        private _distance_left = 10;
+        private _distance_left = 1000;
         private _nextLevel: scenes.State;
         private _canFinish = true;
         private _endEventFired = false;
@@ -63,12 +63,21 @@ module scenes
                         break;
                 }
             });
+            // every 20s
+            setInterval(()=> { this.CreatePowerup() }, 20000);
 
             this.Start();
         }
 
         public set MaximumEnemies(amount:number){
             this._noOfEnemies = amount;
+        }
+
+        public get DistanceLeft(){
+            return this._distance_left;
+        }
+        public set DistanceLeft(amount:number){
+            this._distance_left = amount;
         }
 
         // PUBLIC METHODS
@@ -267,6 +276,7 @@ module scenes
                     if(that._player.Life == 0) {
                         that.removeChild(that._player);
                         that._player.Die();
+                        config.Game.SCENE_STATE = scenes.State.LOOSE;
                     } else {
                         that._player.Reset();
                     }

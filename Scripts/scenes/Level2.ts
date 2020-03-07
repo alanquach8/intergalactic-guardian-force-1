@@ -9,7 +9,7 @@ module scenes
 
         ReachedLevelEnd(){
             super.ReachedLevelEnd();
-            this.SubBoss.HP += 10
+            this.SubBoss.HP = 20
         }
 
     }

@@ -18,12 +18,13 @@ var scenes;
         __extends(Level3, _super);
         function Level3() {
             var _this = _super.call(this, scenes.State.END) || this;
-            _this.MaximumEnemies = 12;
+            _this.MaximumEnemies = 10;
+            _this.DistanceLeft = 30;
             return _this;
         }
         Level3.prototype.ReachedLevelEnd = function () {
             _super.prototype.ReachedLevelEnd.call(this);
-            this.SubBoss.HP += 20;
+            this.SubBoss.HP = 40;
         };
         return Level3;
     }(scenes.Level1));

@@ -5,7 +5,7 @@ module objects {
     export class SubBoss extends GameObject {
         private _isAlive = true;
         private _state = 1;
-        private _hp = 3;
+        private _hp = 10;
         private _delta = 3;
         private _deathEvent:EventCallback = () : void => {console.log("No action event specified");};
         

@@ -23,7 +23,7 @@ var scenes;
             _this._scrollBuffer = 100;
             _this._movingForward = false;
             _this._movingBackward = false;
-            _this._distance_left = 10;
+            _this._distance_left = 1000;
             _this._canFinish = true;
             _this._endEventFired = false;
             // initialization
@@ -59,12 +59,24 @@ var scenes;
                         break;
                 }
             });
+            // every 20s
+            setInterval(function () { _this.CreatePowerup(); }, 20000);
             _this.Start();
             return _this;
         }
         Object.defineProperty(LevelParent.prototype, "MaximumEnemies", {
             set: function (amount) {
                 this._noOfEnemies = amount;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(LevelParent.prototype, "DistanceLeft", {
+            get: function () {
+                return this._distance_left;
+            },
+            set: function (amount) {
+                this._distance_left = amount;
             },
             enumerable: true,
             configurable: true
@@ -244,6 +256,7 @@ var scenes;
                     if (that._player.Life == 0) {
                         that.removeChild(that._player);
                         that._player.Die();
+                        config.Game.SCENE_STATE = scenes.State.LOOSE;
                     }
                     else {
                         that._player.Reset();

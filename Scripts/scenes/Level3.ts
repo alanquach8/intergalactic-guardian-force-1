@@ -4,12 +4,13 @@ module scenes
     {
         constructor(){
             super(scenes.State.END);
-            this.MaximumEnemies = 12;
+            this.MaximumEnemies = 10;
+            this.DistanceLeft = 30;
         }
 
         ReachedLevelEnd(){
             super.ReachedLevelEnd();
-            this.SubBoss.HP += 20
+            this.SubBoss.HP = 40;
         }
 
     }

@@ -24,7 +24,7 @@ var scenes;
         }
         Level2.prototype.ReachedLevelEnd = function () {
             _super.prototype.ReachedLevelEnd.call(this);
-            this.SubBoss.HP += 10;
+            this.SubBoss.HP = 20;
         };
         return Level2;
     }(scenes.Level1));

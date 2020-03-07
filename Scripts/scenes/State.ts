@@ -8,7 +8,8 @@ module scenes
         LEVEL2,
         LEVEL3,
         END,
-        NUM_OF_SCENES,
-        QUOTE
+        QUOTE,
+        LOOSE,
+        NUM_OF_SCENES
     }
 }

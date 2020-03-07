@@ -9,8 +9,9 @@ var scenes;
         State[State["LEVEL2"] = 2] = "LEVEL2";
         State[State["LEVEL3"] = 3] = "LEVEL3";
         State[State["END"] = 4] = "END";
-        State[State["NUM_OF_SCENES"] = 5] = "NUM_OF_SCENES";
-        State[State["QUOTE"] = 6] = "QUOTE";
+        State[State["QUOTE"] = 5] = "QUOTE";
+        State[State["LOOSE"] = 6] = "LOOSE";
+        State[State["NUM_OF_SCENES"] = 7] = "NUM_OF_SCENES";
     })(State = scenes.State || (scenes.State = {}));
 })(scenes || (scenes = {}));
 //# sourceMappingURL=State.js.map
