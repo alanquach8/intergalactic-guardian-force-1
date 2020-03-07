@@ -28,15 +28,15 @@ var scenes;
         }
         // PUBLIC METHODS
         End.prototype.Start = function () {
-            this.endLabel = new objects.Label("You Win!", "80px", "Consolas", "#000000", 320, 200, true);
-            this.endButton = new objects.Button("./Assets/images/backButton.png", 320, 400, true);
+            this.endLabel = new objects.Label("You Win!", "80px", "Consolas", "Green", 320, 200, true);
+            this.endButton = new objects.Button("./Assets/images/ui/buttons/menu.png", 320, 400, true);
             this.Main();
         };
         End.prototype.Update = function () {
         };
         End.prototype.Main = function () {
             // a hacky way to set the screen's background color
-            this.addChild(new objects.Rectangle(0, 0, 640, 480, "#FFF"));
+            this.addChild(new objects.Rectangle(0, 0, 640, 480, "#000"));
             this.addChild(this.endLabel);
             this.addChild(this.endButton);
             this.endButton.on("click", function () {

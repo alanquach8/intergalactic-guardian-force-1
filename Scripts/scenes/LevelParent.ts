@@ -14,7 +14,7 @@ module scenes
         private _scrollBuffer=150;
         private _movingForward=false;
         private _movingBackward=false;
-        private _distance_left = 200;
+        private _distance_left = 1000;
         private _nextLevel: scenes.State;
         private _canFinish = true;
         private _endEventFired = false;

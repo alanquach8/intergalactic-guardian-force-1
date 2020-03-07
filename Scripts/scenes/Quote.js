@@ -35,7 +35,7 @@ var scenes;
         Quote.prototype.Start = function () {
             var fontSize = "25px";
             var font = "Consolas";
-            var fontColor = "#FFF";
+            var fontColor = "Green";
             var isCentered = false;
             var xPos = 50;
             this.startLabel = [

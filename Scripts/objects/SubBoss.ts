@@ -6,7 +6,7 @@ module objects {
         private _isAlive = true;
         private _state = 1;
         private _hp:number;
-        private _maHP = 1;
+        private _maHP = 100;
         private _delta = 3;
         private _deathEvent:EventCallback = () : void => {console.log("No action event specified");};
         private _bullets:objects.BulletSlime[] = [];

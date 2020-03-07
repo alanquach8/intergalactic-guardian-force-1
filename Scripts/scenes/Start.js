@@ -21,23 +21,30 @@ var scenes;
         function Start() {
             var _this = _super.call(this) || this;
             // initialization
-            _this.startLabel = new objects.Label();
+            _this.logoImage = new createjs.Bitmap("Assets/images/ui/logo.png");
+            _this.logoImage.regX = _this.logoImage.getBounds().width * 0.5;
+            _this.logoImage.scaleX = 0.6;
+            _this.logoImage.scaleY = 0.6;
+            _this.logoImage.x = 320;
+            _this.logoImage.y = 10;
             _this.startButton = new objects.Button();
+            _this.companyLabel = new objects.Label();
             _this.Start();
             return _this;
         }
         // PUBLIC METHODS
         Start.prototype.Start = function () {
-            this.startLabel = new objects.Label("The Game", "80px", "Consolas", "#000000", 320, 200, true);
-            this.startButton = new objects.Button("./Assets/images/startButton.png", 320, 400, true);
+            this.startButton = new objects.Button("./Assets/images/ui/buttons/play.png", 320, 240, true);
+            this.companyLabel = new objects.Label("MACK Address Games", "15px", "Consolas", "Green", 320, 90, true);
             this.Main();
         };
         Start.prototype.Update = function () {
         };
         Start.prototype.Main = function () {
             // a hacky way to set the screen's background color
-            this.addChild(new objects.Rectangle(0, 0, 640, 480, "#FFF"));
-            this.addChild(this.startLabel);
+            this.addChild(new objects.Rectangle(0, 0, 640, 480, "#000"));
+            this.addChild(this.logoImage);
+            this.addChild(this.companyLabel);
             this.addChild(this.startButton);
             this.startButton.on("click", function () {
                 // config.Game.SCENE_STATE = scenes.State.QUOTE;
