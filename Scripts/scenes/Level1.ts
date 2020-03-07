@@ -23,6 +23,10 @@ module scenes
             return this._subBoss;
         }
 
+        public EndGamePrep(){
+            
+        }
+
                 
         public PlayerMovementUpdate(y_delta:number){
             this._subBoss.y -= y_delta;

@@ -5,7 +5,8 @@ module objects {
     export class SubBoss extends GameObject {
         private _isAlive = true;
         private _state = 1;
-        private _hp = 100;
+        private _hp:number;
+        private _maHP = 1;
         private _delta = 3;
         private _deathEvent:EventCallback = () : void => {console.log("No action event specified");};
         private _bullets:objects.BulletSlime[] = [];
@@ -16,6 +17,8 @@ module objects {
         private _reloadSpeed = 10;
         private _reloadCounter:number;
         private _damageMultiplier = 1;
+        private _healthBarBack:objects.Rectangle;
+        private _healthBarValue:objects.Rectangle;
         
 
         constructor(player:objects.Player, inactive:boolean=false){
@@ -25,9 +28,29 @@ module objects {
             this._player = player;
             this._inactive = inactive;
 
+            this._hp = this._maHP;
+
             this._reloadCounter = this._reloadSpeed;
 
             setInterval(()=> { this.CycleState() }, 5 * 1000);
+
+            this._healthBarBack = new Rectangle(0, 0, this.width, 10, "Gray");
+            this._healthBarValue = new Rectangle(0, 0, 0, 10, "red");
+            this.UpdateHealthBar();
+        }
+
+        public UpdateHealthBar(){
+            if (this.parent == null)
+                return;
+            this.parent.removeChild(this._healthBarBack);
+            this.parent.removeChild(this._healthBarValue);
+
+            if(!this.IsAlive)
+                return;
+            this._healthBarBack  = new Rectangle(this.x - this.halfWidth, this.y + this.halfHeight, this.width, 10, "Gray")
+            this._healthBarValue = new Rectangle(this.x - this.halfWidth, this.y + this.halfHeight, (this._hp / this._maHP) * this.width, 10, "red")
+            this.parent.addChild(this._healthBarBack);
+            this.parent.addChild(this._healthBarValue);
         }
 
         get DamageMultiplier():number {
@@ -75,6 +98,7 @@ module objects {
             return this._hp
         }
         public set HP(hp:number){
+            this._maHP = hp;
             this._hp = hp;
         }
 
@@ -155,6 +179,7 @@ module objects {
                     this._bullets.splice(this._bullets.indexOf(bullet), 1);
                 }
             });
+            this.UpdateHealthBar();
         }
         public LateralMovement(): void{
             if (this.x < 64 || this.x > 576)

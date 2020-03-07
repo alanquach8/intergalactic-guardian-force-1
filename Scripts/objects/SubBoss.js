@@ -21,7 +21,7 @@ var objects;
             var _this = _super.call(this, "./Assets/images/enemy/subboss/subboss.png", 64, -64, true) || this;
             _this._isAlive = true;
             _this._state = 1;
-            _this._hp = 100;
+            _this._maHP = 1;
             _this._delta = 3;
             _this._deathEvent = function () { console.log("No action event specified"); };
             _this._bullets = [];
@@ -31,10 +31,26 @@ var objects;
             _this._facing = 90;
             _this._player = player;
             _this._inactive = inactive;
+            _this._hp = _this._maHP;
             _this._reloadCounter = _this._reloadSpeed;
             setInterval(function () { _this.CycleState(); }, 5 * 1000);
+            _this._healthBarBack = new objects.Rectangle(0, 0, _this.width, 10, "Gray");
+            _this._healthBarValue = new objects.Rectangle(0, 0, 0, 10, "red");
+            _this.UpdateHealthBar();
             return _this;
         }
+        SubBoss.prototype.UpdateHealthBar = function () {
+            if (this.parent == null)
+                return;
+            this.parent.removeChild(this._healthBarBack);
+            this.parent.removeChild(this._healthBarValue);
+            if (!this.IsAlive)
+                return;
+            this._healthBarBack = new objects.Rectangle(this.x - this.halfWidth, this.y + this.halfHeight, this.width, 10, "Gray");
+            this._healthBarValue = new objects.Rectangle(this.x - this.halfWidth, this.y + this.halfHeight, (this._hp / this._maHP) * this.width, 10, "red");
+            this.parent.addChild(this._healthBarBack);
+            this.parent.addChild(this._healthBarValue);
+        };
         Object.defineProperty(SubBoss.prototype, "DamageMultiplier", {
             get: function () {
                 return this._damageMultiplier;
@@ -84,6 +100,7 @@ var objects;
                 return this._hp;
             },
             set: function (hp) {
+                this._maHP = hp;
                 this._hp = hp;
             },
             enumerable: true,
@@ -168,6 +185,7 @@ var objects;
                     _this._bullets.splice(_this._bullets.indexOf(bullet), 1);
                 }
             });
+            this.UpdateHealthBar();
         };
         SubBoss.prototype.LateralMovement = function () {
             if (this.x < 64 || this.x > 576)

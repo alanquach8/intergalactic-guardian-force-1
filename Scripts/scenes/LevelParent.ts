@@ -310,7 +310,6 @@ module scenes
 
                     this._scrollBuffer = 0;
                     if (this._player.y <= 0){
-                        console.log(this._canFinish)
                         if(this._canFinish){
                             config.Game.SCENE_STATE = this._nextLevel;
                         } else {

@@ -23,8 +23,8 @@ var scenes;
             return _this;
         }
         Level2.prototype.ReachedLevelEnd = function () {
-            _super.prototype.ReachedLevelEnd.call(this);
-            this.SubBoss.HP = 20;
+            // super.ReachedLevelEnd();
+            this.SubBoss.HP = 200;
         };
         return Level2;
     }(scenes.Level1));

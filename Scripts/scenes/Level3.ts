@@ -10,7 +10,7 @@ module scenes
 
         ReachedLevelEnd(){
             super.ReachedLevelEnd();
-            this.SubBoss.HP = 40;
+            this.SubBoss.HP = 300;
         }
 
     }

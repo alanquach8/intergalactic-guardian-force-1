@@ -39,6 +39,8 @@ var scenes;
             enumerable: true,
             configurable: true
         });
+        Level1.prototype.EndGamePrep = function () {
+        };
         Level1.prototype.PlayerMovementUpdate = function (y_delta) {
             this._subBoss.y -= y_delta;
             this._subBoss.position = new objects.Vector2(this._subBoss.x, this._subBoss.y);
