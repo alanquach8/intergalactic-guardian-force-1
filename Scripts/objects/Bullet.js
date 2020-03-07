@@ -63,6 +63,9 @@ var objects;
         };
         Bullet.prototype.Reset = function () {
         };
+        Bullet.prototype.IsOffScreen = function () {
+            return this.x < 0 || this.x > 640 || this.y < 0 || this.y > 480;
+        };
         return Bullet;
     }(objects.GameObject));
     objects.Bullet = Bullet;

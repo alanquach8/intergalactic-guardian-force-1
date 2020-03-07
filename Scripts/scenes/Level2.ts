@@ -8,8 +8,8 @@ module scenes
         }
 
         ReachedLevelEnd(){
-            super.ReachedLevelEnd();
-            this.SubBoss.HP = 20
+            // super.ReachedLevelEnd();
+            this.SubBoss.HP = 200
         }
 
     }

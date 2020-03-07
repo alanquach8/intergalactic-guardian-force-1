@@ -192,6 +192,8 @@ var objects;
                     this.x += this.Direction.x * this.Speed;
                 if (this.x >= 640 - this._wallBuffer)
                     this.x += this.Direction.x * this.Speed;
+                if (this.y >= 470)
+                    this.y += this.Direction.y * this.Speed;
             }
             if (this._right) {
                 this.rotation += this.Rotate;

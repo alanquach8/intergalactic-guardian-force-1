@@ -11,7 +11,7 @@ module scenes
         private _gernadeManager:objects.GrenadeManager;
         private _playerLivesThumbs: createjs.Bitmap[];
         private _powerups:objects.Powerup[];
-        private _scrollBuffer=100;
+        private _scrollBuffer=150;
         private _movingForward=false;
         private _movingBackward=false;
         private _distance_left = 1000;
@@ -205,6 +205,11 @@ module scenes
 
         }
 
+        
+        public PlayerMovementUpdate(y_delta:number){
+
+        }
+        
         public Update(): void {
             // Reference to the Play Scene Object
             let that = this;
@@ -274,8 +279,6 @@ module scenes
                     that._player.Life--;
                     this.UpdatePlayerLivesIndicator();
                     if(that._player.Life == 0) {
-                        that.removeChild(that._player);
-                        that._player.Die();
                         config.Game.SCENE_STATE = scenes.State.LOOSE;
                     } else {
                         that._player.Reset();
@@ -307,7 +310,6 @@ module scenes
 
                     this._scrollBuffer = 0;
                     if (this._player.y <= 0){
-                        console.log(this._canFinish)
                         if(this._canFinish){
                             config.Game.SCENE_STATE = this._nextLevel;
                         } else {
@@ -329,6 +331,11 @@ module scenes
                         exp.y -= y_delta;
                         exp.position = new objects.Vector2(exp.x, exp.y);
                     });
+
+                    this._deadEnemies.forEach(enemy => {
+                        enemy.y -= y_delta;
+                        enemy.position = new objects.Vector2(enemy.x, enemy.y);
+                    });
     
                     this._enemies.forEach(enemy => {
                         enemy.y -= y_delta;
@@ -338,11 +345,13 @@ module scenes
                             this._enemies.splice(this._enemies.indexOf(enemy), 1);
                         }
                     });
+
+                    this.PlayerMovementUpdate(y_delta);
                 }
             }
             this.UpdateLevel();
         }
-        
+
         public Main(): void {
             let that = this;
 
@@ -361,5 +370,10 @@ module scenes
                 that.addChild(enemy);
             })
         }
+
+        public get Enemies():objects.Enemy[]{
+            return this._enemies;
+        }
+        
     }
 }

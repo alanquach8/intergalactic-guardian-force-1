@@ -55,5 +55,9 @@ module objects {
             public Reset(): void {
                 
             }
+
+            public IsOffScreen():boolean {
+                return this.x < 0 || this.x > 640 || this.y < 0 || this.y > 480;
+            }
         }
 }

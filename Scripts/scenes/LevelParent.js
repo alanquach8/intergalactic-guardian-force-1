@@ -20,7 +20,7 @@ var scenes;
         // CONSTRUCTOR
         function LevelParent(next) {
             var _this = _super.call(this) || this;
-            _this._scrollBuffer = 100;
+            _this._scrollBuffer = 150;
             _this._movingForward = false;
             _this._movingBackward = false;
             _this._distance_left = 1000;
@@ -195,6 +195,8 @@ var scenes;
         };
         LevelParent.prototype.UpdateLevel = function () {
         };
+        LevelParent.prototype.PlayerMovementUpdate = function (y_delta) {
+        };
         LevelParent.prototype.Update = function () {
             var _this = this;
             // Reference to the Play Scene Object
@@ -254,8 +256,6 @@ var scenes;
                     that._player.Life--;
                     _this.UpdatePlayerLivesIndicator();
                     if (that._player.Life == 0) {
-                        that.removeChild(that._player);
-                        that._player.Die();
                         config.Game.SCENE_STATE = scenes.State.LOOSE;
                     }
                     else {
@@ -282,7 +282,6 @@ var scenes;
                     }
                     this._scrollBuffer = 0;
                     if (this._player.y <= 0) {
-                        console.log(this._canFinish);
                         if (this._canFinish) {
                             config.Game.SCENE_STATE = this._nextLevel;
                         }
@@ -304,6 +303,10 @@ var scenes;
                         exp.y -= y_delta_1;
                         exp.position = new objects.Vector2(exp.x, exp.y);
                     });
+                    this._deadEnemies.forEach(function (enemy) {
+                        enemy.y -= y_delta_1;
+                        enemy.position = new objects.Vector2(enemy.x, enemy.y);
+                    });
                     this._enemies.forEach(function (enemy) {
                         enemy.y -= y_delta_1;
                         enemy.position = new objects.Vector2(enemy.x, enemy.y);
@@ -312,6 +315,7 @@ var scenes;
                             _this._enemies.splice(_this._enemies.indexOf(enemy), 1);
                         }
                     });
+                    this.PlayerMovementUpdate(y_delta_1);
                 }
             }
             this.UpdateLevel();
@@ -329,6 +333,13 @@ var scenes;
                 that.addChild(enemy);
             });
         };
+        Object.defineProperty(LevelParent.prototype, "Enemies", {
+            get: function () {
+                return this._enemies;
+            },
+            enumerable: true,
+            configurable: true
+        });
         return LevelParent;
     }(objects.Scene));
     scenes.LevelParent = LevelParent;

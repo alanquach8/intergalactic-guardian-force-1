@@ -33,14 +33,14 @@ module scenes
         {
             let fontSize:string = "25px";
             let font:string = "Consolas";
-            let fontColor:string = "#FFF";
+            let fontColor:string = "Green";
             let isCentered:boolean = false;
             let xPos:number = 50;
             
             this.startLabel = [
                 new objects.Label("Two possibilities exist:",               fontSize, font, fontColor, xPos, 125, isCentered),
-                new objects.Label("  Either we are alone in the Universe,",   fontSize, font, fontColor, xPos, 165, isCentered),
-                new objects.Label("  or we are not.",                         fontSize, font, fontColor, xPos, 190, isCentered),
+                new objects.Label("  Either we are alone in the Universe,", fontSize, font, fontColor, xPos, 165, isCentered),
+                new objects.Label("  or we are not.",                       fontSize, font, fontColor, xPos, 190, isCentered),
                 new objects.Label("Both are equally terrifying.",           fontSize, font, fontColor, xPos, 230, isCentered),
                 new objects.Label("  ― Arthur C. Clarke ",                  fontSize, font, fontColor, xPos, 270, isCentered)
             ];      
