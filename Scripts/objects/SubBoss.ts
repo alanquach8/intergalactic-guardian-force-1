@@ -14,6 +14,13 @@ module objects {
             super("./Assets/images/enemy/subboss/subboss.png", 64, 64, true);
         }
 
+        public get HP(){
+            return this._hp
+        }
+        public set HP(hp:number){
+            this._hp = hp;
+        }
+
         public ExecuteDeathEvent(): void{
             this._deathEvent();
         }

@@ -4,9 +4,9 @@ module scenes
     {
         private _subBoss: objects.SubBoss = new objects.SubBoss;
 
-        constructor(){
+        constructor(scene=scenes.State.LEVEL2){
             
-            super(scenes.State.LEVEL2);
+            super(scene);
             this.CanFinish = false;
         }
 
@@ -16,6 +16,10 @@ module scenes
             this._subBoss.DeathEvent = () : void => {
                 this.CanFinish = true;
             };
+        }
+
+        public get SubBoss(){
+            return this._subBoss;
         }
 
         Update(){

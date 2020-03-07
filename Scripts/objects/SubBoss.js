@@ -25,6 +25,16 @@ var objects;
             _this._deathEvent = function () { console.log("No action event specified"); };
             return _this;
         }
+        Object.defineProperty(SubBoss.prototype, "HP", {
+            get: function () {
+                return this._hp;
+            },
+            set: function (hp) {
+                this._hp = hp;
+            },
+            enumerable: true,
+            configurable: true
+        });
         SubBoss.prototype.ExecuteDeathEvent = function () {
             this._deathEvent();
         };

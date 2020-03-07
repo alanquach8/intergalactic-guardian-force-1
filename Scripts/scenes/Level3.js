@@ -17,10 +17,16 @@ var scenes;
     var Level3 = /** @class */ (function (_super) {
         __extends(Level3, _super);
         function Level3() {
-            return _super.call(this, scenes.State.END) || this;
+            var _this = _super.call(this, scenes.State.END) || this;
+            _this.MaximumEnemies = 12;
+            return _this;
         }
+        Level3.prototype.ReachedLevelEnd = function () {
+            _super.prototype.ReachedLevelEnd.call(this);
+            this.SubBoss.HP += 20;
+        };
         return Level3;
-    }(scenes.LevelParent));
+    }(scenes.Level1));
     scenes.Level3 = Level3;
 })(scenes || (scenes = {}));
 //# sourceMappingURL=Level3.js.map

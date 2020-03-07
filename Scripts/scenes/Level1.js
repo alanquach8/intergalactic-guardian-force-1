@@ -16,8 +16,9 @@ var scenes;
 (function (scenes) {
     var Level1 = /** @class */ (function (_super) {
         __extends(Level1, _super);
-        function Level1() {
-            var _this = _super.call(this, scenes.State.LEVEL2) || this;
+        function Level1(scene) {
+            if (scene === void 0) { scene = scenes.State.LEVEL2; }
+            var _this = _super.call(this, scene) || this;
             _this._subBoss = new objects.SubBoss;
             _this.CanFinish = false;
             return _this;
@@ -30,6 +31,13 @@ var scenes;
                 _this.CanFinish = true;
             };
         };
+        Object.defineProperty(Level1.prototype, "SubBoss", {
+            get: function () {
+                return this._subBoss;
+            },
+            enumerable: true,
+            configurable: true
+        });
         Level1.prototype.Update = function () {
             var _this = this;
             _super.prototype.Update.call(this);
