@@ -366,5 +366,10 @@ module scenes
                 that.addChild(enemy);
             })
         }
+
+        public get Enemies():objects.Enemy[]{
+            return this._enemies;
+        }
+        
     }
 }

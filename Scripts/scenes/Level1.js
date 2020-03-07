@@ -75,6 +75,20 @@ var scenes;
                         _this.Player.Reset();
                     }
                 }
+                _this.Enemies.forEach(function (enemy) {
+                    managers.Collision.AABBCheck(bullet, enemy);
+                    if (enemy.isColliding) {
+                        enemy.hitPoints--;
+                        if (enemy.hitPoints == 0) {
+                            _this.KillEnemy(enemy);
+                        }
+                        // remove the bullet
+                        if (enemy.IsAlive) {
+                            _this._subBoss.Bullets.splice(_this._subBoss.Bullets.indexOf(bullet), 1);
+                            _this.removeChild(bullet);
+                        }
+                    }
+                });
             });
         };
         return Level1;

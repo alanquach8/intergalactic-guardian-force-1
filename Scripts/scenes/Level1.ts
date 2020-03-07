@@ -63,6 +63,24 @@ module scenes
                         this.Player.Reset();
                     }
                 }
+
+                this.Enemies.forEach(enemy => {
+                    managers.Collision.AABBCheck(bullet, enemy);
+                    if(enemy.isColliding) {
+                        enemy.hitPoints--;
+                        if(enemy.hitPoints == 0) {
+                            this.KillEnemy(enemy);
+                        }
+                        // remove the bullet
+    
+                        if (enemy.IsAlive){
+                            this._subBoss.Bullets.splice(this._subBoss.Bullets.indexOf(bullet), 1);
+                            this.removeChild(bullet);
+                        }
+                    }
+                });
+               
+               
             });
         }
     }

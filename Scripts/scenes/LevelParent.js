@@ -330,6 +330,13 @@ var scenes;
                 that.addChild(enemy);
             });
         };
+        Object.defineProperty(LevelParent.prototype, "Enemies", {
+            get: function () {
+                return this._enemies;
+            },
+            enumerable: true,
+            configurable: true
+        });
         return LevelParent;
     }(objects.Scene));
     scenes.LevelParent = LevelParent;

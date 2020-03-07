@@ -21,7 +21,7 @@ var objects;
             var _this = _super.call(this, "./Assets/images/enemy/subboss/subboss.png", 64, -64, true) || this;
             _this._isAlive = true;
             _this._state = 1;
-            _this._hp = 10;
+            _this._hp = 100;
             _this._delta = 3;
             _this._deathEvent = function () { console.log("No action event specified"); };
             _this._bullets = [];
