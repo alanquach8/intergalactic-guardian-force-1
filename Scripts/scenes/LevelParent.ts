@@ -14,8 +14,10 @@ module scenes
         private _scrollBuffer=100;
         private _movingForward=false;
         private _movingBackward=false;
-        private _distance_left = 1000;
+        private _distance_left = 10;
         private _nextLevel: scenes.State;
+        private _canFinish = true;
+        private _endEventFired = false;
 
 
         // PUBLIC PROPERTIES
@@ -63,6 +65,10 @@ module scenes
             });
 
             this.Start();
+        }
+
+        public set MaximumEnemies(amount:number){
+            this._noOfEnemies = amount;
         }
 
         // PUBLIC METHODS
@@ -114,7 +120,11 @@ module scenes
                 this.addChild(p);
             }
         }
-        
+
+        public get Player(){
+            return this._player;
+        }
+       
         public SendGrenade(x:number, y:number){
             if (this._gernadeManager.GrenadeCount <= 0)
                 return
@@ -170,6 +180,20 @@ module scenes
             enemy.Die();
             this._deadEnemies.push(enemy);
             this._enemies.splice(this._enemies.indexOf(enemy), 1);
+        }
+
+        public get CanFinish(){
+            return this._canFinish;
+        }
+        public set CanFinish(state:boolean){
+            this._canFinish = state;
+        }
+
+        public ReachedLevelEnd():void{
+            
+        }
+        public UpdateLevel():void{
+
         }
 
         public Update(): void {
@@ -266,9 +290,19 @@ module scenes
                 
                 this._distance_left += y_delta;
                 if (this._distance_left <= 0){
+                    if(!this._endEventFired){
+                        this._endEventFired = true;
+                        this.ReachedLevelEnd();
+                    }
+
                     this._scrollBuffer = 0;
                     if (this._player.y <= 0){
-                        config.Game.SCENE_STATE = this._nextLevel;
+                        console.log(this._canFinish)
+                        if(this._canFinish){
+                            config.Game.SCENE_STATE = this._nextLevel;
+                        } else {
+                            this._player.y = 1
+                        }
                     }
                 } else {
                     if(this._distance_left % 200 < 1){
@@ -296,6 +330,7 @@ module scenes
                     });
                 }
             }
+            this.UpdateLevel();
         }
         
         public Main(): void {

@@ -23,7 +23,9 @@ var scenes;
             _this._scrollBuffer = 100;
             _this._movingForward = false;
             _this._movingBackward = false;
-            _this._distance_left = 1000;
+            _this._distance_left = 10;
+            _this._canFinish = true;
+            _this._endEventFired = false;
             // initialization
             _this._player = new objects.Player();
             _this._enemies = new Array();
@@ -60,6 +62,13 @@ var scenes;
             _this.Start();
             return _this;
         }
+        Object.defineProperty(LevelParent.prototype, "MaximumEnemies", {
+            set: function (amount) {
+                this._noOfEnemies = amount;
+            },
+            enumerable: true,
+            configurable: true
+        });
         // PUBLIC METHODS
         LevelParent.prototype.Start = function () {
             this._player = new objects.Player();
@@ -105,6 +114,13 @@ var scenes;
                 this.addChild(p);
             }
         };
+        Object.defineProperty(LevelParent.prototype, "Player", {
+            get: function () {
+                return this._player;
+            },
+            enumerable: true,
+            configurable: true
+        });
         LevelParent.prototype.SendGrenade = function (x, y) {
             if (this._gernadeManager.GrenadeCount <= 0)
                 return;
@@ -152,6 +168,20 @@ var scenes;
             enemy.Die();
             this._deadEnemies.push(enemy);
             this._enemies.splice(this._enemies.indexOf(enemy), 1);
+        };
+        Object.defineProperty(LevelParent.prototype, "CanFinish", {
+            get: function () {
+                return this._canFinish;
+            },
+            set: function (state) {
+                this._canFinish = state;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        LevelParent.prototype.ReachedLevelEnd = function () {
+        };
+        LevelParent.prototype.UpdateLevel = function () {
         };
         LevelParent.prototype.Update = function () {
             var _this = this;
@@ -233,9 +263,19 @@ var scenes;
                     y_delta_1 *= -1;
                 this._distance_left += y_delta_1;
                 if (this._distance_left <= 0) {
+                    if (!this._endEventFired) {
+                        this._endEventFired = true;
+                        this.ReachedLevelEnd();
+                    }
                     this._scrollBuffer = 0;
                     if (this._player.y <= 0) {
-                        config.Game.SCENE_STATE = this._nextLevel;
+                        console.log(this._canFinish);
+                        if (this._canFinish) {
+                            config.Game.SCENE_STATE = this._nextLevel;
+                        }
+                        else {
+                            this._player.y = 1;
+                        }
                     }
                 }
                 else {
@@ -261,6 +301,7 @@ var scenes;
                     });
                 }
             }
+            this.UpdateLevel();
         };
         LevelParent.prototype.Main = function () {
             var that = this;

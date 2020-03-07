@@ -17,8 +17,34 @@ var scenes;
     var Level1 = /** @class */ (function (_super) {
         __extends(Level1, _super);
         function Level1() {
-            return _super.call(this, scenes.State.LEVEL2) || this;
+            var _this = _super.call(this, scenes.State.LEVEL2) || this;
+            _this._subBoss = new objects.SubBoss;
+            _this.CanFinish = false;
+            return _this;
         }
+        Level1.prototype.ReachedLevelEnd = function () {
+            var _this = this;
+            this._subBoss = new objects.SubBoss();
+            this.addChild(this._subBoss);
+            this._subBoss.DeathEvent = function () {
+                _this.CanFinish = true;
+            };
+        };
+        Level1.prototype.Update = function () {
+            var _this = this;
+            _super.prototype.Update.call(this);
+            if (this._subBoss != undefined) {
+                this._subBoss.Update();
+                this.Player.Bullets.forEach(function (bullet) {
+                    managers.Collision.AABBCheck(_this._subBoss, bullet);
+                    if (bullet.isColliding) {
+                        _this.Player.Bullets.splice(_this.Player.Bullets.indexOf(bullet), 1);
+                        _this.removeChild(bullet);
+                        _this._subBoss.ChangeHP(-1);
+                    }
+                });
+            }
+        };
         return Level1;
     }(scenes.LevelParent));
     scenes.Level1 = Level1;
