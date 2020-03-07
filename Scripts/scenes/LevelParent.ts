@@ -1,6 +1,6 @@
 module scenes
 {
-    export class Play extends objects.Scene
+    export class LevelParent extends objects.Scene
     {
         // PRIVATE INSTANCE MEMBERS
         private _player:objects.Player;
@@ -15,11 +15,13 @@ module scenes
         private _movingForward=false;
         private _movingBackward=false;
         private _distance_left = 1000;
+        private _nextLevel: scenes.State;
+
 
         // PUBLIC PROPERTIES
 
         // CONSTRUCTOR
-        constructor()
+        constructor(next:scenes.State)
         {
             super();
 
@@ -32,11 +34,13 @@ module scenes
             this._playerLivesThumbs = [];
             this._noOfEnemies = 5;
             this._gernadeManager = new objects.GrenadeManager();
+            this._nextLevel = next;
+
 
             this.addEventListener("click", (evt: createjs.MouseEvent) => {
                 this.SendGrenade(evt.stageX, evt.stageY);
             });
-            window.addEventListener('keyup', (e) => {
+            window.addEventListener('keyup', (e: KeyboardEvent) => {
                 switch(e.code) {
                     case "ArrowUp":
                         this._movingForward = false;
@@ -47,7 +51,7 @@ module scenes
                 }
             });
 
-            window.addEventListener('keydown', (e) => {
+            window.addEventListener('keydown', (e: KeyboardEvent) => {
                 switch(e.code) {
                     case "ArrowUp":
                         this._movingForward = true;
@@ -159,7 +163,6 @@ module scenes
         }
 
         public ChangeGrenades(delta:number){
-            console.log(delta, this._gernadeManager.GrenadeCount)
             this.SetGrenades(this._gernadeManager.GrenadeCount + delta);
         }
 
@@ -212,7 +215,6 @@ module scenes
                     managers.Collision.AABBCheck(bullet, enemy);
                     if(enemy.isColliding) {
                         enemy.hitPoints--;
-                        console.log(enemy.hitPoints);
                         if(enemy.hitPoints == 0) {
                             that.KillEnemy(enemy);
                         }
@@ -266,7 +268,7 @@ module scenes
                 if (this._distance_left <= 0){
                     this._scrollBuffer = 0;
                     if (this._player.y <= 0){
-                        config.Game.SCENE_STATE = scenes.State.END;
+                        config.Game.SCENE_STATE = this._nextLevel;
                     }
                 } else {
                     if(this._distance_left % 200 < 1){

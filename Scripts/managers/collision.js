@@ -9,7 +9,6 @@ var managers;
             var radii = object1.halfWidth + object2.halfWidth;
             if (sqrDistance < (radii * radii)) {
                 if (!object2.isColliding) {
-                    console.log("Collision!");
                     object2.isColliding = true;
                 }
             }
@@ -35,7 +34,6 @@ var managers;
                 object1TopLeft.y < object2TopLeft.y + object2.height &&
                 object1TopLeft.y + object1.height > object2TopLeft.y) {
                 if (!object2.isColliding) {
-                    console.log("Collision!");
                     object2.isColliding = true;
                 }
             }

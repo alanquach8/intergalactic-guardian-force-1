@@ -14,11 +14,11 @@ var __extends = (this && this.__extends) || (function () {
 })();
 var scenes;
 (function (scenes) {
-    var Play = /** @class */ (function (_super) {
-        __extends(Play, _super);
+    var LevelParent = /** @class */ (function (_super) {
+        __extends(LevelParent, _super);
         // PUBLIC PROPERTIES
         // CONSTRUCTOR
-        function Play() {
+        function LevelParent(next) {
             var _this = _super.call(this) || this;
             _this._scrollBuffer = 100;
             _this._movingForward = false;
@@ -33,6 +33,7 @@ var scenes;
             _this._playerLivesThumbs = [];
             _this._noOfEnemies = 5;
             _this._gernadeManager = new objects.GrenadeManager();
+            _this._nextLevel = next;
             _this.addEventListener("click", function (evt) {
                 _this.SendGrenade(evt.stageX, evt.stageY);
             });
@@ -60,7 +61,7 @@ var scenes;
             return _this;
         }
         // PUBLIC METHODS
-        Play.prototype.Start = function () {
+        LevelParent.prototype.Start = function () {
             this._player = new objects.Player();
             // Add Enemies to the array
             for (var i = 0; i < this._noOfEnemies; i++) { //TODO add a Variable for number of enemies currently hardcoded to 5
@@ -68,10 +69,10 @@ var scenes;
             }
             this.Main();
         };
-        Play.prototype.getRandomInt = function (max) {
+        LevelParent.prototype.getRandomInt = function (max) {
             return Math.floor(Math.random() * Math.floor(max));
         };
-        Play.prototype.CreatePowerup = function (x, y, id) {
+        LevelParent.prototype.CreatePowerup = function (x, y, id) {
             var _this = this;
             if (x === void 0) { x = -1; }
             if (y === void 0) { y = 0; }
@@ -104,7 +105,7 @@ var scenes;
                 this.addChild(p);
             }
         };
-        Play.prototype.SendGrenade = function (x, y) {
+        LevelParent.prototype.SendGrenade = function (x, y) {
             if (this._gernadeManager.GrenadeCount <= 0)
                 return;
             this.ChangeGrenades(-1);
@@ -112,7 +113,7 @@ var scenes;
             this._explosion.push(exp);
             this.addChild(exp);
         };
-        Play.prototype.UpdatePlayerLivesIndicator = function () {
+        LevelParent.prototype.UpdatePlayerLivesIndicator = function () {
             var _this = this;
             this._playerLivesThumbs.forEach(function (p) {
                 _this.removeChild(p);
@@ -129,7 +130,7 @@ var scenes;
                 this.addChild(img);
             }
         };
-        Play.prototype.SetGrenades = function (count) {
+        LevelParent.prototype.SetGrenades = function (count) {
             var _this = this;
             this._gernadeManager.GrenadeCount = count;
             var grenadeThumbs = this._gernadeManager.GrenadeThumbs;
@@ -144,16 +145,15 @@ var scenes;
                 this.addChild(img);
             }
         };
-        Play.prototype.ChangeGrenades = function (delta) {
-            console.log(delta, this._gernadeManager.GrenadeCount);
+        LevelParent.prototype.ChangeGrenades = function (delta) {
             this.SetGrenades(this._gernadeManager.GrenadeCount + delta);
         };
-        Play.prototype.KillEnemy = function (enemy) {
+        LevelParent.prototype.KillEnemy = function (enemy) {
             enemy.Die();
             this._deadEnemies.push(enemy);
             this._enemies.splice(this._enemies.indexOf(enemy), 1);
         };
-        Play.prototype.Update = function () {
+        LevelParent.prototype.Update = function () {
             var _this = this;
             // Reference to the Play Scene Object
             var that = this;
@@ -191,7 +191,6 @@ var scenes;
                     managers.Collision.AABBCheck(bullet, enemy);
                     if (enemy.isColliding) {
                         enemy.hitPoints--;
-                        console.log(enemy.hitPoints);
                         if (enemy.hitPoints == 0) {
                             that.KillEnemy(enemy);
                         }
@@ -236,7 +235,7 @@ var scenes;
                 if (this._distance_left <= 0) {
                     this._scrollBuffer = 0;
                     if (this._player.y <= 0) {
-                        config.Game.SCENE_STATE = scenes.State.END;
+                        config.Game.SCENE_STATE = this._nextLevel;
                     }
                 }
                 else {
@@ -263,7 +262,7 @@ var scenes;
                 }
             }
         };
-        Play.prototype.Main = function () {
+        LevelParent.prototype.Main = function () {
             var that = this;
             this.addChild(new objects.Rectangle(0, 0, 15, 480, "DarkGrey"));
             this.addChild(new objects.Rectangle(625, 0, 15, 480, "DarkGrey"));
@@ -276,8 +275,8 @@ var scenes;
                 that.addChild(enemy);
             });
         };
-        return Play;
+        return LevelParent;
     }(objects.Scene));
-    scenes.Play = Play;
+    scenes.LevelParent = LevelParent;
 })(scenes || (scenes = {}));
-//# sourceMappingURL=Play.js.map
+//# sourceMappingURL=LevelParent.js.map

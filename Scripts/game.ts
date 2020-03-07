@@ -14,7 +14,6 @@ let game = (function(){
      */
     function Start():void
     {
-        console.log(`%c Game Started`, "color: blue; font-size:20px;");
         stage = new createjs.Stage(canvas);
         stage.name = "Main Stage";
         config.Game.STAGE = stage; // create a reference to the Global Stage
@@ -47,8 +46,6 @@ let game = (function(){
      */
     function Main():void
     {
-        console.log(`%c Switching Scenes`, "color: green; font-size:16px;");
-
         // Clean Up
         if(currentSceneState != scenes.State.NO_SCENE)
         {
@@ -62,8 +59,14 @@ let game = (function(){
             case scenes.State.START:
                 currentScene = new scenes.Start();
                 break;
-            case scenes.State.PLAY:
-                currentScene = new scenes.Play();
+            case scenes.State.LEVEL1:
+                currentScene = new scenes.Level1();
+                break;
+            case scenes.State.LEVEL2:
+                currentScene = new scenes.Level2();
+                break;
+            case scenes.State.LEVEL3:
+                currentScene = new scenes.Level3();
                 break;
             case scenes.State.END:
                 currentScene = new scenes.End();

@@ -24,6 +24,10 @@ var scenes;
             _this.quote_delta = 0.005;
             // initialization
             _this.startLabel = [];
+            window.addEventListener('keydown', function (e) {
+                if (config.Game.SCENE_STATE == scenes.State.QUOTE)
+                    config.Game.SCENE_STATE = scenes.State.LEVEL1;
+            });
             _this.Start();
             return _this;
         }
@@ -41,9 +45,6 @@ var scenes;
                 new objects.Label("Both are equally terrifying.", fontSize, font, fontColor, xPos, 230, isCentered),
                 new objects.Label("  ― Arthur C. Clarke ", fontSize, font, fontColor, xPos, 270, isCentered)
             ];
-            window.addEventListener('keydown', function (e) {
-                config.Game.SCENE_STATE = scenes.State.PLAY;
-            });
             this.Main();
         };
         Quote.prototype.Update = function () {
@@ -57,7 +58,7 @@ var scenes;
             }
             // -10 used to allow for some delay on animation completion
             if (this.quote_alpha <= -0.25) {
-                config.Game.SCENE_STATE = scenes.State.PLAY;
+                config.Game.SCENE_STATE = scenes.State.LEVEL1;
             }
         };
         Quote.prototype.Main = function () {

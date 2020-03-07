@@ -4,7 +4,9 @@ module scenes
     {
         NO_SCENE = -1,
         START,
-        PLAY,
+        LEVEL1,
+        LEVEL2,
+        LEVEL3,
         END,
         NUM_OF_SCENES,
         QUOTE
