@@ -142,6 +142,7 @@ module objects {
                 this._state = -1;
                 this._isAlive = false
                 this.ExecuteDeathEvent();
+                config.Game.SCORE += this._maHP;
             }
         }
 

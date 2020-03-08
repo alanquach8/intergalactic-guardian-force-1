@@ -56,7 +56,7 @@ var scenes;
                 this._subBoss.Update();
                 this.Player.Bullets.forEach(function (bullet) {
                     managers.Collision.AABBCheck(_this._subBoss, bullet);
-                    if (bullet.isColliding) {
+                    if (bullet.isColliding && _this._subBoss.HP > 0) {
                         _this.Player.Bullets.splice(_this.Player.Bullets.indexOf(bullet), 1);
                         _this.removeChild(bullet);
                         _this._subBoss.ChangeHP(-1);
