@@ -32,6 +32,7 @@ var objects;
             _this._reloadCounter = 0;
             _this._isReviving = false;
             _this._wallBuffer = 30;
+            _this._score = 0;
             _this._forward = false;
             _this._backward = false;
             _this._left = false;
@@ -161,6 +162,16 @@ var objects;
             },
             set: function (newReloadSpeed) {
                 this._reloadSpeed = newReloadSpeed;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(Player.prototype, "Score", {
+            get: function () {
+                return this._score;
+            },
+            set: function (newScore) {
+                this._score = newScore;
             },
             enumerable: true,
             configurable: true

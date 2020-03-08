@@ -14,6 +14,7 @@ module objects {
         private _reloadCounter:number = 0;
         private _isReviving:boolean = false;
         private _wallBuffer = 30;
+        private _score:number = 0;
 
         private _forward:boolean = false;
         private _backward:boolean = false;
@@ -88,6 +89,14 @@ module objects {
 
         get ReloadSpeed():number {
             return this._reloadSpeed;
+        }
+
+        get Score():number {
+            return this._score;
+        }
+
+        set Score(newScore:number) {
+            this._score = newScore;
         }
 
         // CONSTRUCTOR

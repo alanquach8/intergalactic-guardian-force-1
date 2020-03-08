@@ -18,6 +18,7 @@ module scenes
         private _nextLevel: scenes.State;
         private _canFinish = true;
         private _endEventFired = false;
+        private _scoreLabel: objects.Label;
 
 
         // PUBLIC PROPERTIES
@@ -37,6 +38,8 @@ module scenes
             this._noOfEnemies = 5;
             this._gernadeManager = new objects.GrenadeManager();
             this._nextLevel = next;
+            this._scoreLabel = new objects.Label(this._player.Score.toString(),
+            "40px", "Consolas", "#000000", 0, 0);
 
 
             this.addEventListener("click", (evt: createjs.MouseEvent) => {
@@ -255,6 +258,7 @@ module scenes
                         enemy.hitPoints--;
                         if(enemy.hitPoints == 0) {
                             that.KillEnemy(enemy);
+                            that._player.Score++;
                         }
                         // remove the bullet
 
@@ -349,6 +353,10 @@ module scenes
                     this.PlayerMovementUpdate(y_delta);
                 }
             }
+            this.removeChild(this._scoreLabel);
+            this._scoreLabel = new objects.Label(this._player.Score.toString(),
+            "40px", "Consolas", "#000000", 0, 0);
+            this.addChild(this._scoreLabel);
             this.UpdateLevel();
         }
 
@@ -369,6 +377,8 @@ module scenes
             this._enemies.forEach((enemy)=>{
                 that.addChild(enemy);
             })
+
+            this.addChild(this._scoreLabel);
         }
 
         public get Enemies():objects.Enemy[]{
