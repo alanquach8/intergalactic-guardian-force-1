@@ -100,7 +100,7 @@ module objects {
         }
 
         // CONSTRUCTOR
-        constructor(imagePath:string="/Assets/images/player/top.png", x:number = 320, y:number = 250, isCentered:boolean = true) //TODO x, y Variables
+        constructor(imagePath:string="./Assets/images/player/top.png", x:number = 320, y:number = 250, isCentered:boolean = true) //TODO x, y Variables
         {
             super(imagePath, x, y, true);
             

@@ -18,7 +18,7 @@ var objects;
         __extends(Player, _super);
         // CONSTRUCTOR
         function Player(imagePath, x, y, isCentered) {
-            if (imagePath === void 0) { imagePath = "/Assets/images/player/top.png"; }
+            if (imagePath === void 0) { imagePath = "./Assets/images/player/top.png"; }
             if (x === void 0) { x = 320; }
             if (y === void 0) { y = 250; }
             if (isCentered === void 0) { isCentered = true; }
