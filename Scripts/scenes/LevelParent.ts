@@ -38,7 +38,7 @@ module scenes
             this._noOfEnemies = 5;
             this._gernadeManager = new objects.GrenadeManager();
             this._nextLevel = next;
-            this._scoreLabel = new objects.Label(this._player.Score.toString(),
+            this._scoreLabel = new objects.Label(config.Game.SCORE.toString(),
             "40px", "Consolas", "#000000", 0, 0);
 
 
@@ -258,7 +258,7 @@ module scenes
                         enemy.hitPoints--;
                         if(enemy.hitPoints == 0) {
                             that.KillEnemy(enemy);
-                            that._player.Score++;
+                            config.Game.SCORE++;
                         }
                         // remove the bullet
 
@@ -354,7 +354,7 @@ module scenes
                 }
             }
             this.removeChild(this._scoreLabel);
-            this._scoreLabel = new objects.Label(this._player.Score.toString(),
+            this._scoreLabel = new objects.Label(config.Game.SCORE.toString(),
             "40px", "Consolas", "#000000", 0, 0);
             this.addChild(this._scoreLabel);
             this.UpdateLevel();

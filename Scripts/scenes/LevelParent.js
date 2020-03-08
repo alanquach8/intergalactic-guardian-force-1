@@ -36,7 +36,7 @@ var scenes;
             _this._noOfEnemies = 5;
             _this._gernadeManager = new objects.GrenadeManager();
             _this._nextLevel = next;
-            _this._scoreLabel = new objects.Label(_this._player.Score.toString(), "40px", "Consolas", "#000000", 0, 0);
+            _this._scoreLabel = new objects.Label(config.Game.SCORE.toString(), "40px", "Consolas", "#000000", 0, 0);
             _this.addEventListener("click", function (evt) {
                 _this.SendGrenade(evt.stageX, evt.stageY);
             });
@@ -238,7 +238,7 @@ var scenes;
                         enemy.hitPoints--;
                         if (enemy.hitPoints == 0) {
                             that.KillEnemy(enemy);
-                            that._player.Score++;
+                            config.Game.SCORE++;
                         }
                         // remove the bullet
                         if (enemy.IsAlive) {
@@ -321,7 +321,7 @@ var scenes;
                 }
             }
             this.removeChild(this._scoreLabel);
-            this._scoreLabel = new objects.Label(this._player.Score.toString(), "40px", "Consolas", "#000000", 0, 0);
+            this._scoreLabel = new objects.Label(config.Game.SCORE.toString(), "40px", "Consolas", "#000000", 0, 0);
             this.addChild(this._scoreLabel);
             this.UpdateLevel();
         };
