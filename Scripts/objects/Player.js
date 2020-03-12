@@ -38,6 +38,7 @@ var objects;
             _this._left = false;
             _this._right = false;
             _this._shoot = false;
+            _this._pierceCount = 1;
             _this._facing = 270; // initially looking up (-90degrees on canvas axis = 270degrees on normal axis)
             _this._direction = new objects.Vector2(0, -1);
             _this._bullets = [];
@@ -82,6 +83,16 @@ var objects;
             _this.Start();
             return _this;
         }
+        Object.defineProperty(Player.prototype, "PierceCount", {
+            get: function () {
+                return this._pierceCount;
+            },
+            set: function (value) {
+                this._pierceCount = value;
+            },
+            enumerable: true,
+            configurable: true
+        });
         Object.defineProperty(Player.prototype, "IsReviving", {
             // PUBLIC PROPERTIES
             get: function () {
@@ -224,6 +235,7 @@ var objects;
                     bullet.y = this.y;
                     bullet.direction = this.Direction;
                     bullet.rotation = this.rotation;
+                    bullet.PierceCount = this._pierceCount;
                     this._bullets.push(bullet);
                     this.parent.addChild(bullet);
                     this._reloadCounter = this._reloadSpeed;

@@ -101,7 +101,8 @@ var scenes;
             if (id === void 0) { id = -1; }
             if (id == -1) {
                 // n cases (in the switch statement below) + 1
-                id = this.getRandomInt(2);
+                id = this.getRandomInt(3);
+                id = 2;
             }
             if (x == -1) {
                 x = this.getRandomInt(480);
@@ -119,6 +120,13 @@ var scenes;
                     p.ActivationEvent = function () {
                         _this._player.Life += 1;
                         _this.UpdatePlayerLivesIndicator();
+                    };
+                    break;
+                case 2:
+                    p = new objects.Powerup("./Assets/images/bullet/piercing_powerup.png", x, y);
+                    p.Scale = 0.5;
+                    p.ActivationEvent = function () {
+                        _this._player.PierceCount += 1;
                     };
                     break;
             }
@@ -235,16 +243,20 @@ var scenes;
                 that._player.Bullets.forEach(function (bullet) {
                     managers.Collision.AABBCheck(bullet, enemy);
                     if (enemy.isColliding) {
-                        enemy.hitPoints--;
-                        if (enemy.hitPoints == 0) {
-                            that.KillEnemy(enemy);
-                            config.Game.SCORE++;
+                        if (!bullet.IsEnemyBlacklisted(enemy)) {
+                            bullet.BlacklistEnemyDamage(enemy);
+                            enemy.hitPoints--;
+                            if (enemy.hitPoints == 0) {
+                                that.KillEnemy(enemy);
+                                config.Game.SCORE++;
+                            }
+                            console.log(bullet.ShouldImpactDelete());
+                            if (bullet.ShouldImpactDelete()) {
+                                that._player.Bullets.splice(that._player.Bullets.indexOf(bullet), 1);
+                                that.removeChild(bullet);
+                            }
                         }
                         // remove the bullet
-                        if (enemy.IsAlive) {
-                            that._player.Bullets.splice(that._player.Bullets.indexOf(bullet), 1);
-                            that.removeChild(bullet);
-                        }
                     }
                 });
                 that._explosion.forEach(function (exp) {

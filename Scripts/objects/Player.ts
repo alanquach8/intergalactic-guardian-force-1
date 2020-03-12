@@ -22,7 +22,17 @@ module objects {
         private _right:boolean = false;
         private _shoot:boolean = false;
 
+        private _pierceCount:number = 1;
+
         private _bullets:objects.Bullet[];
+
+        
+        get PierceCount():number{
+            return this._pierceCount;
+        }
+        set PierceCount(value:number){
+            this._pierceCount = value;
+        }
         
         // PUBLIC PROPERTIES
         get IsReviving():boolean{
@@ -211,6 +221,7 @@ module objects {
                     bullet.y = this.y;
                     bullet.direction = this.Direction;
                     bullet.rotation = this.rotation;
+                    bullet.PierceCount = this._pierceCount;
                     this._bullets.push(bullet);
                     this.parent.addChild(bullet);
                     this._reloadCounter = this._reloadSpeed;

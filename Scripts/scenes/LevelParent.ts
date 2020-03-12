@@ -104,7 +104,8 @@ module scenes
 
             if(id == -1){
                 // n cases (in the switch statement below) + 1
-                id = this.getRandomInt(2)
+                id = this.getRandomInt(3)
+                id = 2
             }
 
             if(x == -1){
@@ -126,6 +127,14 @@ module scenes
                         this.UpdatePlayerLivesIndicator();
                     };
                     break;    
+
+                case 2: 
+                    p = new objects.Powerup("./Assets/images/bullet/piercing_powerup.png", x, y);
+                    p.Scale = 0.5;
+                    p.ActivationEvent = () => {
+                        this._player.PierceCount += 1;
+                    };
+                    break; 
             }
             if(p != undefined){
                 this._powerups.push(p);
@@ -255,17 +264,24 @@ module scenes
                 that._player.Bullets.forEach((bullet)=>{
                     managers.Collision.AABBCheck(bullet, enemy);
                     if(enemy.isColliding) {
-                        enemy.hitPoints--;
-                        if(enemy.hitPoints == 0) {
-                            that.KillEnemy(enemy);
-                            config.Game.SCORE++;
-                        }
-                        // remove the bullet
+                        if (!bullet.IsEnemyBlacklisted(enemy)){
+                            bullet.BlacklistEnemyDamage(enemy);
 
-                        if (enemy.IsAlive){
-                            that._player.Bullets.splice(that._player.Bullets.indexOf(bullet), 1);
-                            that.removeChild(bullet);
+                            enemy.hitPoints--;
+                            if(enemy.hitPoints == 0) {
+                                that.KillEnemy(enemy);
+                                config.Game.SCORE++;
+                            }
+
+                            console.log(bullet.ShouldImpactDelete())
+                            if (bullet.ShouldImpactDelete()){
+                                that._player.Bullets.splice(that._player.Bullets.indexOf(bullet), 1);
+                                that.removeChild(bullet);
+                            }
                         }
+                        
+                        // remove the bullet
+                        
                     }
                 });
 

@@ -24,6 +24,8 @@ var objects;
             if (isCentered === void 0) { isCentered = true; }
             var _this = _super.call(this, imagePath, x, y, isCentered) || this;
             _this._speed = 20;
+            _this._pierceCount = 1;
+            _this._collidedWith = [];
             _this.position = new objects.Vector2(-1, -1);
             _this._direction = new objects.Vector2(0, -1);
             return _this;
@@ -35,6 +37,16 @@ var objects;
             },
             set: function (newDirection) {
                 this._direction = newDirection;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(Bullet.prototype, "PierceCount", {
+            get: function () {
+                return this._pierceCount;
+            },
+            set: function (value) {
+                this._pierceCount = value;
             },
             enumerable: true,
             configurable: true
@@ -65,6 +77,16 @@ var objects;
         };
         Bullet.prototype.IsOffScreen = function () {
             return this.x < 0 || this.x > 640 || this.y < 0 || this.y > 480;
+        };
+        Bullet.prototype.IsEnemyBlacklisted = function (e) {
+            return this._collidedWith.indexOf(e) > -1;
+        };
+        Bullet.prototype.BlacklistEnemyDamage = function (e) {
+            this._collidedWith.push(e);
+        };
+        Bullet.prototype.ShouldImpactDelete = function () {
+            console.log(this._collidedWith.length);
+            return this._collidedWith.length >= this._pierceCount;
         };
         return Bullet;
     }(objects.GameObject));
