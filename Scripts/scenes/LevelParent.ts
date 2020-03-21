@@ -105,7 +105,6 @@ module scenes
             if(id == -1){
                 // n cases (in the switch statement below) + 1
                 id = this.getRandomInt(3)
-                id = 2
             }
 
             if(x == -1){
@@ -319,6 +318,9 @@ module scenes
 
                 if (this._movingBackward)
                     y_delta *= -1;
+
+                if (this._movingForward && this._movingBackward)
+                    y_delta = 0;
 
                 
                 this._distance_left += y_delta;

@@ -102,7 +102,6 @@ var scenes;
             if (id == -1) {
                 // n cases (in the switch statement below) + 1
                 id = this.getRandomInt(3);
-                id = 2;
             }
             if (x == -1) {
                 x = this.getRandomInt(480);
@@ -288,6 +287,8 @@ var scenes;
                 var y_delta_1 = this._player.Direction.y * this._player.Speed;
                 if (this._movingBackward)
                     y_delta_1 *= -1;
+                if (this._movingForward && this._movingBackward)
+                    y_delta_1 = 0;
                 this._distance_left += y_delta_1;
                 if (this._distance_left <= 0) {
                     if (!this._endEventFired) {
