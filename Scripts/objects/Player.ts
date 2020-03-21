@@ -126,7 +126,7 @@ module objects {
                 this._controlArray = ["KeyW", "KeyS", "KeyD", "KeyA", "Space"];
                 this.x = 200;
             } else {
-                this._controlArray = ["ArrowUp", "ArrowDown", "ArrowRight", "ArrowLeft", "ControlRight"];
+                this._controlArray = ["ArrowUp", "ArrowDown", "ArrowRight", "ArrowLeft", "ShiftRight"];
                 this.x = 440;
             }
             window.addEventListener('keyup', (e) => {

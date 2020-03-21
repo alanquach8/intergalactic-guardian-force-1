@@ -20,6 +20,10 @@ var scenes;
         // CONSTRUCTOR
         function LevelParent(next) {
             var _this = _super.call(this) || this;
+            // PRIVATE INSTANCE MEMBERS
+            // private _player:objects.Player;
+            // private _player2: objects.Player;
+            _this.noOfPlayers = config.Game.NO_OF_PLAYERS;
             _this._scrollBuffer = 150;
             _this._movingForward = false;
             _this._movingBackward = false;
@@ -27,8 +31,9 @@ var scenes;
             _this._canFinish = true;
             _this._endEventFired = false;
             // initialization
-            _this._player = new objects.Player(1);
-            _this._player2 = new objects.Player(2);
+            // this._player = new objects.Player(1);
+            // this._player2 = new objects.Player(2);
+            _this._players = new Array();
             _this._enemies = new Array();
             _this._deadEnemies = new Array();
             _this._powerups = new Array();
@@ -49,6 +54,12 @@ var scenes;
                     case "ArrowDown":
                         _this._movingBackward = false;
                         break;
+                    case "KeyW":
+                        _this._movingForward = false;
+                        break;
+                    case "KeyS":
+                        _this._movingBackward = false;
+                        break;
                 }
             });
             window.addEventListener('keydown', function (e) {
@@ -57,6 +68,12 @@ var scenes;
                         _this._movingForward = true;
                         break;
                     case "ArrowDown":
+                        _this._movingBackward = true;
+                        break;
+                    case "KeyW":
+                        _this._movingForward = true;
+                        break;
+                    case "KeyS":
                         _this._movingBackward = true;
                         break;
                 }
@@ -85,8 +102,11 @@ var scenes;
         });
         // PUBLIC METHODS
         LevelParent.prototype.Start = function () {
-            this._player = new objects.Player(1);
-            this._player2 = new objects.Player(2);
+            // this._player = new objects.Player(1);
+            // this._player2 = new objects.Player(2);
+            for (var i = 1; i < this.noOfPlayers + 1; i++) { // CHANGE 'players' variable to an option... config?
+                this._players.push(new objects.Player(i));
+            }
             // Add Enemies to the array
             for (var i = 0; i < this._noOfEnemies; i++) { //TODO add a Variable for number of enemies currently hardcoded to 5
                 this._enemies.push(new objects.Enemy());
@@ -119,8 +139,11 @@ var scenes;
                     p = new objects.Powerup("./Assets/images/player/front.png", x, y);
                     p.Scale = 0.5;
                     p.ActivationEvent = function () {
-                        _this._player.Life += 1;
-                        _this._player2.Life += 1;
+                        for (var i = 0; i < _this.noOfPlayers; i++) {
+                            _this._players[i].Life += 1;
+                        }
+                        // this._player.Life += 1;
+                        // this._player2.Life += 1;
                         _this.UpdatePlayerLivesIndicator();
                     };
                     break;
@@ -128,7 +151,9 @@ var scenes;
                     p = new objects.Powerup("./Assets/images/bullet/piercing_powerup.png", x, y);
                     p.Scale = 0.5;
                     p.ActivationEvent = function () {
-                        _this._player.PierceCount += 1;
+                        for (var i = 0; i < _this.noOfPlayers; i++) {
+                            _this._players[i].PierceCount += 1;
+                        }
                     };
                     break;
             }
@@ -139,7 +164,7 @@ var scenes;
         };
         Object.defineProperty(LevelParent.prototype, "Player", {
             get: function () {
-                return this._player;
+                return this._players[0];
             },
             enumerable: true,
             configurable: true
@@ -158,7 +183,7 @@ var scenes;
                 _this.removeChild(p);
             });
             var x = 640;
-            for (var i = 0; i < this._player.Life; i++) {
+            for (var i = 0; i < this._players[0].Life; i++) {
                 var img = new createjs.Bitmap("./Assets/images/player/front.png");
                 img.scaleX = 0.5;
                 img.scaleY = 0.5;
@@ -217,14 +242,16 @@ var scenes;
                 this._enemies.push(new objects.Enemy());
                 this.addChild(this._enemies[this._enemies.length - 1]);
             }
-            if (this._player.visible) {
-                this._player.Update();
+            for (var i = 0; i < this.noOfPlayers; i++) {
+                if (this._players[i].visible) {
+                    this._players[i].Update();
+                }
+                else {
+                    // game over
+                    config.Game.SCENE_STATE = scenes.State.END;
+                }
+                this._players[i].Update();
             }
-            else {
-                // game over
-                config.Game.SCENE_STATE = scenes.State.END;
-            }
-            this._player2.Update();
             this._explosion.forEach(function (exp) {
                 if (exp.Done) {
                     _this._explosion.splice(_this._explosion.indexOf(exp), 1);
@@ -233,50 +260,58 @@ var scenes;
                 exp.Update();
             });
             this._powerups.forEach(function (p) {
-                managers.Collision.AABBCheck(_this._player, p);
-                if (p.isColliding) {
-                    p.ActivationEvent();
-                    _this._powerups.splice(_this._powerups.indexOf(p), 1);
-                    _this.removeChild(p);
+                for (var i = 0; i < _this.noOfPlayers; i++) {
+                    managers.Collision.AABBCheck(_this._players[i], p);
+                    if (p.isColliding) {
+                        p.ActivationEvent();
+                        _this._powerups.splice(_this._powerups.indexOf(p), 1);
+                        _this.removeChild(p);
+                    }
                 }
             });
             this._enemies.forEach(function (enemy) {
-                enemy.Update(that._player.x, that._player.y);
-                // Bullets and Enemy Collision Check
-                that._player.Bullets.concat(that._player2.Bullets).forEach(function (bullet) {
-                    managers.Collision.AABBCheck(bullet, enemy);
-                    if (enemy.isColliding) {
-                        if (!bullet.IsEnemyBlacklisted(enemy)) {
-                            bullet.BlacklistEnemyDamage(enemy);
-                            enemy.hitPoints--;
-                            if (enemy.hitPoints == 0) {
-                                that.KillEnemy(enemy);
-                                config.Game.SCORE++;
-                            }
-                            console.log(bullet.ShouldImpactDelete());
-                            if (bullet.ShouldImpactDelete()) {
-                                that._player.Bullets.splice(that._player.Bullets.indexOf(bullet), 1);
-                                that.removeChild(bullet);
+                enemy.Update(that._players[0].x, that._players[0].y);
+                var _loop_2 = function (i) {
+                    that._players[i].Bullets.forEach(function (bullet) {
+                        managers.Collision.AABBCheck(bullet, enemy);
+                        if (enemy.isColliding) {
+                            if (!bullet.IsEnemyBlacklisted(enemy)) {
+                                bullet.BlacklistEnemyDamage(enemy);
+                                enemy.hitPoints--;
+                                if (enemy.hitPoints == 0) {
+                                    that.KillEnemy(enemy);
+                                    config.Game.SCORE++;
+                                }
+                                console.log(bullet.ShouldImpactDelete());
+                                if (bullet.ShouldImpactDelete()) {
+                                    that._players[i].Bullets.splice(that._players[i].Bullets.indexOf(bullet), 1);
+                                    that.removeChild(bullet);
+                                }
                             }
                         }
-                        // remove the bullet
-                    }
-                });
+                    });
+                };
+                // Bullets and Enemy Collision Check
+                for (var i = 0; i < _this.noOfPlayers; i++) {
+                    _loop_2(i);
+                }
                 that._explosion.forEach(function (exp) {
                     managers.Collision.AABBCheck(exp, enemy);
                     if (enemy.isColliding)
                         that.KillEnemy(enemy);
                 });
                 // Enemy and Player Collision Check
-                managers.Collision.AABBCheck(enemy, that._player);
-                if (that._player.isColliding && !that._player.IsReviving) {
-                    that._player.Life--;
-                    _this.UpdatePlayerLivesIndicator();
-                    if (that._player.Life == 0) {
-                        config.Game.SCENE_STATE = scenes.State.LOOSE;
-                    }
-                    else {
-                        that._player.Reset();
+                for (var i = 0; i < _this.noOfPlayers; i++) {
+                    managers.Collision.AABBCheck(enemy, that._players[i]);
+                    if (that._players[i].isColliding && !that._players[i].IsReviving) {
+                        that._players[i].Life--;
+                        _this.UpdatePlayerLivesIndicator();
+                        if (that._players[i].Life == 0) {
+                            config.Game.SCENE_STATE = scenes.State.LOOSE;
+                        }
+                        else {
+                            that._players[i].Reset();
+                        }
                     }
                 }
             });
@@ -287,55 +322,61 @@ var scenes;
                     that.removeChild(enemy);
                 }
             });
-            if ((this._movingForward || this._movingBackward) && (this._player.y < this._scrollBuffer || this._player2.y < this._scrollBuffer)) {
-                var y_delta_1 = this._player.Direction.y * this._player.Speed;
-                if (this._movingBackward)
-                    y_delta_1 *= -1;
-                if (this._movingForward && this._movingBackward)
-                    y_delta_1 = 0;
-                this._distance_left += y_delta_1;
-                if (this._distance_left <= 0) {
-                    if (!this._endEventFired) {
-                        this._endEventFired = true;
-                        this.ReachedLevelEnd();
+            var _loop_1 = function (i) {
+                if ((this_1._movingForward || this_1._movingBackward) && this_1._players[i].y < this_1._scrollBuffer) {
+                    var y_delta_1 = this_1._players[i].Direction.y * this_1._players[i].Speed;
+                    if (this_1._movingBackward)
+                        y_delta_1 *= -1;
+                    if (this_1._movingForward && this_1._movingBackward)
+                        y_delta_1 = 0;
+                    this_1._distance_left += y_delta_1;
+                    if (this_1._distance_left <= 0) {
+                        if (!this_1._endEventFired) {
+                            this_1._endEventFired = true;
+                            this_1.ReachedLevelEnd();
+                        }
+                        this_1._scrollBuffer = 0;
+                        if (this_1._players[i].y <= 0) {
+                            if (this_1._canFinish) {
+                                config.Game.SCENE_STATE = this_1._nextLevel;
+                            }
+                            else {
+                                this_1._players[i].y = 1;
+                            }
+                        }
                     }
-                    this._scrollBuffer = 0;
-                    if (this._player.y <= 0) {
-                        if (this._canFinish) {
-                            config.Game.SCENE_STATE = this._nextLevel;
+                    else {
+                        if (this_1._distance_left % 200 < 1) {
+                            this_1.CreatePowerup();
                         }
-                        else {
-                            this._player.y = 1;
-                        }
+                        this_1._players[i].y = this_1._scrollBuffer;
+                        this_1._powerups.forEach(function (power) {
+                            power.y -= y_delta_1;
+                            power.position = new objects.Vector2(power.x, power.y);
+                        });
+                        this_1._explosion.forEach(function (exp) {
+                            exp.y -= y_delta_1;
+                            exp.position = new objects.Vector2(exp.x, exp.y);
+                        });
+                        this_1._deadEnemies.forEach(function (enemy) {
+                            enemy.y -= y_delta_1;
+                            enemy.position = new objects.Vector2(enemy.x, enemy.y);
+                        });
+                        this_1._enemies.forEach(function (enemy) {
+                            enemy.y -= y_delta_1;
+                            enemy.position = new objects.Vector2(enemy.x, enemy.y);
+                            if (enemy.y > 520) {
+                                _this.removeChild(enemy);
+                                _this._enemies.splice(_this._enemies.indexOf(enemy), 1);
+                            }
+                        });
+                        this_1.PlayerMovementUpdate(y_delta_1);
                     }
                 }
-                else {
-                    if (this._distance_left % 200 < 1) {
-                        this.CreatePowerup();
-                    }
-                    this._player.y = this._scrollBuffer;
-                    this._powerups.forEach(function (power) {
-                        power.y -= y_delta_1;
-                        power.position = new objects.Vector2(power.x, power.y);
-                    });
-                    this._explosion.forEach(function (exp) {
-                        exp.y -= y_delta_1;
-                        exp.position = new objects.Vector2(exp.x, exp.y);
-                    });
-                    this._deadEnemies.forEach(function (enemy) {
-                        enemy.y -= y_delta_1;
-                        enemy.position = new objects.Vector2(enemy.x, enemy.y);
-                    });
-                    this._enemies.forEach(function (enemy) {
-                        enemy.y -= y_delta_1;
-                        enemy.position = new objects.Vector2(enemy.x, enemy.y);
-                        if (enemy.y > 520) {
-                            _this.removeChild(enemy);
-                            _this._enemies.splice(_this._enemies.indexOf(enemy), 1);
-                        }
-                    });
-                    this.PlayerMovementUpdate(y_delta_1);
-                }
+            };
+            var this_1 = this;
+            for (var i = 0; i < this.noOfPlayers; i++) {
+                _loop_1(i);
             }
             this.removeChild(this._scoreLabel);
             this._scoreLabel = new objects.Label(config.Game.SCORE.toString(), "40px", "Consolas", "#000000", 0, 0);
@@ -347,8 +388,9 @@ var scenes;
             this.addChild(new objects.Rectangle(0, 0, 15, 480, "DarkGrey"));
             this.addChild(new objects.Rectangle(625, 0, 15, 480, "DarkGrey"));
             this.addChild(new objects.Rectangle(15, 0, 610, 480, "GhostWhite"));
-            this.addChild(this._player);
-            this.addChild(this._player2);
+            for (var i = 0; i < this.noOfPlayers; i++) {
+                this.addChild(this._players[i]);
+            }
             this.SetGrenades(2);
             this.UpdatePlayerLivesIndicator();
             this._gernadeManager.GrenadeCount = 2;

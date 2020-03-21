@@ -48,7 +48,7 @@ var objects;
                 _this.x = 200;
             }
             else {
-                _this._controlArray = ["ArrowUp", "ArrowDown", "ArrowRight", "ArrowLeft", "ControlRight"];
+                _this._controlArray = ["ArrowUp", "ArrowDown", "ArrowRight", "ArrowLeft", "ShiftRight"];
                 _this.x = 440;
             }
             window.addEventListener('keyup', function (e) {
