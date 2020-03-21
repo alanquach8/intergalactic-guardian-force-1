@@ -17,7 +17,7 @@ var objects;
     var Player = /** @class */ (function (_super) {
         __extends(Player, _super);
         // CONSTRUCTOR
-        function Player(imagePath, x, y, isCentered) {
+        function Player(playerId, imagePath, x, y, isCentered) {
             if (imagePath === void 0) { imagePath = "./Assets/images/player/top.png"; }
             if (x === void 0) { x = 320; }
             if (y === void 0) { y = 250; }
@@ -42,40 +42,50 @@ var objects;
             _this._facing = 270; // initially looking up (-90degrees on canvas axis = 270degrees on normal axis)
             _this._direction = new objects.Vector2(0, -1);
             _this._bullets = [];
+            _this._playerId = playerId;
+            if (playerId == 1) {
+                _this._controlArray = ["KeyW", "KeyS", "KeyD", "KeyA", "Space"];
+                _this.x = 200;
+            }
+            else {
+                _this._controlArray = ["ArrowUp", "ArrowDown", "ArrowRight", "ArrowLeft", "ControlRight"];
+                _this.x = 440;
+            }
             window.addEventListener('keyup', function (e) {
+                console.log(e.code);
                 switch (e.code) {
-                    case "ArrowUp":
+                    case _this._controlArray[0]:
                         _this._forward = false;
                         break;
-                    case "ArrowDown":
+                    case _this._controlArray[1]:
                         _this._backward = false;
                         break;
-                    case "ArrowRight":
+                    case _this._controlArray[2]:
                         _this._right = false;
                         break;
-                    case "ArrowLeft":
+                    case _this._controlArray[3]:
                         _this._left = false;
                         break;
-                    case "Space":
+                    case _this._controlArray[4]:
                         _this._shoot = false;
                         break;
                 }
             });
             window.addEventListener('keydown', function (e) {
                 switch (e.code) {
-                    case "ArrowUp":
+                    case _this._controlArray[0]:
                         _this._forward = true;
                         break;
-                    case "ArrowDown":
+                    case _this._controlArray[1]:
                         _this._backward = true;
                         break;
-                    case "ArrowRight":
+                    case _this._controlArray[2]:
                         _this._right = true;
                         break;
-                    case "ArrowLeft":
+                    case _this._controlArray[3]:
                         _this._left = true;
                         break;
-                    case "Space":
+                    case _this._controlArray[4]:
                         _this._shoot = true;
                         break;
                 }

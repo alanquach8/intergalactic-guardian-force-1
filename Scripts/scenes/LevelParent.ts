@@ -4,6 +4,7 @@ module scenes
     {
         // PRIVATE INSTANCE MEMBERS
         private _player:objects.Player;
+        private _player2: objects.Player
         private _enemies:objects.Enemy[];
         private _deadEnemies:objects.Enemy[];
         private _explosion:objects.Explosion[];
@@ -29,7 +30,8 @@ module scenes
             super();
 
             // initialization
-            this._player = new objects.Player();
+            this._player = new objects.Player(1);
+            this._player2 = new objects.Player(2);
             this._enemies = new Array();
             this._deadEnemies = new Array();
             this._powerups = new Array();
@@ -87,7 +89,8 @@ module scenes
 
         public Start(): void 
         {
-            this._player = new objects.Player();
+            this._player = new objects.Player(1);
+            this._player2 = new objects.Player(2);
             // Add Enemies to the array
             for(let i = 0; i < this._noOfEnemies; i++){ //TODO add a Variable for number of enemies currently hardcoded to 5
                 this._enemies.push(new objects.Enemy());
@@ -123,6 +126,7 @@ module scenes
                     p.Scale = 0.5;
                     p.ActivationEvent = () => {
                         this._player.Life += 1;
+                        this._player2.Life += 1;
                         this.UpdatePlayerLivesIndicator();
                     };
                     break;    
@@ -237,6 +241,8 @@ module scenes
                 // game over
                 config.Game.SCENE_STATE = scenes.State.END;
             }
+
+            this._player2.Update();
             
             this._explosion.forEach(exp => {
                 if (exp.Done){
@@ -260,7 +266,7 @@ module scenes
                 enemy.Update(that._player.x, that._player.y);
 
                 // Bullets and Enemy Collision Check
-                that._player.Bullets.forEach((bullet)=>{
+                that._player.Bullets.concat(that._player2.Bullets).forEach((bullet)=>{
                     managers.Collision.AABBCheck(bullet, enemy);
                     if(enemy.isColliding) {
                         if (!bullet.IsEnemyBlacklisted(enemy)){
@@ -313,7 +319,7 @@ module scenes
                 }
             });
 
-            if ((this._movingForward || this._movingBackward) && this._player.y < this._scrollBuffer){
+            if ((this._movingForward || this._movingBackward) && (this._player.y < this._scrollBuffer || this._player2.y < this._scrollBuffer)){
                 let y_delta = this._player.Direction.y * this._player.Speed;
 
                 if (this._movingBackward)
@@ -386,6 +392,7 @@ module scenes
             this.addChild(new objects.Rectangle(15, 0, 610, 480, "GhostWhite"))
             
             this.addChild(this._player);
+            this.addChild(this._player2);
 
             this.SetGrenades(2);
             this.UpdatePlayerLivesIndicator();
