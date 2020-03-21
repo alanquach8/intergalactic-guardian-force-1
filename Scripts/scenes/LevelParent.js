@@ -26,6 +26,7 @@ var scenes;
             _this._distance_left = 1000;
             _this._canFinish = true;
             _this._endEventFired = false;
+            _this._isActive = false;
             // initialization
             _this._player = new objects.Player();
             _this._enemies = new Array();
@@ -38,6 +39,61 @@ var scenes;
             _this._nextLevel = next;
             _this._scoreLabel = new objects.Label(config.Game.SCORE.toString(), "40px", "Consolas", "#000000", 0, 0);
             _this._segways = [];
+            document.body.querySelector("#cheatCodeButton").addEventListener("click", function () {
+                if (_this._isActive) {
+                    var code = document.body.querySelector("#cheatCode").value.split(" ");
+                    if (code.length == 0) {
+                        return;
+                    }
+                    if (code[0] == "spawn") {
+                        if (code.length < 2) {
+                            _this.CheatCodeFeedback("Invalid Use Of Spawn Command. <br>Usage: spawn <object> [x] [y] [id]");
+                            return;
+                        }
+                        var x = 100;
+                        var y = 100;
+                        var id = _this.getRandomInt(3);
+                        switch (code[1]) {
+                            case "segway":
+                                if (code.length >= 4) {
+                                    x = Number(code[2]);
+                                    y = Number(code[3]);
+                                }
+                                _this.AddSegways(1, x, y);
+                                _this.CheatCodeFeedback("Spawned Segway At x=" + x + " y=" + y, "green");
+                                break;
+                            case "powerup":
+                                if (code.length == 3) {
+                                    _this.CheatCodeFeedback("Invalid Use Of Spawn Command. <br>Usage: spawn <object> [x] [y] [id]");
+                                    return;
+                                }
+                                if (code.length == 4) {
+                                    x = Number(code[2]);
+                                    y = Number(code[3]);
+                                }
+                                else if (code.length >= 5) {
+                                    x = Number(code[2]);
+                                    y = Number(code[3]);
+                                    id = Number(code[4]);
+                                }
+                                _this.CreatePowerup(x, y, id);
+                                _this.CheatCodeFeedback("Spawned Powerup At x=" + x + " y=" + y + " id=" + id, "green");
+                                break;
+                            case "enemy":
+                                if (code.length >= 4) {
+                                    x = Number(code[2]);
+                                    y = Number(code[3]);
+                                }
+                                _this.SpawnEnemy(x, y);
+                                _this.CheatCodeFeedback("Spawned Enemy At x=" + x + " y=" + y, "green");
+                                break;
+                            default:
+                                _this.CheatCodeFeedback("Invalid Use Of Spawn Command. <br>Unknown Entity: " + code[1]);
+                        }
+                    }
+                    _this.ProcessCommand(code);
+                }
+            });
             _this.addEventListener("click", function (evt) {
                 _this.SendGrenade(evt.stageX, evt.stageY);
             });
@@ -66,9 +122,21 @@ var scenes;
             _this.Start();
             return _this;
         }
-        LevelParent.prototype.AddSegways = function (amount) {
+        LevelParent.prototype.CheatCodeFeedback = function (text, color) {
+            if (color === void 0) { color = "red"; }
+            var feedback = document.body.querySelector("#cheatCodeFeedback");
+            if (feedback != null) {
+                feedback.innerHTML = text;
+                feedback.setAttribute("style", "margin: 0px; color:" + color);
+            }
+        };
+        LevelParent.prototype.ProcessCommand = function (command) {
+        };
+        LevelParent.prototype.AddSegways = function (amount, x, y) {
+            if (x === void 0) { x = 100; }
+            if (y === void 0) { y = 100; }
             for (var i = 0; i < amount; i++) {
-                var s = new objects.Segway();
+                var s = new objects.Segway(undefined, x, y);
                 this._segways.push(s);
                 this.addChild(s);
             }
@@ -216,8 +284,15 @@ var scenes;
         };
         LevelParent.prototype.PlayerMovementUpdate = function (y_delta) {
         };
+        LevelParent.prototype.SpawnEnemy = function (x, y) {
+            if (x === void 0) { x = -1; }
+            if (y === void 0) { y = -1; }
+            this._enemies.push(new objects.Enemy(new objects.Vector2(x, y)));
+            this.addChild(this._enemies[this._enemies.length - 1]);
+        };
         LevelParent.prototype.Update = function () {
             var _this = this;
+            this._isActive = true;
             // Reference to the Play Scene Object
             var that = this;
             // add more enemies if one dies
@@ -230,6 +305,7 @@ var scenes;
             }
             else {
                 // game over
+                this._isActive = false;
                 config.Game.SCENE_STATE = scenes.State.END;
             }
             this._explosion.forEach(function (exp) {
@@ -298,6 +374,7 @@ var scenes;
                     }
                     _this.UpdatePlayerLivesIndicator();
                     if (that._player.Life == 0) {
+                        _this._isActive = false;
                         config.Game.SCENE_STATE = scenes.State.LOOSE;
                     }
                     else {
@@ -327,6 +404,7 @@ var scenes;
                     this._scrollBuffer = 0;
                     if (this._player.y <= 0) {
                         if (this._canFinish) {
+                            this._isActive = false;
                             config.Game.SCENE_STATE = this._nextLevel;
                         }
                         else {

@@ -56,3 +56,44 @@ body{
 h4{
     margin-bottom: 3px;
 }
+
+.cheatCodes{
+    width: 90%;
+    height: 20px;
+    background-color: black;
+    border: none;
+    color: green;
+    padding: 3px;
+}
+button.cheatCodes{
+    margin-top: 5px;
+    cursor: pointer;
+}
+
+ .collapsible {
+    background-color: #131313;
+    color: #444;
+    cursor: pointer;
+    padding: 3px;
+    margin-top: 8px;
+    width: 300px;
+    border: none;
+    text-align: left;
+    outline: none;
+    font-size: 15px;
+    color: green;
+  }
+  
+  .active, .collapsible:hover {
+    background-color: #000000;
+  }
+  
+  .content {
+    width: 300px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 5px 0px;
+    display: none;
+    overflow: hidden;
+    background-color: #131313;
+  } 

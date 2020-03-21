@@ -46,13 +46,17 @@ module objects
         }
 
         // CONSTRUCTOR
-        constructor(playerPosition:Vector2 = new Vector2(10, 10), containerWidth:number = 640, containerHeight:number = 480)
+        constructor(playerPosition:Vector2 = new Vector2(10, 10), containerWidth:number = 640, containerHeight:number = 480, startx:number=-1, starty:number=-1)
         {
 
             super("./Assets/images/enemy/minion/minion.png", 200, 200, true);
 
             // create enemy
-            this.position = this._getRandomPoints(playerPosition, containerWidth, containerHeight);
+            if(startx == -1 && starty == -1)
+                this.position = this._getRandomPoints(playerPosition, containerWidth, containerHeight);
+            else
+            this.position = new Vector2(startx, starty);
+
             this.playerPosition = playerPosition;
             this.isMoving = false;
             // Set the random moving speed
