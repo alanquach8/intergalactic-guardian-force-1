@@ -119,7 +119,7 @@ module scenes
                                 this.CheatCodeFeedback("Set Number Of Grenades To " + value, "green");
                                 break;
                             case "lives":
-                                this._player.Life = value;
+                                this._players[0].Life = value;
                                 this.UpdatePlayerLivesIndicator();
                                 this.CheatCodeFeedback("Set Number Of Lives To " + value, "green");
                                 break;

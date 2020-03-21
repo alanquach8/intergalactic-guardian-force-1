@@ -110,7 +110,7 @@ var scenes;
                                 _this.CheatCodeFeedback("Set Number Of Grenades To " + value, "green");
                                 break;
                             case "lives":
-                                _this._player.Life = value;
+                                _this._players[0].Life = value;
                                 _this.UpdatePlayerLivesIndicator();
                                 _this.CheatCodeFeedback("Set Number Of Lives To " + value, "green");
                                 break;
@@ -386,13 +386,13 @@ var scenes;
                 this._enemies.push(enemy);
                 this.addChild(this._enemies[this._enemies.length - 1]);
             }
-
             for (var i = 0; i < this.noOfPlayers; i++) {
                 if (this._players[i].visible) {
                     this._players[i].Update();
                 }
                 else {
                     // game over
+                    this._isActive = false;
                     config.Game.SCENE_STATE = scenes.State.END;
                 }
                 this._players[i].Update();
@@ -457,7 +457,6 @@ var scenes;
                     if (enemy.isColliding)
                         that.KillEnemy(enemy);
                 });
-
                 var _loop_3 = function (i) {
                     managers.Collision.AABBCheck(enemy, that._players[i]);
                     if (that._players[i].isColliding && !that._players[i].IsReviving) {
@@ -520,6 +519,7 @@ var scenes;
                         this_1._scrollBuffer = 0;
                         if (this_1._players[i].y <= 0) {
                             if (this_1._canFinish) {
+                                this_1._isActive = false;
                                 config.Game.SCENE_STATE = this_1._nextLevel;
                             }
                             else {
