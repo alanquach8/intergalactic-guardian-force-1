@@ -32,6 +32,7 @@ var objects;
             _this._hitPoints = 5;
             _this.isDying = false;
             _this.isDead = false;
+            _this._lockTo = 0;
             /**
              * This method will move the enemy towards to player
              *
@@ -72,8 +73,18 @@ var objects;
             _this.Start();
             return _this;
         }
-        Object.defineProperty(Enemy.prototype, "IsAlive", {
+        Object.defineProperty(Enemy.prototype, "LockTo", {
             // PUBLIC PROPERTIES
+            get: function () {
+                return this._lockTo;
+            },
+            set: function (newState) {
+                this._lockTo = newState;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(Enemy.prototype, "IsAlive", {
             get: function () {
                 return this.isAlive;
             },

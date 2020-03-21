@@ -6,5 +6,7 @@ module config
         public static SCENE_STATE: scenes.State;
 
         public static SCORE: number = 0;
+
+        public static NO_OF_PLAYERS: number = 2;
     }
 }

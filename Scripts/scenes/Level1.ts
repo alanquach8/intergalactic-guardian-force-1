@@ -2,12 +2,13 @@ module scenes
 {
     export class Level1 extends LevelParent
     {
-        private _subBoss: objects.SubBoss = new objects.SubBoss(new objects.Player, true);
+        private _subBoss: objects.SubBoss;
         private _spawnedBoss = false;
 
         constructor(scene=scenes.State.LEVEL2){
             
             super(scene);
+            this._subBoss = new objects.SubBoss(new objects.Player(0), true)
             this.CanFinish = false;
         }
 

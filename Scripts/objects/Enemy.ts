@@ -11,9 +11,17 @@ module objects
         _hitPoints:number = 5;
         isDying:boolean = false;
         isDead:boolean = false;
+        _lockTo:number = 0;
 
 
         // PUBLIC PROPERTIES
+        get LockTo() {
+            return this._lockTo;
+        }
+        set LockTo(newState:number) {
+            this._lockTo = newState;
+        }
+        
         get IsAlive(){
             return this.isAlive;
         }

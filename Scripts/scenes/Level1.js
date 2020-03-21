@@ -19,8 +19,8 @@ var scenes;
         function Level1(scene) {
             if (scene === void 0) { scene = scenes.State.LEVEL2; }
             var _this = _super.call(this, scene) || this;
-            _this._subBoss = new objects.SubBoss(new objects.Player, true);
             _this._spawnedBoss = false;
+            _this._subBoss = new objects.SubBoss(new objects.Player(0), true);
             _this.CanFinish = false;
             return _this;
         }

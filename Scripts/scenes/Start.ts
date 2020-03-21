@@ -4,7 +4,8 @@ module scenes
     {
         // PRIVATE INSTANCE MEMBERS
         logoImage:createjs.Bitmap;
-        startButton:objects.Button;
+        play1:objects.Button;
+        play2:objects.Button;
         companyLabel:objects.Label;
 
 
@@ -26,7 +27,8 @@ module scenes
             this.logoImage.x = 320;
             this.logoImage.y = 10;
 
-            this.startButton = new objects.Button();
+            this.play1 = new objects.Button();
+            this.play2 = new objects.Button();
             this.companyLabel = new objects.Label();
 
             this.Start();
@@ -36,7 +38,8 @@ module scenes
 
         public Start(): void 
         {
-            this.startButton = new objects.Button("./Assets/images/ui/buttons/play.png", 320, 240, true);
+            this.play1 = new objects.Button("./Assets/images/ui/buttons/play.png", 320, 240, true);
+            this.play2 = new objects.Button("./Assets/images/ui/buttons/play.png", 320, 300, true);
             this.companyLabel = new objects.Label("MACK Address Games", "15px","Consolas", "Green", 320, 90, true);
 
            
@@ -54,12 +57,20 @@ module scenes
             
             this.addChild(this.logoImage);
             this.addChild(this.companyLabel)
-            this.addChild(this.startButton);
+            this.addChild(this.play1);
+            this.addChild(this.play2);
     
-            this.startButton.on("click", function() {
+            this.play1.on("click", function() {
                // config.Game.SCENE_STATE = scenes.State.QUOTE;
+               config.Game.NO_OF_PLAYERS = 1;
                config.Game.SCENE_STATE = scenes.State.QUOTE;
             });
+
+            this.play2.on("click", function() {
+                // config.Game.SCENE_STATE = scenes.State.QUOTE;
+                config.Game.NO_OF_PLAYERS = 2;
+                config.Game.SCENE_STATE = scenes.State.QUOTE;
+             });
     
             
             
