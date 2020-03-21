@@ -17,10 +17,12 @@ var objects;
     var Enemy = /** @class */ (function (_super) {
         __extends(Enemy, _super);
         // CONSTRUCTOR
-        function Enemy(playerPosition, containerWidth, containerHeight) {
+        function Enemy(playerPosition, containerWidth, containerHeight, startx, starty) {
             if (playerPosition === void 0) { playerPosition = new objects.Vector2(10, 10); }
             if (containerWidth === void 0) { containerWidth = 640; }
             if (containerHeight === void 0) { containerHeight = 480; }
+            if (startx === void 0) { startx = -1; }
+            if (starty === void 0) { starty = -1; }
             var _this = _super.call(this, "./Assets/images/enemy/minion/minion.png", 200, 200, true) || this;
             // PRIVATE INSTANCE MEMBERS
             _this.isAlive = true;
@@ -60,7 +62,10 @@ var objects;
                 that.isMoving = false;
             };
             // create enemy
-            _this.position = _this._getRandomPoints(playerPosition, containerWidth, containerHeight);
+            if (startx == -1 && starty == -1)
+                _this.position = _this._getRandomPoints(playerPosition, containerWidth, containerHeight);
+            else
+                _this.position = new objects.Vector2(startx, starty);
             _this.playerPosition = playerPosition;
             _this.isMoving = false;
             // Set the random moving speed

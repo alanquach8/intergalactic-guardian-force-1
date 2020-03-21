@@ -23,7 +23,7 @@ module scenes
         private _endEventFired = false;
         private _scoreLabel: objects.Label;
         private _segways: objects.Segway[];
-
+        private _isActive = false;
 
         // PUBLIC PROPERTIES
 
@@ -48,6 +48,119 @@ module scenes
             "40px", "Consolas", "#000000", 0, 0);
 
             this._segways = [];
+
+            (<HTMLInputElement>document.body.querySelector("#cheatCodeButton")).addEventListener("click", () => {
+                if(this._isActive){
+
+                    let code:string[] = (<HTMLInputElement>document.body.querySelector("#cheatCode")).value.split(" ");
+
+                    if(code.length == 0){
+                        return;
+                    }
+
+                    if (code[0] == "spawn"){
+                        if(code.length <  2){
+                            this.CheatCodeFeedback("Invalid Use Of Spawn Command. <br>Usage: spawn <object> [x] [y] [id]")
+                            return;
+                        }
+
+                        let x = 100;
+                        let y = 100;
+                        let id = this.getRandomInt(3);
+
+                        switch(code[1]){
+                            case "segway":
+                                if (code.length >= 4){
+                                    x = Number(code[2]);
+                                    y = Number(code[3]);
+                                }
+                                this.AddSegways(1, x, y);
+                                this.CheatCodeFeedback("Spawned Segway At x=" + x + " y=" + y, "green");
+                                break;
+                            case "powerup":
+                                if(code.length == 3){
+                                    this.CheatCodeFeedback("Invalid Use Of Spawn Command. <br>Usage: spawn &lt;object&gt; [x] [y] [id]")
+                                    return;
+                                }
+                                if (code.length == 4){
+                                    x = Number(code[2]);
+                                    y = Number(code[3]);
+                                } else if (code.length >= 5){
+                                    x = Number(code[2]);
+                                    y = Number(code[3]);
+                                    id = Number(code[4]);
+                                }
+                                this.CreatePowerup(x, y, id)
+                                this.CheatCodeFeedback("Spawned Powerup At x=" + x + " y=" + y + " id=" + id, "green");
+                                break;
+                            case "enemy":
+                                if (code.length >= 4){
+                                    x = Number(code[2]);
+                                    y = Number(code[3]);
+                                }
+                                this.SpawnEnemy(x, y)
+                                this.CheatCodeFeedback("Spawned Enemy At x=" + x + " y=" + y, "green");
+                                break;
+
+                            default:
+                                this.CheatCodeFeedback("Invalid Use Of Spawn Command. <br>Unknown Entity: " + code[1])
+
+                        }
+                    } else if (code[0] == "set"){
+                        if(code.length < 3){
+                            this.CheatCodeFeedback("Invalid Use Of Set Command. <br>Usage: Set &lt;what&gt; &lt;value&gt;")
+                            return;
+                        }
+                        let what = code[1];
+                        let value = Number(code[2]);
+                        switch (what){
+                            case "grenades":
+                                this.SetGrenades(value);
+                                this.CheatCodeFeedback("Set Number Of Grenades To " + value, "green");
+                                break;
+                            case "lives":
+                                this._player.Life = value;
+                                this.UpdatePlayerLivesIndicator();
+                                this.CheatCodeFeedback("Set Number Of Lives To " + value, "green");
+                                break;
+                            case "score":
+                                config.Game.SCORE = value;
+                                this.CheatCodeFeedback("Set Score To " + value, "green");
+                                break;
+                            default:
+                                this.CheatCodeFeedback("Invalid Use Of Set Command. <br>Unknown Value: " + what)
+    
+                        }
+                    } else if (code[0] == "level"){
+                        if(code.length < 2){
+                            this.CheatCodeFeedback("Invalid Use Of Set Command. <br>Usage: level &lt;number&gt;")
+                            return;
+                        }
+                        let level = Number(code[1]);
+                        switch(level){
+                            case 1:
+                                config.Game.SCENE_STATE = scenes.State.LEVEL1;
+                                break;
+                            case 2:
+                                config.Game.SCENE_STATE = scenes.State.LEVEL2;
+                                break;
+                            case 3:
+                                config.Game.SCENE_STATE = scenes.State.LEVEL3;
+                                break;
+                            default:
+                                this.CheatCodeFeedback("Invalid Use Of Level Command. <br>Unknown Level ID: " + level)
+                        }
+                    } else if (code[0] == "help"){
+                        this.CheatCodeFeedback("Cheat Codes Command Reference:<br>spawn &lt;segway|powerup|enemy&gt; [x] [y] [id]<br>Set &lt;grenades|lives|score&gt; &lt;value&gt;<br>Usage: level &lt;1|2|3&gt;<br>help", "green")
+                    } else if (code[0] == "clear"){
+                        this.CheatCodeFeedback("")
+                    } else {
+                        this.CheatCodeFeedback("Unknown Command. Use 'help' For A List Of Commands!")
+                    }
+
+                    this.ProcessCommand(code);
+                }
+            });
 
             this.addEventListener("click", (evt: createjs.MouseEvent) => {
                 this.SendGrenade(evt.stageX, evt.stageY);
@@ -91,9 +204,21 @@ module scenes
             this.Start();
         }
 
-        public AddSegways(amount:number){
+        public CheatCodeFeedback(text:string, color:string="red"){
+            let feedback = document.body.querySelector("#cheatCodeFeedback")
+            if (feedback != null){
+                feedback.innerHTML = text;
+                feedback.setAttribute("style", "margin: 0px; color:" + color); 
+            }
+        }
+
+        public ProcessCommand(command:string[]){
+
+        }
+
+        public AddSegways(amount:number, x:number=100, y:number=100){
             for (let i = 0; i < amount; i++) {
-                let s = new objects.Segway();
+                let s = new objects.Segway(undefined, x, y);
                 this._segways.push(s)
                 this.addChild(s)
             }
@@ -264,8 +389,15 @@ module scenes
         public PlayerMovementUpdate(y_delta:number){
 
         }
+
+        public SpawnEnemy(x:number=-1, y:number=-1){
+            this._enemies.push(new objects.Enemy(new objects.Vector2(x, y)));
+            this.addChild(this._enemies[this._enemies.length-1]);
+        }
         
         public Update(): void {
+            this._isActive = true;
+
             // Reference to the Play Scene Object
             let that = this;
 
@@ -282,6 +414,7 @@ module scenes
                     this._players[i].Update();
                 } else {
                     // game over
+                    this._isActive = false;
                     config.Game.SCENE_STATE = scenes.State.END;
                 }
                 this._players[i].Update();
@@ -381,7 +514,6 @@ module scenes
                                 that._players[i].Reset();
                             }
                         }
-                        
                     }
                 }
 
@@ -417,6 +549,7 @@ module scenes
                         this._scrollBuffer = 0;
                         if (this._players[i].y <= 0){
                             if(this._canFinish){
+                                this._isActive = false;
                                 config.Game.SCENE_STATE = this._nextLevel;
                             } else {
                                 this._players[i].y = 1

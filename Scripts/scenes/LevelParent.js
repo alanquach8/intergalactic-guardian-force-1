@@ -30,6 +30,7 @@ var scenes;
             _this._distance_left = 1000;
             _this._canFinish = true;
             _this._endEventFired = false;
+            _this._isActive = false;
             // initialization
             // this._player = new objects.Player(1);
             // this._player2 = new objects.Player(2);
@@ -44,6 +45,115 @@ var scenes;
             _this._nextLevel = next;
             _this._scoreLabel = new objects.Label(config.Game.SCORE.toString(), "40px", "Consolas", "#000000", 0, 0);
             _this._segways = [];
+            document.body.querySelector("#cheatCodeButton").addEventListener("click", function () {
+                if (_this._isActive) {
+                    var code = document.body.querySelector("#cheatCode").value.split(" ");
+                    if (code.length == 0) {
+                        return;
+                    }
+                    if (code[0] == "spawn") {
+                        if (code.length < 2) {
+                            _this.CheatCodeFeedback("Invalid Use Of Spawn Command. <br>Usage: spawn <object> [x] [y] [id]");
+                            return;
+                        }
+                        var x = 100;
+                        var y = 100;
+                        var id = _this.getRandomInt(3);
+                        switch (code[1]) {
+                            case "segway":
+                                if (code.length >= 4) {
+                                    x = Number(code[2]);
+                                    y = Number(code[3]);
+                                }
+                                _this.AddSegways(1, x, y);
+                                _this.CheatCodeFeedback("Spawned Segway At x=" + x + " y=" + y, "green");
+                                break;
+                            case "powerup":
+                                if (code.length == 3) {
+                                    _this.CheatCodeFeedback("Invalid Use Of Spawn Command. <br>Usage: spawn &lt;object&gt; [x] [y] [id]");
+                                    return;
+                                }
+                                if (code.length == 4) {
+                                    x = Number(code[2]);
+                                    y = Number(code[3]);
+                                }
+                                else if (code.length >= 5) {
+                                    x = Number(code[2]);
+                                    y = Number(code[3]);
+                                    id = Number(code[4]);
+                                }
+                                _this.CreatePowerup(x, y, id);
+                                _this.CheatCodeFeedback("Spawned Powerup At x=" + x + " y=" + y + " id=" + id, "green");
+                                break;
+                            case "enemy":
+                                if (code.length >= 4) {
+                                    x = Number(code[2]);
+                                    y = Number(code[3]);
+                                }
+                                _this.SpawnEnemy(x, y);
+                                _this.CheatCodeFeedback("Spawned Enemy At x=" + x + " y=" + y, "green");
+                                break;
+                            default:
+                                _this.CheatCodeFeedback("Invalid Use Of Spawn Command. <br>Unknown Entity: " + code[1]);
+                        }
+                    }
+                    else if (code[0] == "set") {
+                        if (code.length < 3) {
+                            _this.CheatCodeFeedback("Invalid Use Of Set Command. <br>Usage: Set &lt;what&gt; &lt;value&gt;");
+                            return;
+                        }
+                        var what = code[1];
+                        var value = Number(code[2]);
+                        switch (what) {
+                            case "grenades":
+                                _this.SetGrenades(value);
+                                _this.CheatCodeFeedback("Set Number Of Grenades To " + value, "green");
+                                break;
+                            case "lives":
+                                _this._player.Life = value;
+                                _this.UpdatePlayerLivesIndicator();
+                                _this.CheatCodeFeedback("Set Number Of Lives To " + value, "green");
+                                break;
+                            case "score":
+                                config.Game.SCORE = value;
+                                _this.CheatCodeFeedback("Set Score To " + value, "green");
+                                break;
+                            default:
+                                _this.CheatCodeFeedback("Invalid Use Of Set Command. <br>Unknown Value: " + what);
+                        }
+                    }
+                    else if (code[0] == "level") {
+                        if (code.length < 2) {
+                            _this.CheatCodeFeedback("Invalid Use Of Set Command. <br>Usage: level &lt;number&gt;");
+                            return;
+                        }
+                        var level = Number(code[1]);
+                        switch (level) {
+                            case 1:
+                                config.Game.SCENE_STATE = scenes.State.LEVEL1;
+                                break;
+                            case 2:
+                                config.Game.SCENE_STATE = scenes.State.LEVEL2;
+                                break;
+                            case 3:
+                                config.Game.SCENE_STATE = scenes.State.LEVEL3;
+                                break;
+                            default:
+                                _this.CheatCodeFeedback("Invalid Use Of Level Command. <br>Unknown Level ID: " + level);
+                        }
+                    }
+                    else if (code[0] == "help") {
+                        _this.CheatCodeFeedback("Cheat Codes Command Reference:<br>spawn &lt;segway|powerup|enemy&gt; [x] [y] [id]<br>Set &lt;grenades|lives|score&gt; &lt;value&gt;<br>Usage: level &lt;1|2|3&gt;<br>help", "green");
+                    }
+                    else if (code[0] == "clear") {
+                        _this.CheatCodeFeedback("");
+                    }
+                    else {
+                        _this.CheatCodeFeedback("Unknown Command. Use 'help' For A List Of Commands!");
+                    }
+                    _this.ProcessCommand(code);
+                }
+            });
             _this.addEventListener("click", function (evt) {
                 _this.SendGrenade(evt.stageX, evt.stageY);
             });
@@ -84,9 +194,21 @@ var scenes;
             _this.Start();
             return _this;
         }
-        LevelParent.prototype.AddSegways = function (amount) {
+        LevelParent.prototype.CheatCodeFeedback = function (text, color) {
+            if (color === void 0) { color = "red"; }
+            var feedback = document.body.querySelector("#cheatCodeFeedback");
+            if (feedback != null) {
+                feedback.innerHTML = text;
+                feedback.setAttribute("style", "margin: 0px; color:" + color);
+            }
+        };
+        LevelParent.prototype.ProcessCommand = function (command) {
+        };
+        LevelParent.prototype.AddSegways = function (amount, x, y) {
+            if (x === void 0) { x = 100; }
+            if (y === void 0) { y = 100; }
             for (var i = 0; i < amount; i++) {
-                var s = new objects.Segway();
+                var s = new objects.Segway(undefined, x, y);
                 this._segways.push(s);
                 this.addChild(s);
             }
@@ -246,8 +368,15 @@ var scenes;
         };
         LevelParent.prototype.PlayerMovementUpdate = function (y_delta) {
         };
+        LevelParent.prototype.SpawnEnemy = function (x, y) {
+            if (x === void 0) { x = -1; }
+            if (y === void 0) { y = -1; }
+            this._enemies.push(new objects.Enemy(new objects.Vector2(x, y)));
+            this.addChild(this._enemies[this._enemies.length - 1]);
+        };
         LevelParent.prototype.Update = function () {
             var _this = this;
+            this._isActive = true;
             // Reference to the Play Scene Object
             var that = this;
             // add more enemies if one dies
@@ -257,6 +386,7 @@ var scenes;
                 this._enemies.push(enemy);
                 this.addChild(this._enemies[this._enemies.length - 1]);
             }
+
             for (var i = 0; i < this.noOfPlayers; i++) {
                 if (this._players[i].visible) {
                     this._players[i].Update();
@@ -327,6 +457,7 @@ var scenes;
                     if (enemy.isColliding)
                         that.KillEnemy(enemy);
                 });
+
                 var _loop_3 = function (i) {
                     managers.Collision.AABBCheck(enemy, that._players[i]);
                     if (that._players[i].isColliding && !that._players[i].IsReviving) {
