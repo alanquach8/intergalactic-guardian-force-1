@@ -24,6 +24,9 @@ module scenes
         private _scoreLabel: objects.Label;
         private _segways: objects.Segway[];
 
+        private _civilians:objects.Civilian[];
+        private _noOfCivilians:number;
+
 
         // PUBLIC PROPERTIES
 
@@ -48,6 +51,9 @@ module scenes
             "40px", "Consolas", "#000000", 0, 0);
 
             this._segways = [];
+
+            this._civilians = new Array();
+            this._noOfCivilians = 3;
 
             this.addEventListener("click", (evt: createjs.MouseEvent) => {
                 this.SendGrenade(evt.stageX, evt.stageY);
@@ -125,6 +131,10 @@ module scenes
                 let enemy = new objects.Enemy();
                 enemy.LockTo = Math.floor(Math.random() * this.noOfPlayers);
                 this._enemies.push(enemy);
+            }
+
+            for(let i = 0; i< this._noOfCivilians; i++) {
+                this._civilians.push(new objects.Civilian(this.getRandomInt(640), 200+this.getRandomInt(200)));
             }
            
             this.Main();
@@ -321,8 +331,32 @@ module scenes
                 }
             })
 
+
+
+            this._civilians.forEach((civilian) => {
+                this._players.forEach((player) => {
+                    managers.Collision.AABBCheck(player, civilian);
+                    if(civilian.Life == 200) {
+                        civilian.Saved = true;
+                        that._civilians.splice(that._civilians.indexOf(civilian));
+                        that.removeChild(civilian);
+                    }
+                });
+
+                this._enemies.forEach((enemy) => {
+                    managers.Collision.AABBCheck(enemy, civilian);
+                    if(civilian.Life == 0) {
+                        that._civilians.splice(that._civilians.indexOf(civilian));
+                        that.removeChild(civilian);
+                    }
+                });
+
+                civilian.Update();
+            });
+            
             this._enemies.forEach((enemy) => {
                 enemy.Update(that._players[enemy.LockTo].x, that._players[enemy.LockTo].y);
+
                 // Bullets and Enemy Collision Check
                 for(let i = 0; i<this.noOfPlayers; i++) {
                     that._players[i].Bullets.forEach((bullet)=>{
@@ -523,6 +557,10 @@ module scenes
             for(let i = 0; i<this.noOfPlayers; i++) {
                 this.addChild(this._players[i]);
             }
+
+            this._civilians.forEach((civilian) => {
+                that.addChild(civilian);
+            });
             
             this.AddSegways(1);
 
