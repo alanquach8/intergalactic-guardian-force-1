@@ -27,14 +27,16 @@ var scenes;
             _this.logoImage.scaleY = 0.6;
             _this.logoImage.x = 320;
             _this.logoImage.y = 10;
-            _this.startButton = new objects.Button();
+            _this.play1 = new objects.Button();
+            _this.play2 = new objects.Button();
             _this.companyLabel = new objects.Label();
             _this.Start();
             return _this;
         }
         // PUBLIC METHODS
         Start.prototype.Start = function () {
-            this.startButton = new objects.Button("./Assets/images/ui/buttons/play.png", 320, 240, true);
+            this.play1 = new objects.Button("./Assets/images/ui/buttons/play.png", 320, 240, true);
+            this.play2 = new objects.Button("./Assets/images/ui/buttons/play.png", 320, 300, true);
             this.companyLabel = new objects.Label("MACK Address Games", "15px", "Consolas", "Green", 320, 90, true);
             this.Main();
         };
@@ -45,9 +47,16 @@ var scenes;
             this.addChild(new objects.Rectangle(0, 0, 640, 480, "#000"));
             this.addChild(this.logoImage);
             this.addChild(this.companyLabel);
-            this.addChild(this.startButton);
-            this.startButton.on("click", function () {
+            this.addChild(this.play1);
+            this.addChild(this.play2);
+            this.play1.on("click", function () {
                 // config.Game.SCENE_STATE = scenes.State.QUOTE;
+                config.Game.NO_OF_PLAYERS = 1;
+                config.Game.SCENE_STATE = scenes.State.QUOTE;
+            });
+            this.play2.on("click", function () {
+                // config.Game.SCENE_STATE = scenes.State.QUOTE;
+                config.Game.NO_OF_PLAYERS = 2;
                 config.Game.SCENE_STATE = scenes.State.QUOTE;
             });
         };

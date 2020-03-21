@@ -22,6 +22,8 @@ module objects {
         private _right:boolean = false;
         private _shoot:boolean = false;
 
+        private _playerId: number;
+        private _controlArray:string[];
         private _isRidingSegway = false;
 
         private _pierceCount:number = 1;
@@ -125,29 +127,38 @@ module objects {
         }
 
         // CONSTRUCTOR
-        constructor(imagePath:string="./Assets/images/player/top.png", x:number = 320, y:number = 250, isCentered:boolean = true) //TODO x, y Variables
+        constructor(playerId:number, imagePath:string="./Assets/images/player/top.png", x:number = 320, y:number = 250, isCentered:boolean = true) //TODO x, y Variables
         {
             super(imagePath, x, y, true);
             
             this._facing = 270; // initially looking up (-90degrees on canvas axis = 270degrees on normal axis)
             this._direction = new Vector2(0, -1);
             this._bullets = [];
+            this._playerId = playerId;
 
+            if(playerId == 1){
+                this._controlArray = ["KeyW", "KeyS", "KeyD", "KeyA", "Space"];
+                this.x = 200;
+            } else {
+                this._controlArray = ["ArrowUp", "ArrowDown", "ArrowRight", "ArrowLeft", "ShiftRight"];
+                this.x = 440;
+            }
             window.addEventListener('keyup', (e) => {
+                console.log(e.code);
                 switch(e.code) {
-                    case "ArrowUp":
+                    case this._controlArray[0]:
                         this._forward = false;
                         break;
-                    case "ArrowDown":
+                    case this._controlArray[1]:
                         this._backward = false;
                         break;
-                    case "ArrowRight":
+                    case this._controlArray[2]:
                         this._right = false;
                         break;
-                    case "ArrowLeft":
+                    case this._controlArray[3]:
                         this._left = false;
                         break;
-                    case "Space":
+                    case this._controlArray[4]:
                         this._shoot = false;
                         break;
                 }
@@ -155,19 +166,19 @@ module objects {
 
             window.addEventListener('keydown', (e) => {
                 switch(e.code) {
-                    case "ArrowUp":
+                    case this._controlArray[0]:
                         this._forward = true;
                         break;
-                    case "ArrowDown":
+                    case this._controlArray[1]:
                         this._backward = true;
                         break;
-                    case "ArrowRight":
+                    case this._controlArray[2]:
                         this._right = true;
                         break;
-                    case "ArrowLeft":
+                    case this._controlArray[3]:
                         this._left = true;
                         break;
-                    case "Space":
+                    case this._controlArray[4]:
                         this._shoot = true;
                         break;
                 }
