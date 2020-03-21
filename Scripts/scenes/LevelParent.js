@@ -116,6 +116,35 @@ var scenes;
                                 _this.CheatCodeFeedback("Invalid Use Of Set Command. <br>Unknown Value: " + what);
                         }
                     }
+                    else if (code[0] == "level") {
+                        if (code.length < 2) {
+                            _this.CheatCodeFeedback("Invalid Use Of Set Command. <br>Usage: level &lt;number&gt;");
+                            return;
+                        }
+                        var level = Number(code[1]);
+                        switch (level) {
+                            case 1:
+                                config.Game.SCENE_STATE = scenes.State.LEVEL1;
+                                break;
+                            case 2:
+                                config.Game.SCENE_STATE = scenes.State.LEVEL2;
+                                break;
+                            case 3:
+                                config.Game.SCENE_STATE = scenes.State.LEVEL3;
+                                break;
+                            default:
+                                _this.CheatCodeFeedback("Invalid Use Of Level Command. <br>Unknown Level ID: " + level);
+                        }
+                    }
+                    else if (code[0] == "help") {
+                        _this.CheatCodeFeedback("Cheat Codes Command Reference:<br>spawn &lt;segway|powerup|enemy&gt; [x] [y] [id]<br>Set &lt;grenades|lives|score&gt; &lt;value&gt;<br>Usage: level &lt;1|2|3&gt;<br>help", "green");
+                    }
+                    else if (code[0] == "clear") {
+                        _this.CheatCodeFeedback("");
+                    }
+                    else {
+                        _this.CheatCodeFeedback("Unknown Command. Use 'help' For A List Of Commands!");
+                    }
                     _this.ProcessCommand(code);
                 }
             });
