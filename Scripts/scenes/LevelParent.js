@@ -117,7 +117,9 @@ var scenes;
             }
             // Add Enemies to the array
             for (var i = 0; i < this._noOfEnemies; i++) { //TODO add a Variable for number of enemies currently hardcoded to 5
-                this._enemies.push(new objects.Enemy());
+                var enemy = new objects.Enemy();
+                enemy.LockTo = Math.floor(Math.random() * this.noOfPlayers);
+                this._enemies.push(enemy);
             }
             this.Main();
         };
@@ -250,7 +252,9 @@ var scenes;
             var that = this;
             // add more enemies if one dies
             if (this._enemies.length < this._noOfEnemies) {
-                this._enemies.push(new objects.Enemy());
+                var enemy = new objects.Enemy();
+                enemy.LockTo = Math.floor(Math.random() * this.noOfPlayers);
+                this._enemies.push(enemy);
                 this.addChild(this._enemies[this._enemies.length - 1]);
             }
             for (var i = 0; i < this.noOfPlayers; i++) {
@@ -293,7 +297,7 @@ var scenes;
                 }
             });
             this._enemies.forEach(function (enemy) {
-                enemy.Update(that._players[0].x, that._players[0].y);
+                enemy.Update(that._players[enemy.LockTo].x, that._players[enemy.LockTo].y);
                 var _loop_2 = function (i) {
                     that._players[i].Bullets.forEach(function (bullet) {
                         managers.Collision.AABBCheck(bullet, enemy);
