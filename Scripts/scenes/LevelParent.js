@@ -37,6 +37,7 @@ var scenes;
             _this._gernadeManager = new objects.GrenadeManager();
             _this._nextLevel = next;
             _this._scoreLabel = new objects.Label(config.Game.SCORE.toString(), "40px", "Consolas", "#000000", 0, 0);
+            _this._segways = [];
             _this.addEventListener("click", function (evt) {
                 _this.SendGrenade(evt.stageX, evt.stageY);
             });
@@ -65,6 +66,13 @@ var scenes;
             _this.Start();
             return _this;
         }
+        LevelParent.prototype.AddSegways = function (amount) {
+            for (var i = 0; i < amount; i++) {
+                var s = new objects.Segway();
+                this._segways.push(s);
+                this.addChild(s);
+            }
+        };
         Object.defineProperty(LevelParent.prototype, "MaximumEnemies", {
             set: function (amount) {
                 this._noOfEnemies = amount;
@@ -141,13 +149,16 @@ var scenes;
             enumerable: true,
             configurable: true
         });
+        LevelParent.prototype.AddExplosion = function (x, y) {
+            var exp = new objects.Explosion(x, y);
+            this._explosion.push(exp);
+            this.addChild(exp);
+        };
         LevelParent.prototype.SendGrenade = function (x, y) {
             if (this._gernadeManager.GrenadeCount <= 0)
                 return;
             this.ChangeGrenades(-1);
-            var exp = new objects.Explosion(x, y);
-            this._explosion.push(exp);
-            this.addChild(exp);
+            this.AddExplosion(x, y);
         };
         LevelParent.prototype.UpdatePlayerLivesIndicator = function () {
             var _this = this;
@@ -228,12 +239,22 @@ var scenes;
                 }
                 exp.Update();
             });
+            this._segways.forEach(function (seg) {
+                seg.Update();
+            });
             this._powerups.forEach(function (p) {
                 managers.Collision.AABBCheck(_this._player, p);
                 if (p.isColliding) {
                     p.ActivationEvent();
                     _this._powerups.splice(_this._powerups.indexOf(p), 1);
                     _this.removeChild(p);
+                }
+            });
+            this._segways.forEach(function (seg) {
+                managers.Collision.AABBCheck(_this._player, seg);
+                if (seg.isColliding) {
+                    seg.SetRider(_this._player);
+                    _this.Player.IsRidingSegway = true;
                 }
             });
             this._enemies.forEach(function (enemy) {
@@ -267,6 +288,14 @@ var scenes;
                 managers.Collision.AABBCheck(enemy, that._player);
                 if (that._player.isColliding && !that._player.IsReviving) {
                     that._player.Life--;
+                    if (that.Player.IsRidingSegway) {
+                        that._segways.forEach(function (s) {
+                            that.AddExplosion(s.x, s.y);
+                            that._segways.splice(that._segways.indexOf(s), 1);
+                            that.removeChild(s);
+                            that._player.IsRidingSegway = false;
+                        });
+                    }
                     _this.UpdatePlayerLivesIndicator();
                     if (that._player.Life == 0) {
                         config.Game.SCENE_STATE = scenes.State.LOOSE;
@@ -318,6 +347,12 @@ var scenes;
                         exp.y -= y_delta_1;
                         exp.position = new objects.Vector2(exp.x, exp.y);
                     });
+                    this._segways.forEach(function (seg) {
+                        if (!seg.IsRiding) {
+                            seg.y -= y_delta_1;
+                            seg.position = new objects.Vector2(seg.x, seg.y);
+                        }
+                    });
                     this._deadEnemies.forEach(function (enemy) {
                         enemy.y -= y_delta_1;
                         enemy.position = new objects.Vector2(enemy.x, enemy.y);
@@ -343,6 +378,7 @@ var scenes;
             this.addChild(new objects.Rectangle(0, 0, 15, 480, "DarkGrey"));
             this.addChild(new objects.Rectangle(625, 0, 15, 480, "DarkGrey"));
             this.addChild(new objects.Rectangle(15, 0, 610, 480, "GhostWhite"));
+            this.AddSegways(1);
             this.addChild(this._player);
             this.SetGrenades(2);
             this.UpdatePlayerLivesIndicator();
