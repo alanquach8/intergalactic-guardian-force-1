@@ -64,7 +64,7 @@ var scenes;
                                 break;
                             case "powerup":
                                 if (code.length == 3) {
-                                    _this.CheatCodeFeedback("Invalid Use Of Spawn Command. <br>Usage: spawn <object> [x] [y] [id]");
+                                    _this.CheatCodeFeedback("Invalid Use Of Spawn Command. <br>Usage: spawn &lt;object&gt; [x] [y] [id]");
                                     return;
                                 }
                                 if (code.length == 4) {
@@ -89,6 +89,31 @@ var scenes;
                                 break;
                             default:
                                 _this.CheatCodeFeedback("Invalid Use Of Spawn Command. <br>Unknown Entity: " + code[1]);
+                        }
+                    }
+                    else if (code[0] == "set") {
+                        if (code.length < 3) {
+                            _this.CheatCodeFeedback("Invalid Use Of Set Command. <br>Usage: Set &lt;what&gt; &lt;value&gt;");
+                            return;
+                        }
+                        var what = code[1];
+                        var value = Number(code[2]);
+                        switch (what) {
+                            case "grenades":
+                                _this.SetGrenades(value);
+                                _this.CheatCodeFeedback("Set Number Of Grenades To " + value, "green");
+                                break;
+                            case "lives":
+                                _this._player.Life = value;
+                                _this.UpdatePlayerLivesIndicator();
+                                _this.CheatCodeFeedback("Set Number Of Lives To " + value, "green");
+                                break;
+                            case "score":
+                                config.Game.SCORE = value;
+                                _this.CheatCodeFeedback("Set Score To " + value, "green");
+                                break;
+                            default:
+                                _this.CheatCodeFeedback("Invalid Use Of Set Command. <br>Unknown Value: " + what);
                         }
                     }
                     _this.ProcessCommand(code);

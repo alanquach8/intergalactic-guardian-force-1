@@ -74,7 +74,7 @@ module scenes
                                 break;
                             case "powerup":
                                 if(code.length == 3){
-                                    this.CheatCodeFeedback("Invalid Use Of Spawn Command. <br>Usage: spawn <object> [x] [y] [id]")
+                                    this.CheatCodeFeedback("Invalid Use Of Spawn Command. <br>Usage: spawn &lt;object&gt; [x] [y] [id]")
                                     return;
                                 }
                                 if (code.length == 4){
@@ -100,6 +100,31 @@ module scenes
                             default:
                                 this.CheatCodeFeedback("Invalid Use Of Spawn Command. <br>Unknown Entity: " + code[1])
 
+                        }
+                    } else if (code[0] == "set"){
+                        if(code.length < 3){
+                            this.CheatCodeFeedback("Invalid Use Of Set Command. <br>Usage: Set &lt;what&gt; &lt;value&gt;")
+                            return;
+                        }
+                        let what = code[1];
+                        let value = Number(code[2]);
+                        switch (what){
+                            case "grenades":
+                                this.SetGrenades(value);
+                                this.CheatCodeFeedback("Set Number Of Grenades To " + value, "green");
+                                break;
+                            case "lives":
+                                this._player.Life = value;
+                                this.UpdatePlayerLivesIndicator();
+                                this.CheatCodeFeedback("Set Number Of Lives To " + value, "green");
+                                break;
+                            case "score":
+                                config.Game.SCORE = value;
+                                this.CheatCodeFeedback("Set Score To " + value, "green");
+                                break;
+                            default:
+                                this.CheatCodeFeedback("Invalid Use Of Set Command. <br>Unknown Value: " + what)
+    
                         }
                     }
 
