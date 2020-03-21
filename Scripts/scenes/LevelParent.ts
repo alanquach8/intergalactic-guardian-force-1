@@ -319,7 +319,6 @@ module scenes
 
             this._enemies.forEach((enemy) => {
                 enemy.Update(that._players[0].x, that._players[0].y);
-
                 // Bullets and Enemy Collision Check
                 for(let i = 0; i<this.noOfPlayers; i++) {
                     that._players[i].Bullets.forEach((bullet)=>{
@@ -343,14 +342,11 @@ module scenes
                         }
                     });
                 }
-
                 that._explosion.forEach((exp) => {
                     managers.Collision.AABBCheck(exp, enemy);
                     if(enemy.isColliding) 
                     that.KillEnemy(enemy);
                 })
-
-
 
                 // Enemy and Player Collision Check
                 for(let i = 0; i<this.noOfPlayers; i++) {
@@ -384,16 +380,17 @@ module scenes
                         
                     }
                 }
-                
 
-                    this._deadEnemies.forEach(enemy => {
-                        enemy.Update();
-                        if (enemy.isDead){
-                            that._deadEnemies.splice(that._deadEnemies.indexOf(enemy), 1);
-                            that.removeChild(enemy);
-                        }
-                    });
-                }
+                this._deadEnemies.forEach(enemy => {
+                    enemy.Update();
+                    if (enemy.isDead){
+                        that._deadEnemies.splice(that._deadEnemies.indexOf(enemy), 1);
+                        that.removeChild(enemy);
+                    }
+                })
+                
+            })
+
             for(let i = 0; i < this.noOfPlayers; i++) {
                 if ((this._movingForward || this._movingBackward) && this._players[i].y < this._scrollBuffer ){
                     let y_delta = this._players[i].Direction.y * this._players[i].Speed;

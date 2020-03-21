@@ -22,12 +22,9 @@ module objects {
         private _right:boolean = false;
         private _shoot:boolean = false;
 
-<<<<<<< HEAD
         private _playerId: number;
         private _controlArray:string[];
-=======
         private _isRidingSegway = false;
->>>>>>> master
 
         private _pierceCount:number = 1;
 
