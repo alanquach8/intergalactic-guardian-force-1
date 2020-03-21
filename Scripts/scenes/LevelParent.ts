@@ -22,6 +22,7 @@ module scenes
         private _canFinish = true;
         private _endEventFired = false;
         private _scoreLabel: objects.Label;
+        private _segways: objects.Segway[];
 
 
         // PUBLIC PROPERTIES
@@ -46,6 +47,7 @@ module scenes
             this._scoreLabel = new objects.Label(config.Game.SCORE.toString(),
             "40px", "Consolas", "#000000", 0, 0);
 
+            this._segways = [];
 
             this.addEventListener("click", (evt: createjs.MouseEvent) => {
                 this.SendGrenade(evt.stageX, evt.stageY);
@@ -87,6 +89,14 @@ module scenes
             setInterval(()=> { this.CreatePowerup() }, 20000);
 
             this.Start();
+        }
+
+        public AddSegways(amount:number){
+            for (let i = 0; i < amount; i++) {
+                let s = new objects.Segway();
+                this._segways.push(s)
+                this.addChild(s)
+            }
         }
 
         public set MaximumEnemies(amount:number){
@@ -172,6 +182,12 @@ module scenes
         public get Player(){
             return this._players[0];
         }
+
+        public AddExplosion(x:number, y:number){
+            let exp = new objects.Explosion(x, y);
+            this._explosion.push(exp);
+            this.addChild(exp);
+        }
        
         public SendGrenade(x:number, y:number){
             if (this._gernadeManager.GrenadeCount <= 0)
@@ -179,9 +195,7 @@ module scenes
 
             this.ChangeGrenades(-1);
 
-            let exp = new objects.Explosion(x, y);
-            this._explosion.push(exp);
-            this.addChild(exp);
+            this.AddExplosion(x, y);
         }
 
         public UpdatePlayerLivesIndicator():void{
@@ -277,6 +291,10 @@ module scenes
                 exp.Update();
             });
 
+            this._segways.forEach(seg => {
+                seg.Update();
+            });
+
             this._powerups.forEach((p) => {
                 for(let i = 0; i<this.noOfPlayers; i++) {
                     managers.Collision.AABBCheck(this._players[i], p);
@@ -288,32 +306,43 @@ module scenes
                 }
             })
 
-            this._enemies.forEach((enemy)=>{
+            
+            this._segways.forEach((seg) => {
+                for(let i = 0 ; i<this.noOfPlayers; i++) {
+                    managers.Collision.AABBCheck(this._players[i], seg);
+                    if(seg.isColliding){
+                        seg.SetRider(this._players[i]);
+                        this.Player.IsRidingSegway = true;
+                    }
+                }
+            })
+
+            this._enemies.forEach((enemy) => {
                 enemy.Update(that._players[0].x, that._players[0].y);
 
-            // Bullets and Enemy Collision Check
-            for(let i = 0; i<this.noOfPlayers; i++) {
-                that._players[i].Bullets.forEach((bullet)=>{
-                    managers.Collision.AABBCheck(bullet, enemy);
-                    if(enemy.isColliding) {
-                        if (!bullet.IsEnemyBlacklisted(enemy)){
-                            bullet.BlacklistEnemyDamage(enemy);
-    
-                            enemy.hitPoints--;
-                            if(enemy.hitPoints == 0) {
-                                that.KillEnemy(enemy);
-                                config.Game.SCORE++;
-                            }
-    
-                            console.log(bullet.ShouldImpactDelete())
-                            if (bullet.ShouldImpactDelete()){
-                                that._players[i].Bullets.splice(that._players[i].Bullets.indexOf(bullet), 1);
-                                that.removeChild(bullet);
+                // Bullets and Enemy Collision Check
+                for(let i = 0; i<this.noOfPlayers; i++) {
+                    that._players[i].Bullets.forEach((bullet)=>{
+                        managers.Collision.AABBCheck(bullet, enemy);
+                        if(enemy.isColliding) {
+                            if (!bullet.IsEnemyBlacklisted(enemy)){
+                                bullet.BlacklistEnemyDamage(enemy);
+        
+                                enemy.hitPoints--;
+                                if(enemy.hitPoints == 0) {
+                                    that.KillEnemy(enemy);
+                                    config.Game.SCORE++;
+                                }
+        
+                                console.log(bullet.ShouldImpactDelete())
+                                if (bullet.ShouldImpactDelete()){
+                                    that._players[i].Bullets.splice(that._players[i].Bullets.indexOf(bullet), 1);
+                                    that.removeChild(bullet);
+                                }
                             }
                         }
-                    }
-                });
-            }
+                    });
+                }
 
                 that._explosion.forEach((exp) => {
                     managers.Collision.AABBCheck(exp, enemy);
@@ -334,26 +363,91 @@ module scenes
                         } else {
                             that._players[i].Reset();
                         }
+                        managers.Collision.AABBCheck(enemy, that._players[i]);
+                        if(that._players[i].isColliding && !that._players[i].IsReviving){
+                            that._players[i].Life--;
+                            if(that._players[i].IsRidingSegway){
+                                that._segways.forEach(s => {
+                                    that.AddExplosion(s.x, s.y);
+                                    that._segways.splice(that._segways.indexOf(s), 1);
+                                    that.removeChild(s)
+                                    that._players[i].IsRidingSegway = false;
+                                });
+                            }
+                            this.UpdatePlayerLivesIndicator();
+                            if(that._players[i].Life == 0) {
+                                config.Game.SCENE_STATE = scenes.State.LOOSE;
+                            } else {
+                                that._players[i].Reset();
+                            }
+                        }
+                        
                     }
                 }
                 
-            })
 
-            this._deadEnemies.forEach(enemy => {
-                enemy.Update();
-                if (enemy.isDead){
-                    that._deadEnemies.splice(that._deadEnemies.indexOf(enemy), 1);
-                    that.removeChild(enemy);
+                    this._deadEnemies.forEach(enemy => {
+                        enemy.Update();
+                        if (enemy.isDead){
+                            that._deadEnemies.splice(that._deadEnemies.indexOf(enemy), 1);
+                            that.removeChild(enemy);
+                        }
+                    });
                 }
-            });
-
-
             for(let i = 0; i < this.noOfPlayers; i++) {
                 if ((this._movingForward || this._movingBackward) && this._players[i].y < this._scrollBuffer ){
                     let y_delta = this._players[i].Direction.y * this._players[i].Speed;
     
                     if (this._movingBackward)
                         y_delta *= -1;
+                if (this._movingBackward)
+                    y_delta *= -1;
+
+                if (this._movingForward && this._movingBackward)
+                    y_delta = 0;
+                
+                this._distance_left += y_delta;
+                if (this._distance_left <= 0){
+                    if(!this._endEventFired){
+                        this._endEventFired = true;
+                        this.ReachedLevelEnd();
+                    }
+
+                    this._scrollBuffer = 0;
+                    if (this._players[i].y <= 0){
+                        if(this._canFinish){
+                            config.Game.SCENE_STATE = this._nextLevel;
+                        } else {
+                            this._players[i].y = 1
+                        }
+                    }
+                } else {
+                    if(this._distance_left % 200 < 1){
+                        this.CreatePowerup();
+                    }
+                    this._players[i].y = this._scrollBuffer;
+                
+                    this._powerups.forEach(power => {
+                        power.y -= y_delta;
+                        power.position = new objects.Vector2(power.x, power.y);
+                    });
+    
+                    this._explosion.forEach(exp => {
+                        exp.y -= y_delta;
+                        exp.position = new objects.Vector2(exp.x, exp.y);
+                    });
+
+                    this._segways.forEach(seg => {
+                        if(!seg.IsRiding){
+                            seg.y -= y_delta;
+                            seg.position = new objects.Vector2(seg.x, seg.y);
+                        }
+                    });
+
+                    this._deadEnemies.forEach(enemy => {
+                        enemy.y -= y_delta;
+                        enemy.position = new objects.Vector2(enemy.x, enemy.y);
+                    });
     
                     if (this._movingForward && this._movingBackward)
                         y_delta = 0;
@@ -409,12 +503,6 @@ module scenes
                 }
             }
             
-
-
-
-
-
-
             this.removeChild(this._scoreLabel);
             this._scoreLabel = new objects.Label(config.Game.SCORE.toString(),
             "40px", "Consolas", "#000000", 0, 0);
@@ -425,6 +513,7 @@ module scenes
         public Main(): void {
             let that = this;
 
+            
             this.addChild(new objects.Rectangle(0, 0, 15, 480, "DarkGrey"))
             this.addChild(new objects.Rectangle(625, 0, 15, 480, "DarkGrey"))
             this.addChild(new objects.Rectangle(15, 0, 610, 480, "GhostWhite"))
@@ -433,6 +522,7 @@ module scenes
                 this.addChild(this._players[i]);
             }
             
+            this.AddSegways(1);
 
             this.SetGrenades(2);
             this.UpdatePlayerLivesIndicator();

@@ -43,6 +43,7 @@ var scenes;
             _this._gernadeManager = new objects.GrenadeManager();
             _this._nextLevel = next;
             _this._scoreLabel = new objects.Label(config.Game.SCORE.toString(), "40px", "Consolas", "#000000", 0, 0);
+            _this._segways = [];
             _this.addEventListener("click", function (evt) {
                 _this.SendGrenade(evt.stageX, evt.stageY);
             });
@@ -83,6 +84,13 @@ var scenes;
             _this.Start();
             return _this;
         }
+        LevelParent.prototype.AddSegways = function (amount) {
+            for (var i = 0; i < amount; i++) {
+                var s = new objects.Segway();
+                this._segways.push(s);
+                this.addChild(s);
+            }
+        };
         Object.defineProperty(LevelParent.prototype, "MaximumEnemies", {
             set: function (amount) {
                 this._noOfEnemies = amount;
@@ -169,13 +177,16 @@ var scenes;
             enumerable: true,
             configurable: true
         });
+        LevelParent.prototype.AddExplosion = function (x, y) {
+            var exp = new objects.Explosion(x, y);
+            this._explosion.push(exp);
+            this.addChild(exp);
+        };
         LevelParent.prototype.SendGrenade = function (x, y) {
             if (this._gernadeManager.GrenadeCount <= 0)
                 return;
             this.ChangeGrenades(-1);
-            var exp = new objects.Explosion(x, y);
-            this._explosion.push(exp);
-            this.addChild(exp);
+            this.AddExplosion(x, y);
         };
         LevelParent.prototype.UpdatePlayerLivesIndicator = function () {
             var _this = this;
@@ -259,6 +270,9 @@ var scenes;
                 }
                 exp.Update();
             });
+            this._segways.forEach(function (seg) {
+                seg.Update();
+            });
             this._powerups.forEach(function (p) {
                 for (var i = 0; i < _this.noOfPlayers; i++) {
                     managers.Collision.AABBCheck(_this._players[i], p);
@@ -266,6 +280,15 @@ var scenes;
                         p.ActivationEvent();
                         _this._powerups.splice(_this._powerups.indexOf(p), 1);
                         _this.removeChild(p);
+                    }
+                }
+            });
+            this._segways.forEach(function (seg) {
+                for (var i = 0; i < _this.noOfPlayers; i++) {
+                    managers.Collision.AABBCheck(_this._players[i], seg);
+                    if (seg.isColliding) {
+                        seg.SetRider(_this._players[i]);
+                        _this.Player.IsRidingSegway = true;
                     }
                 }
             });
@@ -300,8 +323,7 @@ var scenes;
                     if (enemy.isColliding)
                         that.KillEnemy(enemy);
                 });
-                // Enemy and Player Collision Check
-                for (var i = 0; i < _this.noOfPlayers; i++) {
+                var _loop_3 = function (i) {
                     managers.Collision.AABBCheck(enemy, that._players[i]);
                     if (that._players[i].isColliding && !that._players[i].IsReviving) {
                         that._players[i].Life--;
@@ -312,19 +334,44 @@ var scenes;
                         else {
                             that._players[i].Reset();
                         }
+                        managers.Collision.AABBCheck(enemy, that._players[i]);
+                        if (that._players[i].isColliding && !that._players[i].IsReviving) {
+                            that._players[i].Life--;
+                            if (that._players[i].IsRidingSegway) {
+                                that._segways.forEach(function (s) {
+                                    that.AddExplosion(s.x, s.y);
+                                    that._segways.splice(that._segways.indexOf(s), 1);
+                                    that.removeChild(s);
+                                    that._players[i].IsRidingSegway = false;
+                                });
+                            }
+                            _this.UpdatePlayerLivesIndicator();
+                            if (that._players[i].Life == 0) {
+                                config.Game.SCENE_STATE = scenes.State.LOOSE;
+                            }
+                            else {
+                                that._players[i].Reset();
+                            }
+                        }
                     }
+                };
+                // Enemy and Player Collision Check
+                for (var i = 0; i < _this.noOfPlayers; i++) {
+                    _loop_3(i);
                 }
-            });
-            this._deadEnemies.forEach(function (enemy) {
-                enemy.Update();
-                if (enemy.isDead) {
-                    that._deadEnemies.splice(that._deadEnemies.indexOf(enemy), 1);
-                    that.removeChild(enemy);
-                }
+                _this._deadEnemies.forEach(function (enemy) {
+                    enemy.Update();
+                    if (enemy.isDead) {
+                        that._deadEnemies.splice(that._deadEnemies.indexOf(enemy), 1);
+                        that.removeChild(enemy);
+                    }
+                });
             });
             var _loop_1 = function (i) {
                 if ((this_1._movingForward || this_1._movingBackward) && this_1._players[i].y < this_1._scrollBuffer) {
                     var y_delta_1 = this_1._players[i].Direction.y * this_1._players[i].Speed;
+                    if (this_1._movingBackward)
+                        y_delta_1 *= -1;
                     if (this_1._movingBackward)
                         y_delta_1 *= -1;
                     if (this_1._movingForward && this_1._movingBackward)
@@ -358,30 +405,72 @@ var scenes;
                             exp.y -= y_delta_1;
                             exp.position = new objects.Vector2(exp.x, exp.y);
                         });
+                        this_1._segways.forEach(function (seg) {
+                            if (!seg.IsRiding) {
+                                seg.y -= y_delta_1;
+                                seg.position = new objects.Vector2(seg.x, seg.y);
+                            }
+                        });
                         this_1._deadEnemies.forEach(function (enemy) {
                             enemy.y -= y_delta_1;
                             enemy.position = new objects.Vector2(enemy.x, enemy.y);
                         });
-                        this_1._enemies.forEach(function (enemy) {
-                            enemy.y -= y_delta_1;
-                            enemy.position = new objects.Vector2(enemy.x, enemy.y);
-                            if (enemy.y > 520) {
-                                _this.removeChild(enemy);
-                                _this._enemies.splice(_this._enemies.indexOf(enemy), 1);
+                        if (this_1._movingForward && this_1._movingBackward)
+                            y_delta_1 = 0;
+                        this_1._distance_left += y_delta_1;
+                        if (this_1._distance_left <= 0) {
+                            if (!this_1._endEventFired) {
+                                this_1._endEventFired = true;
+                                this_1.ReachedLevelEnd();
                             }
-                        });
-                        this_1.PlayerMovementUpdate(y_delta_1);
+                            this_1._scrollBuffer = 0;
+                            if (this_1._players[i].y <= 0) {
+                                if (this_1._canFinish) {
+                                    config.Game.SCENE_STATE = this_1._nextLevel;
+                                }
+                                else {
+                                    this_1._players[i].y = 1;
+                                }
+                            }
+                        }
+                        else {
+                            if (this_1._distance_left % 200 < 1) {
+                                this_1.CreatePowerup();
+                            }
+                            this_1._players[i].y = this_1._scrollBuffer;
+                            this_1._powerups.forEach(function (power) {
+                                power.y -= y_delta_1;
+                                power.position = new objects.Vector2(power.x, power.y);
+                            });
+                            this_1._explosion.forEach(function (exp) {
+                                exp.y -= y_delta_1;
+                                exp.position = new objects.Vector2(exp.x, exp.y);
+                            });
+                            this_1._deadEnemies.forEach(function (enemy) {
+                                enemy.y -= y_delta_1;
+                                enemy.position = new objects.Vector2(enemy.x, enemy.y);
+                            });
+                            this_1._enemies.forEach(function (enemy) {
+                                enemy.y -= y_delta_1;
+                                enemy.position = new objects.Vector2(enemy.x, enemy.y);
+                                if (enemy.y > 520) {
+                                    _this.removeChild(enemy);
+                                    _this._enemies.splice(_this._enemies.indexOf(enemy), 1);
+                                }
+                            });
+                            this_1.PlayerMovementUpdate(y_delta_1);
+                        }
                     }
                 }
+                this_1.removeChild(this_1._scoreLabel);
+                this_1._scoreLabel = new objects.Label(config.Game.SCORE.toString(), "40px", "Consolas", "#000000", 0, 0);
+                this_1.addChild(this_1._scoreLabel);
+                this_1.UpdateLevel();
             };
             var this_1 = this;
             for (var i = 0; i < this.noOfPlayers; i++) {
                 _loop_1(i);
             }
-            this.removeChild(this._scoreLabel);
-            this._scoreLabel = new objects.Label(config.Game.SCORE.toString(), "40px", "Consolas", "#000000", 0, 0);
-            this.addChild(this._scoreLabel);
-            this.UpdateLevel();
         };
         LevelParent.prototype.Main = function () {
             var that = this;
@@ -391,6 +480,7 @@ var scenes;
             for (var i = 0; i < this.noOfPlayers; i++) {
                 this.addChild(this._players[i]);
             }
+            this.AddSegways(1);
             this.SetGrenades(2);
             this.UpdatePlayerLivesIndicator();
             this._gernadeManager.GrenadeCount = 2;
