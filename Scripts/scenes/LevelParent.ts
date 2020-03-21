@@ -122,7 +122,9 @@ module scenes
             }
             // Add Enemies to the array
             for(let i = 0; i < this._noOfEnemies; i++){ //TODO add a Variable for number of enemies currently hardcoded to 5
-                this._enemies.push(new objects.Enemy());
+                let enemy = new objects.Enemy();
+                enemy.LockTo = Math.floor(Math.random() * this.noOfPlayers);
+                this._enemies.push(enemy);
             }
            
             this.Main();
@@ -269,7 +271,9 @@ module scenes
 
             // add more enemies if one dies
             if(this._enemies.length < this._noOfEnemies){
-                this._enemies.push(new objects.Enemy());
+                let enemy = new objects.Enemy();
+                enemy.LockTo = Math.floor(Math.random() * this.noOfPlayers);
+                this._enemies.push(enemy);
                 this.addChild(this._enemies[this._enemies.length-1]);
             }
 
@@ -318,7 +322,7 @@ module scenes
             })
 
             this._enemies.forEach((enemy) => {
-                enemy.Update(that._players[0].x, that._players[0].y);
+                enemy.Update(that._players[enemy.LockTo].x, that._players[enemy.LockTo].y);
                 // Bullets and Enemy Collision Check
                 for(let i = 0; i<this.noOfPlayers; i++) {
                     that._players[i].Bullets.forEach((bullet)=>{
