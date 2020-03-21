@@ -38,6 +38,7 @@ var objects;
             _this._left = false;
             _this._right = false;
             _this._shoot = false;
+            _this._isRidingSegway = false;
             _this._pierceCount = 1;
             _this._facing = 270; // initially looking up (-90degrees on canvas axis = 270degrees on normal axis)
             _this._direction = new objects.Vector2(0, -1);

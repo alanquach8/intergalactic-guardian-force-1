@@ -397,6 +397,48 @@ var scenes;
                             this_1.CreatePowerup();
                         }
                         this_1._players[i].y = this_1._scrollBuffer;
+                    }
+                    this_1._powerups.forEach(function (power) {
+                        power.y -= y_delta_1;
+                        power.position = new objects.Vector2(power.x, power.y);
+                    });
+                    this_1._explosion.forEach(function (exp) {
+                        exp.y -= y_delta_1;
+                        exp.position = new objects.Vector2(exp.x, exp.y);
+                    });
+                    this_1._segways.forEach(function (seg) {
+                        if (!seg.IsRiding) {
+                            seg.y -= y_delta_1;
+                            seg.position = new objects.Vector2(seg.x, seg.y);
+                        }
+                    });
+                    this_1._deadEnemies.forEach(function (enemy) {
+                        enemy.y -= y_delta_1;
+                        enemy.position = new objects.Vector2(enemy.x, enemy.y);
+                    });
+                    if (this_1._movingForward && this_1._movingBackward)
+                        y_delta_1 = 0;
+                    this_1._distance_left += y_delta_1;
+                    if (this_1._distance_left <= 0) {
+                        if (!this_1._endEventFired) {
+                            this_1._endEventFired = true;
+                            this_1.ReachedLevelEnd();
+                        }
+                        this_1._scrollBuffer = 0;
+                        if (this_1._players[i].y <= 0) {
+                            if (this_1._canFinish) {
+                                config.Game.SCENE_STATE = this_1._nextLevel;
+                            }
+                            else {
+                                this_1._players[i].y = 1;
+                            }
+                        }
+                    }
+                    else {
+                        if (this_1._distance_left % 200 < 1) {
+                            this_1.CreatePowerup();
+                        }
+                        this_1._players[i].y = this_1._scrollBuffer;
                         this_1._powerups.forEach(function (power) {
                             power.y -= y_delta_1;
                             power.position = new objects.Vector2(power.x, power.y);
@@ -405,72 +447,30 @@ var scenes;
                             exp.y -= y_delta_1;
                             exp.position = new objects.Vector2(exp.x, exp.y);
                         });
-                        this_1._segways.forEach(function (seg) {
-                            if (!seg.IsRiding) {
-                                seg.y -= y_delta_1;
-                                seg.position = new objects.Vector2(seg.x, seg.y);
-                            }
-                        });
                         this_1._deadEnemies.forEach(function (enemy) {
                             enemy.y -= y_delta_1;
                             enemy.position = new objects.Vector2(enemy.x, enemy.y);
                         });
-                        if (this_1._movingForward && this_1._movingBackward)
-                            y_delta_1 = 0;
-                        this_1._distance_left += y_delta_1;
-                        if (this_1._distance_left <= 0) {
-                            if (!this_1._endEventFired) {
-                                this_1._endEventFired = true;
-                                this_1.ReachedLevelEnd();
+                        this_1._enemies.forEach(function (enemy) {
+                            enemy.y -= y_delta_1;
+                            enemy.position = new objects.Vector2(enemy.x, enemy.y);
+                            if (enemy.y > 520) {
+                                _this.removeChild(enemy);
+                                _this._enemies.splice(_this._enemies.indexOf(enemy), 1);
                             }
-                            this_1._scrollBuffer = 0;
-                            if (this_1._players[i].y <= 0) {
-                                if (this_1._canFinish) {
-                                    config.Game.SCENE_STATE = this_1._nextLevel;
-                                }
-                                else {
-                                    this_1._players[i].y = 1;
-                                }
-                            }
-                        }
-                        else {
-                            if (this_1._distance_left % 200 < 1) {
-                                this_1.CreatePowerup();
-                            }
-                            this_1._players[i].y = this_1._scrollBuffer;
-                            this_1._powerups.forEach(function (power) {
-                                power.y -= y_delta_1;
-                                power.position = new objects.Vector2(power.x, power.y);
-                            });
-                            this_1._explosion.forEach(function (exp) {
-                                exp.y -= y_delta_1;
-                                exp.position = new objects.Vector2(exp.x, exp.y);
-                            });
-                            this_1._deadEnemies.forEach(function (enemy) {
-                                enemy.y -= y_delta_1;
-                                enemy.position = new objects.Vector2(enemy.x, enemy.y);
-                            });
-                            this_1._enemies.forEach(function (enemy) {
-                                enemy.y -= y_delta_1;
-                                enemy.position = new objects.Vector2(enemy.x, enemy.y);
-                                if (enemy.y > 520) {
-                                    _this.removeChild(enemy);
-                                    _this._enemies.splice(_this._enemies.indexOf(enemy), 1);
-                                }
-                            });
-                            this_1.PlayerMovementUpdate(y_delta_1);
-                        }
+                        });
+                        this_1.PlayerMovementUpdate(y_delta_1);
                     }
                 }
-                this_1.removeChild(this_1._scoreLabel);
-                this_1._scoreLabel = new objects.Label(config.Game.SCORE.toString(), "40px", "Consolas", "#000000", 0, 0);
-                this_1.addChild(this_1._scoreLabel);
-                this_1.UpdateLevel();
             };
             var this_1 = this;
             for (var i = 0; i < this.noOfPlayers; i++) {
                 _loop_1(i);
             }
+            this.removeChild(this._scoreLabel);
+            this._scoreLabel = new objects.Label(config.Game.SCORE.toString(), "40px", "Consolas", "#000000", 0, 0);
+            this.addChild(this._scoreLabel);
+            this.UpdateLevel();
         };
         LevelParent.prototype.Main = function () {
             var that = this;

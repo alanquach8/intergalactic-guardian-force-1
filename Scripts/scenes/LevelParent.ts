@@ -397,32 +397,33 @@ module scenes
     
                     if (this._movingBackward)
                         y_delta *= -1;
-                if (this._movingBackward)
-                    y_delta *= -1;
+                    if (this._movingBackward)
+                        y_delta *= -1;
 
-                if (this._movingForward && this._movingBackward)
-                    y_delta = 0;
+                    if (this._movingForward && this._movingBackward)
+                        y_delta = 0;
                 
-                this._distance_left += y_delta;
-                if (this._distance_left <= 0){
-                    if(!this._endEventFired){
-                        this._endEventFired = true;
-                        this.ReachedLevelEnd();
-                    }
-
-                    this._scrollBuffer = 0;
-                    if (this._players[i].y <= 0){
-                        if(this._canFinish){
-                            config.Game.SCENE_STATE = this._nextLevel;
-                        } else {
-                            this._players[i].y = 1
+                    this._distance_left += y_delta;
+                    if (this._distance_left <= 0){
+                        if(!this._endEventFired){
+                            this._endEventFired = true;
+                            this.ReachedLevelEnd();
                         }
+
+                        this._scrollBuffer = 0;
+                        if (this._players[i].y <= 0){
+                            if(this._canFinish){
+                                config.Game.SCENE_STATE = this._nextLevel;
+                            } else {
+                                this._players[i].y = 1
+                            }
+                        }
+                    } else {
+                        if(this._distance_left % 200 < 1){
+                            this.CreatePowerup();
+                        }
+                        this._players[i].y = this._scrollBuffer;
                     }
-                } else {
-                    if(this._distance_left % 200 < 1){
-                        this.CreatePowerup();
-                    }
-                    this._players[i].y = this._scrollBuffer;
                 
                     this._powerups.forEach(power => {
                         power.y -= y_delta;
