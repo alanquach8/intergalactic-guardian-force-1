@@ -38,6 +38,7 @@ var objects;
             _this._left = false;
             _this._right = false;
             _this._shoot = false;
+            _this._isRidingSegway = false;
             _this._pierceCount = 1;
             _this._facing = 270; // initially looking up (-90degrees on canvas axis = 270degrees on normal axis)
             _this._direction = new objects.Vector2(0, -1);
@@ -93,6 +94,16 @@ var objects;
             enumerable: true,
             configurable: true
         });
+        Object.defineProperty(Player.prototype, "IsRidingSegway", {
+            get: function () {
+                return this._isRidingSegway;
+            },
+            set: function (value) {
+                this._isRidingSegway = value;
+            },
+            enumerable: true,
+            configurable: true
+        });
         Object.defineProperty(Player.prototype, "IsReviving", {
             // PUBLIC PROPERTIES
             get: function () {
@@ -116,10 +127,13 @@ var objects;
         });
         Object.defineProperty(Player.prototype, "Speed", {
             get: function () {
+                var multiplier = 1;
+                if (this.IsRidingSegway)
+                    multiplier = 2;
                 if (!this._shoot) {
-                    return this._stationarySpeed;
+                    return this._stationarySpeed * multiplier;
                 }
-                return this._speed;
+                return this._speed * multiplier;
             },
             set: function (newSpeed) {
                 this._speed = newSpeed;

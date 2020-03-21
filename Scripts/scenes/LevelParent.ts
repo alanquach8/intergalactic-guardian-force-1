@@ -19,6 +19,7 @@ module scenes
         private _canFinish = true;
         private _endEventFired = false;
         private _scoreLabel: objects.Label;
+        private _segways: objects.Segway[];
 
 
         // PUBLIC PROPERTIES
@@ -41,6 +42,7 @@ module scenes
             this._scoreLabel = new objects.Label(config.Game.SCORE.toString(),
             "40px", "Consolas", "#000000", 0, 0);
 
+            this._segways = [];
 
             this.addEventListener("click", (evt: createjs.MouseEvent) => {
                 this.SendGrenade(evt.stageX, evt.stageY);
@@ -70,6 +72,14 @@ module scenes
             setInterval(()=> { this.CreatePowerup() }, 20000);
 
             this.Start();
+        }
+
+        public AddSegways(amount:number){
+            for (let i = 0; i < amount; i++) {
+                let s = new objects.Segway();
+                this._segways.push(s)
+                this.addChild(s)
+            }
         }
 
         public set MaximumEnemies(amount:number){
@@ -144,6 +154,12 @@ module scenes
         public get Player(){
             return this._player;
         }
+
+        public AddExplosion(x:number, y:number){
+            let exp = new objects.Explosion(x, y);
+            this._explosion.push(exp);
+            this.addChild(exp);
+        }
        
         public SendGrenade(x:number, y:number){
             if (this._gernadeManager.GrenadeCount <= 0)
@@ -151,9 +167,7 @@ module scenes
 
             this.ChangeGrenades(-1);
 
-            let exp = new objects.Explosion(x, y);
-            this._explosion.push(exp);
-            this.addChild(exp);
+            this.AddExplosion(x, y);
         }
 
         public UpdatePlayerLivesIndicator():void{
@@ -246,12 +260,26 @@ module scenes
                 exp.Update();
             });
 
+            this._segways.forEach(seg => {
+                seg.Update();
+            });
+
             this._powerups.forEach((p) => {
                 managers.Collision.AABBCheck(this._player, p);
                 if(p.isColliding){
                     p.ActivationEvent();
                     this._powerups.splice(this._powerups.indexOf(p), 1);
                     this.removeChild(p);
+                }
+
+            })
+
+            
+            this._segways.forEach((seg) => {
+                managers.Collision.AABBCheck(this._player, seg);
+                if(seg.isColliding){
+                    seg.SetRider(this._player);
+                    this.Player.IsRidingSegway = true;
                 }
 
             })
@@ -296,6 +324,14 @@ module scenes
                 managers.Collision.AABBCheck(enemy, that._player);
                 if(that._player.isColliding && !that._player.IsReviving){
                     that._player.Life--;
+                    if(that.Player.IsRidingSegway){
+                        that._segways.forEach(s => {
+                            that.AddExplosion(s.x, s.y);
+                            that._segways.splice(that._segways.indexOf(s), 1);
+                            that.removeChild(s)
+                            that._player.IsRidingSegway = false;
+                        });
+                    }
                     this.UpdatePlayerLivesIndicator();
                     if(that._player.Life == 0) {
                         config.Game.SCENE_STATE = scenes.State.LOOSE;
@@ -321,7 +357,6 @@ module scenes
 
                 if (this._movingForward && this._movingBackward)
                     y_delta = 0;
-
                 
                 this._distance_left += y_delta;
                 if (this._distance_left <= 0){
@@ -354,6 +389,13 @@ module scenes
                         exp.position = new objects.Vector2(exp.x, exp.y);
                     });
 
+                    this._segways.forEach(seg => {
+                        if(!seg.IsRiding){
+                            seg.y -= y_delta;
+                            seg.position = new objects.Vector2(seg.x, seg.y);
+                        }
+                    });
+
                     this._deadEnemies.forEach(enemy => {
                         enemy.y -= y_delta;
                         enemy.position = new objects.Vector2(enemy.x, enemy.y);
@@ -381,9 +423,12 @@ module scenes
         public Main(): void {
             let that = this;
 
+            
             this.addChild(new objects.Rectangle(0, 0, 15, 480, "DarkGrey"))
             this.addChild(new objects.Rectangle(625, 0, 15, 480, "DarkGrey"))
             this.addChild(new objects.Rectangle(15, 0, 610, 480, "GhostWhite"))
+            
+            this.AddSegways(1);
             
             this.addChild(this._player);
 

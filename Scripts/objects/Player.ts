@@ -22,6 +22,8 @@ module objects {
         private _right:boolean = false;
         private _shoot:boolean = false;
 
+        private _isRidingSegway = false;
+
         private _pierceCount:number = 1;
 
         private _bullets:objects.Bullet[];
@@ -33,6 +35,14 @@ module objects {
         set PierceCount(value:number){
             this._pierceCount = value;
         }
+
+        get IsRidingSegway():boolean{
+            return this._isRidingSegway;
+        }
+        set IsRidingSegway(value:boolean){
+            this._isRidingSegway = value;
+        }
+        
         
         // PUBLIC PROPERTIES
         get IsReviving():boolean{
@@ -52,10 +62,15 @@ module objects {
         }
 
         get Speed():number {
+            let multiplier = 1
+
+            if (this.IsRidingSegway)
+                multiplier = 2
+
             if (!this._shoot){
-                return this._stationarySpeed;
+                return this._stationarySpeed * multiplier;
             }
-            return this._speed;
+            return this._speed * multiplier;
         }
 
         set Speed(newSpeed:number) {
