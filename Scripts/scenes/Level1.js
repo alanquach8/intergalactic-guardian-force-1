@@ -54,44 +54,46 @@ var scenes;
             }
             if (this._subBoss != undefined) {
                 this._subBoss.Update();
-                this.Player.Bullets.forEach(function (bullet) {
-                    managers.Collision.AABBCheck(_this._subBoss, bullet);
-                    if (bullet.isColliding && _this._subBoss.HP > 0) {
-                        _this.Player.Bullets.splice(_this.Player.Bullets.indexOf(bullet), 1);
-                        _this.removeChild(bullet);
-                        _this._subBoss.ChangeHP(-1);
-                    }
-                });
-            }
-            this._subBoss.Bullets.forEach(function (bullet) {
-                managers.Collision.AABBCheck(_this.Player, bullet);
-                if (bullet.isColliding && !_this.Player.IsReviving) {
-                    _this._subBoss.Bullets.splice(_this._subBoss.Bullets.indexOf(bullet), 1);
-                    _this.removeChild(bullet);
-                    _this.Player.Life--;
-                    _this.UpdatePlayerLivesIndicator();
-                    if (_this.Player.Life == 0) {
-                        config.Game.SCENE_STATE = scenes.State.LOOSE;
-                    }
-                    else {
-                        _this.Player.Reset();
-                    }
-                }
-                _this.Enemies.forEach(function (enemy) {
-                    managers.Collision.AABBCheck(bullet, enemy);
-                    if (enemy.isColliding) {
-                        enemy.hitPoints--;
-                        if (enemy.hitPoints == 0) {
-                            _this.KillEnemy(enemy);
+                this.Players.forEach(function (player) {
+                    player.Bullets.forEach(function (bullet) {
+                        managers.Collision.AABBCheck(_this._subBoss, bullet);
+                        if (bullet.isColliding && _this._subBoss.HP > 0) {
+                            player.Bullets.splice(player.Bullets.indexOf(bullet), 1);
+                            _this.removeChild(bullet);
+                            _this._subBoss.ChangeHP(-1);
                         }
-                        // remove the bullet
-                        if (enemy.IsAlive) {
+                    });
+                    _this._subBoss.Bullets.forEach(function (bullet) {
+                        managers.Collision.AABBCheck(player, bullet);
+                        if (bullet.isColliding && !player.IsReviving) {
                             _this._subBoss.Bullets.splice(_this._subBoss.Bullets.indexOf(bullet), 1);
                             _this.removeChild(bullet);
+                            _this.PlayerLives--;
+                            _this.UpdatePlayerLivesIndicator();
+                            if (_this.PlayerLives == 0) {
+                                config.Game.SCENE_STATE = scenes.State.LOOSE;
+                            }
+                            else {
+                                player.Reset();
+                            }
                         }
-                    }
+                        _this.Enemies.forEach(function (enemy) {
+                            managers.Collision.AABBCheck(bullet, enemy);
+                            if (enemy.isColliding) {
+                                enemy.hitPoints--;
+                                if (enemy.hitPoints == 0) {
+                                    _this.KillEnemy(enemy);
+                                }
+                                // remove the bullet
+                                if (enemy.IsAlive) {
+                                    _this._subBoss.Bullets.splice(_this._subBoss.Bullets.indexOf(bullet), 1);
+                                    _this.removeChild(bullet);
+                                }
+                            }
+                        });
+                    });
                 });
-            });
+            }
         };
         return Level1;
     }(scenes.LevelParent));
