@@ -27,6 +27,14 @@ module scenes
 
         // PUBLIC PROPERTIES
 
+        public set PlayerLives(val:number){
+            this._players[0].Life = val;
+            this.UpdatePlayerLivesIndicator();
+        }
+        public get PlayerLives():number{
+            return this._players[0].Life;
+        }
+
         // CONSTRUCTOR
         constructor(next:scenes.State)
         {
@@ -233,6 +241,10 @@ module scenes
         }
         public set DistanceLeft(amount:number){
             this._distance_left = amount;
+        }
+
+        public get Players(): objects.Player[]{
+            return this._players;
         }
 
         // PUBLIC METHODS
@@ -449,7 +461,7 @@ module scenes
                     managers.Collision.AABBCheck(this._players[i], seg);
                     if(seg.isColliding){
                         seg.SetRider(this._players[i]);
-                        this.Player.IsRidingSegway = true;
+                        this._players[i].IsRidingSegway = true;
                     }
                 }
             })

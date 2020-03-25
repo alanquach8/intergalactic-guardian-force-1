@@ -16,7 +16,6 @@ var scenes;
 (function (scenes) {
     var LevelParent = /** @class */ (function (_super) {
         __extends(LevelParent, _super);
-        // PUBLIC PROPERTIES
         // CONSTRUCTOR
         function LevelParent(next) {
             var _this = _super.call(this) || this;
@@ -194,6 +193,18 @@ var scenes;
             _this.Start();
             return _this;
         }
+        Object.defineProperty(LevelParent.prototype, "PlayerLives", {
+            get: function () {
+                return this._players[0].Life;
+            },
+            // PUBLIC PROPERTIES
+            set: function (val) {
+                this._players[0].Life = val;
+                this.UpdatePlayerLivesIndicator();
+            },
+            enumerable: true,
+            configurable: true
+        });
         LevelParent.prototype.CheatCodeFeedback = function (text, color) {
             if (color === void 0) { color = "red"; }
             var feedback = document.body.querySelector("#cheatCodeFeedback");
@@ -226,6 +237,13 @@ var scenes;
             },
             set: function (amount) {
                 this._distance_left = amount;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(LevelParent.prototype, "Players", {
+            get: function () {
+                return this._players;
             },
             enumerable: true,
             configurable: true
@@ -422,7 +440,7 @@ var scenes;
                     managers.Collision.AABBCheck(_this._players[i], seg);
                     if (seg.isColliding) {
                         seg.SetRider(_this._players[i]);
-                        _this.Player.IsRidingSegway = true;
+                        _this._players[i].IsRidingSegway = true;
                     }
                 }
             });
