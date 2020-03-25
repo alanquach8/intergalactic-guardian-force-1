@@ -23,7 +23,7 @@ var objects;
             if (isCentered === void 0) { isCentered = true; }
             var _this = _super.call(this, imagePath, x, y, isCentered) || this;
             _this.isRiding = false;
-            _this.riding = new objects.Player;
+            _this.riding = new objects.Player(0);
             return _this;
         }
         //private methods
@@ -49,6 +49,9 @@ var objects;
         Segway.prototype.SetRider = function (player) {
             this.riding = player;
             this.isRiding = true;
+        };
+        Segway.prototype.GetRider = function () {
+            return this.riding;
         };
         return Segway;
     }(objects.GameObject));

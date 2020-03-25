@@ -460,6 +460,16 @@ var scenes;
                 var _loop_3 = function (i) {
                     managers.Collision.AABBCheck(enemy, that._players[i]);
                     if (that._players[i].isColliding && !that._players[i].IsReviving) {
+                        if (that._players[i].IsRidingSegway) {
+                            _this.AddExplosion(that._players[i].x, that._players[i].y);
+                            _this._segways.forEach(function (seg) {
+                                if (seg.GetRider() == that._players[i]) {
+                                    _this.removeChild(seg);
+                                    that._segways.splice(that._segways.indexOf(seg), 1);
+                                    that._players[i].IsRidingSegway = false;
+                                }
+                            });
+                        }
                         that._players[i].Life--;
                         _this.UpdatePlayerLivesIndicator();
                         if (that._players[i].Life == 0) {
@@ -467,25 +477,6 @@ var scenes;
                         }
                         else {
                             that._players[i].Reset();
-                        }
-                        managers.Collision.AABBCheck(enemy, that._players[i]);
-                        if (that._players[i].isColliding && !that._players[i].IsReviving) {
-                            that._players[i].Life--;
-                            if (that._players[i].IsRidingSegway) {
-                                that._segways.forEach(function (s) {
-                                    that.AddExplosion(s.x, s.y);
-                                    that._segways.splice(that._segways.indexOf(s), 1);
-                                    that.removeChild(s);
-                                    that._players[i].IsRidingSegway = false;
-                                });
-                            }
-                            _this.UpdatePlayerLivesIndicator();
-                            if (that._players[i].Life == 0) {
-                                config.Game.SCENE_STATE = scenes.State.LOOSE;
-                            }
-                            else {
-                                that._players[i].Reset();
-                            }
                         }
                     }
                 };
