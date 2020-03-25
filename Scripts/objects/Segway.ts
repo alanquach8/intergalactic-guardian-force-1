@@ -5,7 +5,7 @@ module objects {
 
         constructor(imagePath:string = "./Assets/images/vehicle/segway.png", x:number = 100, y:number = 100, isCentered:boolean = true){
             super(imagePath, x, y, isCentered);
-            this.riding = new objects.Player;
+            this.riding = new objects.Player(0);
         } 
             
         //private methods
@@ -21,7 +21,6 @@ module objects {
                 this.position = new objects.Vector2(this.riding.x, this.riding.y);
                 this.rotation = this.riding.rotation;
             }
-            
         }
         
         public Reset(): void {
@@ -35,6 +34,10 @@ module objects {
         public SetRider(player:objects.Player){
             this.riding = player;
             this.isRiding = true;
+        }
+
+        public GetRider(): objects.Player{
+            return this.riding;
         }
     }
 }
