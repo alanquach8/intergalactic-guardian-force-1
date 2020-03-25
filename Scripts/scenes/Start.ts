@@ -38,8 +38,8 @@ module scenes
 
         public Start(): void 
         {
-            this.play1 = new objects.Button("./Assets/images/ui/buttons/play.png", 320, 240, true);
-            this.play2 = new objects.Button("./Assets/images/ui/buttons/play.png", 320, 300, true);
+            this.play1 = new objects.Button("./Assets/images/ui/buttons/1player.png", 320, 240, true);
+            this.play2 = new objects.Button("./Assets/images/ui/buttons/2player.png", 320, 320, true);
             this.companyLabel = new objects.Label("MACK Address Games", "15px","Consolas", "Green", 320, 90, true);
 
            
