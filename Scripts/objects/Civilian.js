@@ -20,7 +20,7 @@ var objects;
         function Civilian(x, y) {
             if (x === void 0) { x = 200; }
             if (y === void 0) { y = 200; }
-            var _this = _super.call(this, "./Assets/images/civilian.png", x, y, true) || this;
+            var _this = _super.call(this, "./Assets/images/environment/civilian.png", x, y, true) || this;
             // PRIVATE INSTANCE MEMBERS
             _this._life = 100;
             _this._saved = false;

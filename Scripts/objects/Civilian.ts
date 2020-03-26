@@ -22,7 +22,7 @@ module objects
         }
         // CONSTRUCTOR
         constructor(x:number = 200, y:number = 200) {
-            super("./Assets/images/civilian.png", x, y, true);
+            super("./Assets/images/environment/civilian.png", x, y, true);
             this.Start();
         }
         // PRIVATE METHODS
