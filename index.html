@@ -18,16 +18,10 @@
         </tr>
         <tr>
             <td class="side-panel">
-                <h4 style="margin-bottom: 3px; margin-top: 0px;">Story</h4>
-
-                <p style="margin-top: 0px;">
-                    In the year 2049, man has colonized Mars in response to over-population on Earth. <br>
-                    Everything was peaceful and prosperous. <br>
-                    Then in 2058, the invasion happened. <br>
-                    Aliens from a planet from a distant galaxy came and attacked the colony. <br>
-                    With the planet being mostly free of weapons, the human colonists could not defend themselves.
-                </p>
-                
+                <h4>Important Information</h4>
+                <button class="cheatCodes" onclick="ShowModal('storyModal')">Read Story</button>
+                <button class="cheatCodes" onclick="ShowModal('instructionModal')">Read Instructions</button>
+                <button class="cheatCodes" onclick="ShowModal('creditsModal')" id="showStory">Credits</button>
             </td>
             <td class="game-panel"><canvas id="canvas" width="640" height="480"></canvas></td>
             <td class="side-panel">
@@ -106,6 +100,68 @@
         <source src="./Assets/sound/background/levels.mp3" type="audio/mpeg">
     </audio>
 
+    <div id="storyModal" class="modal">
+
+        <!-- Modal content -->
+        <div class="modal-content">
+          <span class="close">&times;</span>
+          <h4>Story</h4>
+          <p>
+            In the year 2049, man has colonized Mars in response to over-population on Earth. <br>
+            Everything was peaceful and good. Then in 2058, the invasion happened. <br>
+            Aliens from a planet from a distant galaxy came and attacked the colony. <br>
+            With the planet being mostly free of weapons, the human colonists could not defend themselves.<br>&nbsp;<br>
+            In response to this attack, the Intergalactic Guardian Force (IGF) was formed. <br>
+            Their sole purpose is to defend humanity from the extra-terrestrial. <br>
+            As the only survivor with a military background, you and your comrade have been tasked with reclaiming the base for humanity. <br>
+            If you fail here, the invasion will progress to Earth too. This could put humans, and every other creature on planet Earth as extinct!<br>&nbsp;<br>
+            You and your partner must make it from the armoury to the airlock door and outside where you must destroy the queen. <br>
+            By destroying the queen, no more enemies can be created, and the invasion will have failed! 
+          </p>
+        </div>
+      
+      </div>
+
+      <!-- The Modal -->
+<div id="instructionModal" class="modal">
+
+    <!-- Modal content -->
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h4>Instructions</h4>
+      <p>
+          The player can progress to the next level simply by reaching the end of said level.<br>
+          The player reaches the end of the level by walking (moving) towards the top of the screen.<br>
+          At the end of each level, there is a boss (level 1 & 2 are weaker bosses, and level 3 is the final boss).<br>
+          Once the boss is defeated, the player may progress.<br>&nbsp;<br>
+          Along your journey, you will also need to kill off any aliens who roam the halls of the colony.<br>&nbsp;<br>
+          You will also encounter civilians scattered through the remains of the colony.<br>
+          Walk up to a civilian to rescue them, and you will be rewarded with points!<br>
+          If a civilian is killed (touched) by an enemy, however, the civilian will die, and you will loose points.
+        </p>
+    </div>
+  
+  </div>
+
+  <div id="creditsModal" class="modal">
+
+    <!-- Modal content -->
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h4>Credits</h4>
+      <p>
+            Made by MACK Address Games (2020)<br>&nbsp;<br>
+            All art and sound assets created by: Christopher Palazzolo<br>
+            The explosion image was created by Sogomn (<a href="https://opengameart.org/content/explosion-3">OpenGameArt.org</a>)<br>&nbsp;<br>
+            Special Thanks To Our Testers:<br>
+            - Victoria R.<br>
+            - Natalie P.<br>&nbsp;<br>
+            <sub>Copyright &copy; 2020. MACK Address Games.<br>All rights reserved. Do not distribute.</sub>
+        </p>
+    </div>
+  
+  </div>
+
     <script>
         var coll = document.getElementsByClassName("collapsible");
         var i;
@@ -122,7 +178,29 @@
           });
         }
         </script>
-    
+
+        <script>
+            function ShowModal(id){
+                let modal = document.getElementById(id);
+                let span = document.getElementsByClassName("close");
+
+                modal.style.display = "block";
+
+                for (let i = 0; i < span.length; i++) {
+                    span[i].onclick = function() {
+                        modal.style.display = "none";
+                    }
+                    
+                }               
+
+                window.onclick = function(event) {
+                    if (event.target == modal) {
+                        modal.style.display = "none";
+                    }
+                }
+
+            }
+        </script>
     <!-- SCRIPTS -->
     <!-- 3RD PARTY LIBRARIES -->
     <script src="./node_modules/easeljs/lib/easeljs.min.js"></script>
