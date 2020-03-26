@@ -651,6 +651,15 @@ module scenes
         public get Enemies():objects.Enemy[]{
             return this._enemies;
         }
+
+        public PlaySound(name:string){
+            let player = <HTMLAudioElement> document.body.querySelector("#" + name + "Sound");
+            player.play();
+        }
+        public PauseSound(name:string){
+            let player = <HTMLAudioElement> document.body.querySelector("#" + name + "Sound");
+            player.pause();
+        }
         
     }
 }
