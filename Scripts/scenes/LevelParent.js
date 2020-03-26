@@ -603,6 +603,14 @@ var scenes;
             enumerable: true,
             configurable: true
         });
+        LevelParent.prototype.PlaySound = function (name) {
+            var player = document.body.querySelector("#" + name + "Sound");
+            player.play();
+        };
+        LevelParent.prototype.PauseSound = function (name) {
+            var player = document.body.querySelector("#" + name + "Sound");
+            player.pause();
+        };
         return LevelParent;
     }(objects.Scene));
     scenes.LevelParent = LevelParent;

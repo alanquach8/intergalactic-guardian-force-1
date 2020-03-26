@@ -10,6 +10,7 @@ module scenes
             super(scene);
             this._subBoss = new objects.SubBoss(new objects.Player(0), true)
             this.CanFinish = false;
+            this.PlaySound("levels");
         }
 
         SpawnBoss(){
