@@ -22,7 +22,7 @@ var objects;
             if (x === void 0) { x = 320; }
             if (y === void 0) { y = 250; }
             if (isCentered === void 0) { isCentered = true; }
-            var _this = _super.call(this, imagePath, x, y, true) || this;
+            var _this = _super.call(this, config.Game.PLAYER_IMAGES[playerId - 1], x, y, true) || this;
             _this._speed = 0.5;
             _this._stationarySpeed = 1;
             _this._rotate = 0.5; // degrees
@@ -40,6 +40,7 @@ var objects;
             _this._shoot = false;
             _this._isRidingSegway = false;
             _this._pierceCount = 1;
+            _this._superHero = false;
             _this._facing = 270; // initially looking up (-90degrees on canvas axis = 270degrees on normal axis)
             _this._direction = new objects.Vector2(0, -1);
             _this._bullets = [];
@@ -100,6 +101,16 @@ var objects;
             },
             set: function (value) {
                 this._pierceCount = value;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(Player.prototype, "SuperHero", {
+            get: function () {
+                return this._superHero;
+            },
+            set: function (val) {
+                this._superHero = val;
             },
             enumerable: true,
             configurable: true

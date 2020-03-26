@@ -8,5 +8,6 @@ module config
         public static SCORE: number = 0;
 
         public static NO_OF_PLAYERS: number = 2;
+        public static PLAYER_IMAGES:string[] = [];
     }
 }

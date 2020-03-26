@@ -11,6 +11,11 @@ module objects{
             this.Start();
         }
 
+        public ScaleImage(factor:number){
+            this.scaleX = factor;
+            this.scaleY = factor;
+        }
+
         // PUBLIC METHODS
 
         HoverOver():void{

@@ -11,7 +11,8 @@ var scenes;
         State[State["END"] = 4] = "END";
         State[State["QUOTE"] = 5] = "QUOTE";
         State[State["LOOSE"] = 6] = "LOOSE";
-        State[State["NUM_OF_SCENES"] = 7] = "NUM_OF_SCENES";
+        State[State["CHARACTER_SELECTION"] = 7] = "CHARACTER_SELECTION";
+        State[State["NUM_OF_SCENES"] = 8] = "NUM_OF_SCENES";
     })(State = scenes.State || (scenes.State = {}));
 })(scenes || (scenes = {}));
 //# sourceMappingURL=State.js.map

@@ -322,7 +322,7 @@ module scenes
             let x = 640;
 
             for (let i = 0; i < this._players[0].Life; i++) {
-                let img = new createjs.Bitmap("./Assets/images/player/front.png")
+                let img = new createjs.Bitmap("./Assets/images/ui/front.png")
                 img.scaleX = 0.5;
                 img.scaleY = 0.5;
                 x -= (img.getBounds().width * 0.5) + 5
