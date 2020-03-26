@@ -24,8 +24,6 @@ var scenes;
             // private _player2: objects.Player;
             _this.noOfPlayers = config.Game.NO_OF_PLAYERS;
             _this._scrollBuffer = 150;
-            _this._movingForward = false;
-            _this._movingBackward = false;
             _this._distance_left = 1000;
             _this._canFinish = true;
             _this._endEventFired = false;
@@ -156,40 +154,8 @@ var scenes;
             _this.addEventListener("click", function (evt) {
                 _this.SendGrenade(evt.stageX, evt.stageY);
             });
-            window.addEventListener('keyup', function (e) {
-                switch (e.code) {
-                    case "ArrowUp":
-                        _this._movingForward = false;
-                        break;
-                    case "ArrowDown":
-                        _this._movingBackward = false;
-                        break;
-                    case "KeyW":
-                        _this._movingForward = false;
-                        break;
-                    case "KeyS":
-                        _this._movingBackward = false;
-                        break;
-                }
-            });
-            window.addEventListener('keydown', function (e) {
-                switch (e.code) {
-                    case "ArrowUp":
-                        _this._movingForward = true;
-                        break;
-                    case "ArrowDown":
-                        _this._movingBackward = true;
-                        break;
-                    case "KeyW":
-                        _this._movingForward = true;
-                        break;
-                    case "KeyS":
-                        _this._movingBackward = true;
-                        break;
-                }
-            });
             // every 20s
-            setInterval(function () { _this.CreatePowerup(); }, 20000);
+            // setInterval(()=> { this.CreatePowerup() }, 20000);
             _this.Start();
             return _this;
         }
@@ -413,7 +379,6 @@ var scenes;
                     this._isActive = false;
                     config.Game.SCENE_STATE = scenes.State.END;
                 }
-                this._players[i].Update();
             }
             this._explosion.forEach(function (exp) {
                 if (exp.Done) {
@@ -510,79 +475,45 @@ var scenes;
                     }
                 });
             });
+            var moved = false;
             var _loop_1 = function (i) {
-                if ((this_1._movingForward || this_1._movingBackward) && this_1._players[i].y < this_1._scrollBuffer) {
-                    var y_delta_1 = this_1._players[i].Direction.y * this_1._players[i].Speed;
-                    if (this_1._movingBackward)
-                        y_delta_1 *= -1;
-                    if (this_1._movingBackward)
-                        y_delta_1 *= -1;
-                    if (this_1._movingForward && this_1._movingBackward)
-                        y_delta_1 = 0;
-                    this_1._distance_left += y_delta_1;
-                    if (this_1._distance_left <= 0) {
-                        if (!this_1._endEventFired) {
-                            this_1._endEventFired = true;
-                            this_1.ReachedLevelEnd();
-                        }
-                        this_1._scrollBuffer = 0;
-                        if (this_1._players[i].y <= 0) {
-                            if (this_1._canFinish) {
-                                this_1._isActive = false;
-                                config.Game.SCENE_STATE = this_1._nextLevel;
-                            }
-                            else {
-                                this_1._players[i].y = 1;
-                            }
-                        }
-                    }
-                    else {
-                        if (this_1._distance_left % 200 < 1) {
-                            this_1.CreatePowerup();
-                        }
+                if (moved) {
+                    if (this_1._distance_left > 0 && this_1._players[i].y < this_1._scrollBuffer) {
                         this_1._players[i].y = this_1._scrollBuffer;
                     }
-                    this_1._powerups.forEach(function (power) {
-                        power.y -= y_delta_1;
-                        power.position = new objects.Vector2(power.x, power.y);
-                    });
-                    this_1._explosion.forEach(function (exp) {
-                        exp.y -= y_delta_1;
-                        exp.position = new objects.Vector2(exp.x, exp.y);
-                    });
-                    this_1._segways.forEach(function (seg) {
-                        if (!seg.IsRiding) {
-                            seg.y -= y_delta_1;
-                            seg.position = new objects.Vector2(seg.x, seg.y);
-                        }
-                    });
-                    this_1._deadEnemies.forEach(function (enemy) {
-                        enemy.y -= y_delta_1;
-                        enemy.position = new objects.Vector2(enemy.x, enemy.y);
-                    });
-                    if (this_1._movingForward && this_1._movingBackward)
-                        y_delta_1 = 0;
-                    this_1._distance_left += y_delta_1;
-                    if (this_1._distance_left <= 0) {
-                        if (!this_1._endEventFired) {
-                            this_1._endEventFired = true;
-                            this_1.ReachedLevelEnd();
-                        }
-                        this_1._scrollBuffer = 0;
-                        if (this_1._players[i].y <= 0) {
-                            if (this_1._canFinish) {
-                                config.Game.SCENE_STATE = this_1._nextLevel;
+                }
+                else {
+                    if ((this_1._players[i].Forward || this_1._players[i].Backward) && this_1._players[i].y < this_1._scrollBuffer) {
+                        var y_delta_1 = this_1._players[i].Direction.y * this_1._players[i].Speed;
+                        if (this_1._players[i].Backward)
+                            y_delta_1 *= -1;
+                        if (this_1._players[i].Forward && this_1._players[i].Backward)
+                            y_delta_1 = 0;
+                        if (y_delta_1 != 0)
+                            moved = true;
+                        this_1._distance_left += y_delta_1;
+                        if (this_1._distance_left <= 0) {
+                            if (!this_1._endEventFired) {
+                                this_1._endEventFired = true;
+                                this_1.ReachedLevelEnd();
                             }
-                            else {
-                                this_1._players[i].y = 1;
+                            this_1._scrollBuffer = 0;
+                            if (this_1._players[i].y <= 0) {
+                                if (this_1._canFinish) {
+                                    this_1._isActive = false;
+                                    config.Game.SCENE_STATE = this_1._nextLevel;
+                                }
+                                else {
+                                    this_1._players[i].y = 1;
+                                }
                             }
                         }
-                    }
-                    else {
-                        if (this_1._distance_left % 200 < 1) {
-                            this_1.CreatePowerup();
+                        else {
+                            if (this_1._distance_left % 200 < 1) {
+                                this_1.CreatePowerup();
+                            }
+                            this_1._players[i].y = this_1._scrollBuffer;
                         }
-                        this_1._players[i].y = this_1._scrollBuffer;
                         this_1._powerups.forEach(function (power) {
                             power.y -= y_delta_1;
                             power.position = new objects.Vector2(power.x, power.y);
@@ -590,6 +521,12 @@ var scenes;
                         this_1._explosion.forEach(function (exp) {
                             exp.y -= y_delta_1;
                             exp.position = new objects.Vector2(exp.x, exp.y);
+                        });
+                        this_1._segways.forEach(function (seg) {
+                            if (!seg.IsRiding) {
+                                seg.y -= y_delta_1;
+                                seg.position = new objects.Vector2(seg.x, seg.y);
+                            }
                         });
                         this_1._deadEnemies.forEach(function (enemy) {
                             enemy.y -= y_delta_1;

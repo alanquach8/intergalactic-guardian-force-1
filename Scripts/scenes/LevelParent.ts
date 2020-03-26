@@ -15,8 +15,6 @@ module scenes
         private _playerLivesThumbs: createjs.Bitmap[];
         private _powerups:objects.Powerup[];
         private _scrollBuffer=150;
-        private _movingForward=false;
-        private _movingBackward=false;
         private _distance_left = 1000;
         private _nextLevel: scenes.State;
         private _canFinish = true;
@@ -173,41 +171,9 @@ module scenes
             this.addEventListener("click", (evt: createjs.MouseEvent) => {
                 this.SendGrenade(evt.stageX, evt.stageY);
             });
-            window.addEventListener('keyup', (e: KeyboardEvent) => {
-                switch(e.code) {
-                    case "ArrowUp":
-                        this._movingForward = false;
-                        break;
-                    case "ArrowDown":
-                        this._movingBackward = false;
-                        break;
-                    case "KeyW":
-                        this._movingForward = false;
-                        break;
-                    case "KeyS":
-                        this._movingBackward = false;
-                        break;
-                }
-            });
-
-            window.addEventListener('keydown', (e: KeyboardEvent) => {
-                switch(e.code) {
-                    case "ArrowUp":
-                        this._movingForward = true;
-                        break;
-                    case "ArrowDown":
-                        this._movingBackward = true;
-                        break;
-                    case "KeyW":
-                        this._movingForward = true;
-                        break;
-                    case "KeyS":
-                        this._movingBackward = true;
-                        break;
-                }
-            });
+            
             // every 20s
-            setInterval(()=> { this.CreatePowerup() }, 20000);
+            // setInterval(()=> { this.CreatePowerup() }, 20000);
 
             this.Start();
         }
@@ -429,7 +395,6 @@ module scenes
                     this._isActive = false;
                     config.Game.SCENE_STATE = scenes.State.END;
                 }
-                this._players[i].Update();
             }
 
             this._explosion.forEach(exp => {
@@ -531,87 +496,49 @@ module scenes
                 
             })
 
+            let moved = false;
             for(let i = 0; i < this.noOfPlayers; i++) {
-                if ((this._movingForward || this._movingBackward) && this._players[i].y < this._scrollBuffer ){
-                    let y_delta = this._players[i].Direction.y * this._players[i].Speed;
-    
-                    if (this._movingBackward)
-                        y_delta *= -1;
-                    if (this._movingBackward)
-                        y_delta *= -1;
 
-                    if (this._movingForward && this._movingBackward)
-                        y_delta = 0;
-                
-                    this._distance_left += y_delta;
-                    if (this._distance_left <= 0){
-                        if(!this._endEventFired){
-                            this._endEventFired = true;
-                            this.ReachedLevelEnd();
-                        }
-
-                        this._scrollBuffer = 0;
-                        if (this._players[i].y <= 0){
-                            if(this._canFinish){
-                                this._isActive = false;
-                                config.Game.SCENE_STATE = this._nextLevel;
-                            } else {
-                                this._players[i].y = 1
-                            }
-                        }
-                    } else {
-                        if(this._distance_left % 200 < 1){
-                            this.CreatePowerup();
-                        }
+                if(moved){
+                    if (this._distance_left > 0 && this._players[i].y < this._scrollBuffer){
                         this._players[i].y = this._scrollBuffer;
                     }
-                
-                    this._powerups.forEach(power => {
-                        power.y -= y_delta;
-                        power.position = new objects.Vector2(power.x, power.y);
-                    });
+                } else {
+                    if ((this._players[i].Forward || this._players[i].Backward) && this._players[i].y < this._scrollBuffer ){
+                        let y_delta = this._players[i].Direction.y * this._players[i].Speed;
+        
+                        if (this._players[i].Backward)
+                            y_delta *= -1;
     
-                    this._explosion.forEach(exp => {
-                        exp.y -= y_delta;
-                        exp.position = new objects.Vector2(exp.x, exp.y);
-                    });
+                        if (this._players[i].Forward && this._players[i].Backward)
+                            y_delta = 0;
 
-                    this._segways.forEach(seg => {
-                        if(!seg.IsRiding){
-                            seg.y -= y_delta;
-                            seg.position = new objects.Vector2(seg.x, seg.y);
-                        }
-                    });
-
-                    this._deadEnemies.forEach(enemy => {
-                        enemy.y -= y_delta;
-                        enemy.position = new objects.Vector2(enemy.x, enemy.y);
-                    });
-    
-                    if (this._movingForward && this._movingBackward)
-                        y_delta = 0;
-    
+                        if (y_delta != 0)
+                            moved = true;   
+                        
                     
-                    this._distance_left += y_delta;
-                    if (this._distance_left <= 0){
-                        if(!this._endEventFired){
-                            this._endEventFired = true;
-                            this.ReachedLevelEnd();
-                        }
-    
-                        this._scrollBuffer = 0;
-                        if (this._players[i].y <= 0){
-                            if(this._canFinish){
-                                config.Game.SCENE_STATE = this._nextLevel;
-                            } else {
-                                this._players[i].y = 1
+                        this._distance_left += y_delta;
+                        if (this._distance_left <= 0){
+                            if(!this._endEventFired){
+                                this._endEventFired = true;
+                                this.ReachedLevelEnd();
                             }
+    
+                            this._scrollBuffer = 0;
+                            if (this._players[i].y <= 0){
+                                if(this._canFinish){
+                                    this._isActive = false;
+                                    config.Game.SCENE_STATE = this._nextLevel;
+                                } else {
+                                    this._players[i].y = 1
+                                }
+                            }
+                        } else {
+                            if(this._distance_left % 200 < 1){
+                                this.CreatePowerup();
+                            }
+                            this._players[i].y = this._scrollBuffer;
                         }
-                    } else {
-                        if(this._distance_left % 200 < 1){
-                            this.CreatePowerup();
-                        }
-                        this._players[i].y = this._scrollBuffer;
                     
                         this._powerups.forEach(power => {
                             power.y -= y_delta;
@@ -623,11 +550,18 @@ module scenes
                             exp.position = new objects.Vector2(exp.x, exp.y);
                         });
     
+                        this._segways.forEach(seg => {
+                            if(!seg.IsRiding){
+                                seg.y -= y_delta;
+                                seg.position = new objects.Vector2(seg.x, seg.y);
+                            }
+                        });
+    
                         this._deadEnemies.forEach(enemy => {
                             enemy.y -= y_delta;
                             enemy.position = new objects.Vector2(enemy.x, enemy.y);
                         });
-        
+    
                         this._enemies.forEach(enemy => {
                             enemy.y -= y_delta;
                             enemy.position = new objects.Vector2(enemy.x, enemy.y);

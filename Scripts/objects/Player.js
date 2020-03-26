@@ -104,6 +104,20 @@ var objects;
             enumerable: true,
             configurable: true
         });
+        Object.defineProperty(Player.prototype, "Forward", {
+            get: function () {
+                return this._forward;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(Player.prototype, "Backward", {
+            get: function () {
+                return this._backward;
+            },
+            enumerable: true,
+            configurable: true
+        });
         Object.defineProperty(Player.prototype, "IsRidingSegway", {
             get: function () {
                 return this._isRidingSegway;
