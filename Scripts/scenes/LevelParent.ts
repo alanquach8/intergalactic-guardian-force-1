@@ -54,8 +54,7 @@ module scenes
             this._powerups = new Array();
             this._explosion = [];
             this._playerLivesThumbs = [];
-            this._noOfEnemies = 1;
-            // this._noOfEnemies = 5;
+            this._noOfEnemies = 5;
             this._gernadeManager = new objects.GrenadeManager();
             this._nextLevel = next;
             this._scoreLabel = new objects.Label(config.Game.SCORE.toString(),
