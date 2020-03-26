@@ -29,7 +29,6 @@ module objects {
         private _pierceCount:number = 1;
 
         private _bullets:objects.Bullet[];
-
         
         get PierceCount():number{
             return this._pierceCount;
@@ -37,6 +36,14 @@ module objects {
         set PierceCount(value:number){
             this._pierceCount = value;
         }
+
+        get Forward():boolean{
+            return this._forward;
+        }
+        get Backward():boolean{
+            return this._backward;
+        }
+
 
         get IsRidingSegway():boolean{
             return this._isRidingSegway;

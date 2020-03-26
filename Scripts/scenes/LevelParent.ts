@@ -15,8 +15,6 @@ module scenes
         private _playerLivesThumbs: createjs.Bitmap[];
         private _powerups:objects.Powerup[];
         private _scrollBuffer=150;
-        private _movingForward=false;
-        private _movingBackward=false;
         private _distance_left = 1000;
         private _nextLevel: scenes.State;
         private _canFinish = true;
@@ -27,8 +25,17 @@ module scenes
         private _civilians:objects.Civilian[];
         private _noOfCivilians:number;
 
+        private _isActive = false;
 
         // PUBLIC PROPERTIES
+
+        public set PlayerLives(val:number){
+            this._players[0].Life = val;
+            this.UpdatePlayerLivesIndicator();
+        }
+        public get PlayerLives():number{
+            return this._players[0].Life;
+        }
 
         // CONSTRUCTOR
         constructor(next:scenes.State)
@@ -55,51 +62,144 @@ module scenes
             this._civilians = new Array();
             this._noOfCivilians = 3;
 
-            this.addEventListener("click", (evt: createjs.MouseEvent) => {
-                this.SendGrenade(evt.stageX, evt.stageY);
-            });
-            window.addEventListener('keyup', (e: KeyboardEvent) => {
-                switch(e.code) {
-                    case "ArrowUp":
-                        this._movingForward = false;
-                        break;
-                    case "ArrowDown":
-                        this._movingBackward = false;
-                        break;
-                    case "KeyW":
-                        this._movingForward = false;
-                        break;
-                    case "KeyS":
-                        this._movingBackward = false;
-                        break;
+            (<HTMLInputElement>document.body.querySelector("#cheatCodeButton")).addEventListener("click", () => {
+                if(this._isActive){
+
+                    let code:string[] = (<HTMLInputElement>document.body.querySelector("#cheatCode")).value.split(" ");
+
+                    if(code.length == 0){
+                        return;
+                    }
+
+                    if (code[0] == "spawn"){
+                        if(code.length <  2){
+                            this.CheatCodeFeedback("Invalid Use Of Spawn Command. <br>Usage: spawn <object> [x] [y] [id]")
+                            return;
+                        }
+
+                        let x = 100;
+                        let y = 100;
+                        let id = this.getRandomInt(3);
+
+                        switch(code[1]){
+                            case "segway":
+                                if (code.length >= 4){
+                                    x = Number(code[2]);
+                                    y = Number(code[3]);
+                                }
+                                this.AddSegways(1, x, y);
+                                this.CheatCodeFeedback("Spawned Segway At x=" + x + " y=" + y, "green");
+                                break;
+                            case "powerup":
+                                if(code.length == 3){
+                                    this.CheatCodeFeedback("Invalid Use Of Spawn Command. <br>Usage: spawn &lt;object&gt; [x] [y] [id]")
+                                    return;
+                                }
+                                if (code.length == 4){
+                                    x = Number(code[2]);
+                                    y = Number(code[3]);
+                                } else if (code.length >= 5){
+                                    x = Number(code[2]);
+                                    y = Number(code[3]);
+                                    id = Number(code[4]);
+                                }
+                                this.CreatePowerup(x, y, id)
+                                this.CheatCodeFeedback("Spawned Powerup At x=" + x + " y=" + y + " id=" + id, "green");
+                                break;
+                            case "enemy":
+                                if (code.length >= 4){
+                                    x = Number(code[2]);
+                                    y = Number(code[3]);
+                                }
+                                this.SpawnEnemy(x, y)
+                                this.CheatCodeFeedback("Spawned Enemy At x=" + x + " y=" + y, "green");
+                                break;
+
+                            default:
+                                this.CheatCodeFeedback("Invalid Use Of Spawn Command. <br>Unknown Entity: " + code[1])
+
+                        }
+                    } else if (code[0] == "set"){
+                        if(code.length < 3){
+                            this.CheatCodeFeedback("Invalid Use Of Set Command. <br>Usage: Set &lt;what&gt; &lt;value&gt;")
+                            return;
+                        }
+                        let what = code[1];
+                        let value = Number(code[2]);
+                        switch (what){
+                            case "grenades":
+                                this.SetGrenades(value);
+                                this.CheatCodeFeedback("Set Number Of Grenades To " + value, "green");
+                                break;
+                            case "lives":
+                                this._players[0].Life = value;
+                                this.UpdatePlayerLivesIndicator();
+                                this.CheatCodeFeedback("Set Number Of Lives To " + value, "green");
+                                break;
+                            case "score":
+                                config.Game.SCORE = value;
+                                this.CheatCodeFeedback("Set Score To " + value, "green");
+                                break;
+                            default:
+                                this.CheatCodeFeedback("Invalid Use Of Set Command. <br>Unknown Value: " + what)
+    
+                        }
+                    } else if (code[0] == "level"){
+                        if(code.length < 2){
+                            this.CheatCodeFeedback("Invalid Use Of Set Command. <br>Usage: level &lt;number&gt;")
+                            return;
+                        }
+                        let level = Number(code[1]);
+                        switch(level){
+                            case 1:
+                                config.Game.SCENE_STATE = scenes.State.LEVEL1;
+                                break;
+                            case 2:
+                                config.Game.SCENE_STATE = scenes.State.LEVEL2;
+                                break;
+                            case 3:
+                                config.Game.SCENE_STATE = scenes.State.LEVEL3;
+                                break;
+                            default:
+                                this.CheatCodeFeedback("Invalid Use Of Level Command. <br>Unknown Level ID: " + level)
+                        }
+                    } else if (code[0] == "help"){
+                        this.CheatCodeFeedback("Cheat Codes Command Reference:<br>spawn &lt;segway|powerup|enemy&gt; [x] [y] [id]<br>Set &lt;grenades|lives|score&gt; &lt;value&gt;<br>Usage: level &lt;1|2|3&gt;<br>help", "green")
+                    } else if (code[0] == "clear"){
+                        this.CheatCodeFeedback("")
+                    } else {
+                        this.CheatCodeFeedback("Unknown Command. Use 'help' For A List Of Commands!")
+                    }
+
+                    this.ProcessCommand(code);
                 }
             });
 
-            window.addEventListener('keydown', (e: KeyboardEvent) => {
-                switch(e.code) {
-                    case "ArrowUp":
-                        this._movingForward = true;
-                        break;
-                    case "ArrowDown":
-                        this._movingBackward = true;
-                        break;
-                    case "KeyW":
-                        this._movingForward = true;
-                        break;
-                    case "KeyS":
-                        this._movingBackward = true;
-                        break;
-                }
+            this.addEventListener("click", (evt: createjs.MouseEvent) => {
+                this.SendGrenade(evt.stageX, evt.stageY);
             });
+            
             // every 20s
-            setInterval(()=> { this.CreatePowerup() }, 20000);
+            // setInterval(()=> { this.CreatePowerup() }, 20000);
 
             this.Start();
         }
 
-        public AddSegways(amount:number){
+        public CheatCodeFeedback(text:string, color:string="red"){
+            let feedback = document.body.querySelector("#cheatCodeFeedback")
+            if (feedback != null){
+                feedback.innerHTML = text;
+                feedback.setAttribute("style", "margin: 0px; color:" + color); 
+            }
+        }
+
+        public ProcessCommand(command:string[]){
+
+        }
+
+        public AddSegways(amount:number, x:number=100, y:number=100){
             for (let i = 0; i < amount; i++) {
-                let s = new objects.Segway();
+                let s = new objects.Segway(undefined, x, y);
                 this._segways.push(s)
                 this.addChild(s)
             }
@@ -114,6 +214,10 @@ module scenes
         }
         public set DistanceLeft(amount:number){
             this._distance_left = amount;
+        }
+
+        public get Players(): objects.Player[]{
+            return this._players;
         }
 
         // PUBLIC METHODS
@@ -274,8 +378,15 @@ module scenes
         public PlayerMovementUpdate(y_delta:number){
 
         }
+
+        public SpawnEnemy(x:number=-1, y:number=-1){
+            this._enemies.push(new objects.Enemy(new objects.Vector2(x, y)));
+            this.addChild(this._enemies[this._enemies.length-1]);
+        }
         
         public Update(): void {
+            this._isActive = true;
+
             // Reference to the Play Scene Object
             let that = this;
 
@@ -292,9 +403,9 @@ module scenes
                     this._players[i].Update();
                 } else {
                     // game over
+                    this._isActive = false;
                     config.Game.SCENE_STATE = scenes.State.END;
                 }
-                this._players[i].Update();
             }
 
             this._explosion.forEach(exp => {
@@ -326,7 +437,7 @@ module scenes
                     managers.Collision.AABBCheck(this._players[i], seg);
                     if(seg.isColliding){
                         seg.SetRider(this._players[i]);
-                        this.Player.IsRidingSegway = true;
+                        this._players[i].IsRidingSegway = true;
                     }
                 }
             })
@@ -390,6 +501,16 @@ module scenes
                 for(let i = 0; i<this.noOfPlayers; i++) {
                     managers.Collision.AABBCheck(enemy, that._players[i]);
                     if(that._players[i].isColliding && !that._players[i].IsReviving){
+                        if(that._players[i].IsRidingSegway){
+                            this.AddExplosion(that._players[i].x, that._players[i].y);
+                            this._segways.forEach(seg => {
+                                if(seg.GetRider() == that._players[i]){
+                                    this.removeChild(seg)
+                                    that._segways.splice(that._segways.indexOf(seg), 1);
+                                    that._players[i].IsRidingSegway = false;
+                                }
+                            });
+                        }
                         that._players[i].Life--;
                         this.UpdatePlayerLivesIndicator();
                         if(that._players[i].Life == 0) {
@@ -397,25 +518,6 @@ module scenes
                         } else {
                             that._players[i].Reset();
                         }
-                        managers.Collision.AABBCheck(enemy, that._players[i]);
-                        if(that._players[i].isColliding && !that._players[i].IsReviving){
-                            that._players[i].Life--;
-                            if(that._players[i].IsRidingSegway){
-                                that._segways.forEach(s => {
-                                    that.AddExplosion(s.x, s.y);
-                                    that._segways.splice(that._segways.indexOf(s), 1);
-                                    that.removeChild(s)
-                                    that._players[i].IsRidingSegway = false;
-                                });
-                            }
-                            this.UpdatePlayerLivesIndicator();
-                            if(that._players[i].Life == 0) {
-                                config.Game.SCENE_STATE = scenes.State.LOOSE;
-                            } else {
-                                that._players[i].Reset();
-                            }
-                        }
-                        
                     }
                 }
 
@@ -429,86 +531,49 @@ module scenes
                 
             })
 
+            let moved = false;
             for(let i = 0; i < this.noOfPlayers; i++) {
-                if ((this._movingForward || this._movingBackward) && this._players[i].y < this._scrollBuffer ){
-                    let y_delta = this._players[i].Direction.y * this._players[i].Speed;
-    
-                    if (this._movingBackward)
-                        y_delta *= -1;
-                    if (this._movingBackward)
-                        y_delta *= -1;
 
-                    if (this._movingForward && this._movingBackward)
-                        y_delta = 0;
-                
-                    this._distance_left += y_delta;
-                    if (this._distance_left <= 0){
-                        if(!this._endEventFired){
-                            this._endEventFired = true;
-                            this.ReachedLevelEnd();
-                        }
-
-                        this._scrollBuffer = 0;
-                        if (this._players[i].y <= 0){
-                            if(this._canFinish){
-                                config.Game.SCENE_STATE = this._nextLevel;
-                            } else {
-                                this._players[i].y = 1
-                            }
-                        }
-                    } else {
-                        if(this._distance_left % 200 < 1){
-                            this.CreatePowerup();
-                        }
+                if(moved){
+                    if (this._distance_left > 0 && this._players[i].y < this._scrollBuffer){
                         this._players[i].y = this._scrollBuffer;
                     }
-                
-                    this._powerups.forEach(power => {
-                        power.y -= y_delta;
-                        power.position = new objects.Vector2(power.x, power.y);
-                    });
+                } else {
+                    if ((this._players[i].Forward || this._players[i].Backward) && this._players[i].y < this._scrollBuffer ){
+                        let y_delta = this._players[i].Direction.y * this._players[i].Speed;
+        
+                        if (this._players[i].Backward)
+                            y_delta *= -1;
     
-                    this._explosion.forEach(exp => {
-                        exp.y -= y_delta;
-                        exp.position = new objects.Vector2(exp.x, exp.y);
-                    });
+                        if (this._players[i].Forward && this._players[i].Backward)
+                            y_delta = 0;
 
-                    this._segways.forEach(seg => {
-                        if(!seg.IsRiding){
-                            seg.y -= y_delta;
-                            seg.position = new objects.Vector2(seg.x, seg.y);
-                        }
-                    });
-
-                    this._deadEnemies.forEach(enemy => {
-                        enemy.y -= y_delta;
-                        enemy.position = new objects.Vector2(enemy.x, enemy.y);
-                    });
-    
-                    if (this._movingForward && this._movingBackward)
-                        y_delta = 0;
-    
+                        if (y_delta != 0)
+                            moved = true;   
+                        
                     
-                    this._distance_left += y_delta;
-                    if (this._distance_left <= 0){
-                        if(!this._endEventFired){
-                            this._endEventFired = true;
-                            this.ReachedLevelEnd();
-                        }
-    
-                        this._scrollBuffer = 0;
-                        if (this._players[i].y <= 0){
-                            if(this._canFinish){
-                                config.Game.SCENE_STATE = this._nextLevel;
-                            } else {
-                                this._players[i].y = 1
+                        this._distance_left += y_delta;
+                        if (this._distance_left <= 0){
+                            if(!this._endEventFired){
+                                this._endEventFired = true;
+                                this.ReachedLevelEnd();
                             }
+    
+                            this._scrollBuffer = 0;
+                            if (this._players[i].y <= 0){
+                                if(this._canFinish){
+                                    this._isActive = false;
+                                    config.Game.SCENE_STATE = this._nextLevel;
+                                } else {
+                                    this._players[i].y = 1
+                                }
+                            }
+                        } else {
+                            if(this._distance_left % 200 < 1){
+                                this.CreatePowerup();
+                            }
+                            this._players[i].y = this._scrollBuffer;
                         }
-                    } else {
-                        if(this._distance_left % 200 < 1){
-                            this.CreatePowerup();
-                        }
-                        this._players[i].y = this._scrollBuffer;
                     
                         this._powerups.forEach(power => {
                             power.y -= y_delta;
@@ -520,11 +585,18 @@ module scenes
                             exp.position = new objects.Vector2(exp.x, exp.y);
                         });
     
+                        this._segways.forEach(seg => {
+                            if(!seg.IsRiding){
+                                seg.y -= y_delta;
+                                seg.position = new objects.Vector2(seg.x, seg.y);
+                            }
+                        });
+    
                         this._deadEnemies.forEach(enemy => {
                             enemy.y -= y_delta;
                             enemy.position = new objects.Vector2(enemy.x, enemy.y);
                         });
-        
+    
                         this._enemies.forEach(enemy => {
                             enemy.y -= y_delta;
                             enemy.position = new objects.Vector2(enemy.x, enemy.y);

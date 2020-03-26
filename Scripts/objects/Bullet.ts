@@ -39,9 +39,9 @@ module objects {
 
              constructor(imagePath:string = "./Assets/images/bullet/bullet_small.png", x:number = 0, y:number = 0, isCentered:boolean = true)
              {
-                 super(imagePath, x, y, isCentered);
+                super(imagePath, x, y, isCentered);
                 this.position = new Vector2(-1,-1);
-                 this._direction = new Vector2(0,-1);
+                this._direction = new Vector2(0,-1);
              }
             
             

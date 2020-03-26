@@ -45,48 +45,53 @@ module scenes
             
             if (this._subBoss != undefined){
                 this._subBoss.Update();
-                this.Player.Bullets.forEach(bullet => {
-                    managers.Collision.AABBCheck(this._subBoss, bullet);
-                    if(bullet.isColliding && this._subBoss.HP > 0){
-                        this.Player.Bullets.splice(this.Player.Bullets.indexOf(bullet), 1);
-                        this.removeChild(bullet);
-                        this._subBoss.ChangeHP(-1);
-                    }
-                });
-            }
-
-            this._subBoss.Bullets.forEach(bullet => {
-                managers.Collision.AABBCheck(this.Player, bullet);
-                if(bullet.isColliding  && !this.Player.IsReviving){
-                    this._subBoss.Bullets.splice(this._subBoss.Bullets.indexOf(bullet), 1);
-                    this.removeChild(bullet);
-                    this.Player.Life--;
-                    this.UpdatePlayerLivesIndicator();
-                    if(this.Player.Life == 0) {
-                        config.Game.SCENE_STATE = scenes.State.LOOSE;
-                    } else {
-                        this.Player.Reset();
-                    }
-                }
-
-                this.Enemies.forEach(enemy => {
-                    managers.Collision.AABBCheck(bullet, enemy);
-                    if(enemy.isColliding) {
-                        enemy.hitPoints--;
-                        if(enemy.hitPoints == 0) {
-                            this.KillEnemy(enemy);
+                this.Players.forEach(player => {
+                    player.Bullets.forEach(bullet => {
+                        managers.Collision.AABBCheck(this._subBoss, bullet);
+                        if(bullet.isColliding && this._subBoss.HP > 0){
+                            player.Bullets.splice(player.Bullets.indexOf(bullet), 1);
+                            this.removeChild(bullet);
+                            this._subBoss.ChangeHP(-1);
                         }
-                        // remove the bullet
-    
-                        if (enemy.IsAlive){
+                    }); 
+
+
+
+                    this._subBoss.Bullets.forEach(bullet => {
+                        managers.Collision.AABBCheck(player, bullet);
+                        if(bullet.isColliding  && !player.IsReviving){
                             this._subBoss.Bullets.splice(this._subBoss.Bullets.indexOf(bullet), 1);
                             this.removeChild(bullet);
+                            this.PlayerLives --;
+                            this.UpdatePlayerLivesIndicator();
+                            if(this.PlayerLives == 0) {
+                                config.Game.SCENE_STATE = scenes.State.LOOSE;
+                            } else {
+                                player.Reset();
+                            }
                         }
-                    }
+        
+                        this.Enemies.forEach(enemy => {
+                            managers.Collision.AABBCheck(bullet, enemy);
+                            if(enemy.isColliding) {
+                                enemy.hitPoints--;
+                                if(enemy.hitPoints == 0) {
+                                    this.KillEnemy(enemy);
+                                }
+                                // remove the bullet
+            
+                                if (enemy.IsAlive){
+                                    this._subBoss.Bullets.splice(this._subBoss.Bullets.indexOf(bullet), 1);
+                                    this.removeChild(bullet);
+                                }
+                            }
+                        });
+                       
+                       
+                    });
+
                 });
-               
-               
-            });
+            }
         }
     }
 }

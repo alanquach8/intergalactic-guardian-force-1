@@ -86,17 +86,38 @@
                         <td>Grenade</td>
                     </tr>
                 </table>
-
-
             </td>
         </tr>
         <tr>
             <td class="over-panel" colspan="3">
                 <sub>Copyright &copy; 2020. MACK Address Games.<br>All rights reserved.</sub>
-
+                <br>
+                <button type="button" class="collapsible">Cheat Codes</button>
+                <div class="content">
+                    <input id="cheatCode" type="text" class="cheatCodes" placeholder="Enter Cheat Code...">
+                    <button id="cheatCodeButton" class="cheatCodes">Apply Code</button>
+                    <p style="margin: 0px;" id="cheatCodeFeedback"></p>
+                </div> 
             </td>
         </tr>
     </table>
+
+    <script>
+        var coll = document.getElementsByClassName("collapsible");
+        var i;
+        
+        for (i = 0; i < coll.length; i++) {
+          coll[i].addEventListener("click", function() {
+            this.classList.toggle("active");
+            var content = this.nextElementSibling;
+            if (content.style.display === "block") {
+              content.style.display = "none";
+            } else {
+              content.style.display = "block";
+            }
+          });
+        }
+        </script>
     
     <!-- SCRIPTS -->
     <!-- 3RD PARTY LIBRARIES -->
