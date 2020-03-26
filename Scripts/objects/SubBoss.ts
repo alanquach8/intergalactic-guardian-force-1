@@ -82,7 +82,10 @@ module objects {
         }
 
         public FacePoint(x:number, y:number){
-            let theta = Math.atan((y - this.y) / (x - this.x)) * (180 / Math.PI)
+            // tan was causing some weird errors because of the ambiguity
+            let dy = (y - this.y);
+            let dx = (x - this.x);
+            let theta = Math.asin(dy / Math.sqrt(dx ** 2 + dy ** 2)) * (180 / Math.PI)
             this.SetRotation(theta);
         }
 
@@ -175,7 +178,7 @@ module objects {
 
             this._bullets.forEach(bullet => {
                 bullet.Update();
-                if (bullet.IsOffScreen()){
+                if (bullet.IsOffScreen(-50)){
                     this.parent.removeChild(bullet);
                     this._bullets.splice(this._bullets.indexOf(bullet), 1);
                 }

@@ -86,7 +86,10 @@ var objects;
             this.RecalculateDirection();
         };
         SubBoss.prototype.FacePoint = function (x, y) {
-            var theta = Math.atan((y - this.y) / (x - this.x)) * (180 / Math.PI);
+            // tan was causing some weird errors because of the ambiguity
+            var dy = (y - this.y);
+            var dx = (x - this.x);
+            var theta = Math.asin(dy / Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2))) * (180 / Math.PI);
             this.SetRotation(theta);
         };
         SubBoss.prototype.FacePlayer = function () {
@@ -181,7 +184,7 @@ var objects;
             }
             this._bullets.forEach(function (bullet) {
                 bullet.Update();
-                if (bullet.IsOffScreen()) {
+                if (bullet.IsOffScreen(-50)) {
                     _this.parent.removeChild(bullet);
                     _this._bullets.splice(_this._bullets.indexOf(bullet), 1);
                 }

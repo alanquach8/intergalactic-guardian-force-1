@@ -75,8 +75,9 @@ var objects;
         };
         Bullet.prototype.Reset = function () {
         };
-        Bullet.prototype.IsOffScreen = function () {
-            return this.x < 0 || this.x > 640 || this.y < 0 || this.y > 480;
+        Bullet.prototype.IsOffScreen = function (topBoundary) {
+            if (topBoundary === void 0) { topBoundary = 0; }
+            return this.x < 0 || this.x > 640 || this.y < topBoundary || this.y > 480;
         };
         Bullet.prototype.IsEnemyBlacklisted = function (e) {
             return this._collidedWith.indexOf(e) > -1;
