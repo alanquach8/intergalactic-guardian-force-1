@@ -18,8 +18,8 @@ var scenes;
         __extends(Level3, _super);
         function Level3() {
             var _this = _super.call(this, scenes.State.END) || this;
-            _this.MaximumEnemies = 10;
-            _this.DistanceLeft = 30;
+            _this.MaximumEnemies = 8;
+            _this.DistanceLeft = 50;
             return _this;
         }
         Level3.prototype.ReachedLevelEnd = function () {

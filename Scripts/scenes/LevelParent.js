@@ -445,7 +445,6 @@ var scenes;
                                     that.KillEnemy(enemy);
                                     config.Game.SCORE++;
                                 }
-                                console.log(bullet.ShouldImpactDelete());
                                 if (bullet.ShouldImpactDelete()) {
                                     that._players[i].Bullets.splice(that._players[i].Bullets.indexOf(bullet), 1);
                                     that.removeChild(bullet);

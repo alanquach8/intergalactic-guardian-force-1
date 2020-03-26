@@ -4,8 +4,8 @@ module scenes
     {
         constructor(){
             super(scenes.State.END);
-            this.MaximumEnemies = 10;
-            this.DistanceLeft = 30;
+            this.MaximumEnemies = 8;
+            this.DistanceLeft = 50;
         }
 
         ReachedLevelEnd(){

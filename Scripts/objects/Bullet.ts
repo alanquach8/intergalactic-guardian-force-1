@@ -65,8 +65,8 @@ module objects {
                 
             }
 
-            public IsOffScreen():boolean {
-                return this.x < 0 || this.x > 640 || this.y < 0 || this.y > 480;
+            public IsOffScreen(topBoundary:number=0):boolean {
+                return this.x < 0 || this.x > 640 || this.y < topBoundary || this.y > 480;
             }
 
             public IsEnemyBlacklisted(e:Enemy):boolean{
