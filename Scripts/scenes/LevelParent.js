@@ -37,13 +37,16 @@ var scenes;
             _this._powerups = new Array();
             _this._explosion = [];
             _this._playerLivesThumbs = [];
-            _this._noOfEnemies = 5;
+            _this._noOfEnemies = 1;
+            // this._noOfEnemies = 5;
             _this._gernadeManager = new objects.GrenadeManager();
             _this._nextLevel = next;
             _this._scoreLabel = new objects.Label(config.Game.SCORE.toString(), "40px", "Consolas", "#000000", 0, 0);
             _this._segways = [];
             _this._civilians = new Array();
             _this._noOfCivilians = 3;
+            _this._boxes = new Array();
+            _this._noOfBoxes = 3;
             document.body.querySelector("#cheatCodeButton").addEventListener("click", function () {
                 if (_this._isActive) {
                     var code = document.body.querySelector("#cheatCode").value.split(" ");
@@ -230,7 +233,10 @@ var scenes;
                 this._enemies.push(enemy);
             }
             for (var i = 0; i < this._noOfCivilians; i++) {
-                this._civilians.push(new objects.Civilian(this.getRandomInt(640), 200 + this.getRandomInt(200)));
+                this._civilians.push(new objects.Civilian(this.getRandomInt(610) + 15, 200 + this.getRandomInt(200)));
+            }
+            for (var i = 0; i < this._noOfBoxes; i++) {
+                this._boxes.push(new objects.Box(this.getRandomInt(610) + 15, 200 + this.getRandomInt(200)));
             }
             this.Main();
         };
@@ -414,6 +420,29 @@ var scenes;
                     }
                 }
             });
+            this._boxes.forEach(function (box) {
+                _this._players.forEach(function (player) {
+                    player.Bullets.forEach(function (bullet) {
+                        managers.Collision.AABBCheck(bullet, box);
+                        if (box.isColliding) {
+                            box.Life--;
+                            if (box.Life == 0) {
+                                that._boxes.splice(that._boxes.indexOf(box));
+                                // SPAWN POWER UP
+                                var pu = _this.getRandomInt(5); // 0-4
+                                console.log('PU' + pu);
+                                console.log(box.x + ' ' + box.y);
+                                if (pu < 3) { // 40% change box contains nothing
+                                    _this.CreatePowerup(box.x, box.y, pu);
+                                }
+                                // SPAWN POWER UP
+                                that.removeChild(box);
+                            }
+                        }
+                    });
+                });
+                box.Update();
+            });
             this._civilians.forEach(function (civilian) {
                 _this._players.forEach(function (player) {
                     managers.Collision.AABBCheck(player, civilian);
@@ -583,15 +612,27 @@ var scenes;
             for (var i = 0; i < this.noOfPlayers; i++) {
                 this.addChild(this._players[i]);
             }
-            this._civilians.forEach(function (civilian) {
-                that.addChild(civilian);
-            });
             this.AddSegways(1);
             this.SetGrenades(2);
             this.UpdatePlayerLivesIndicator();
             this._gernadeManager.GrenadeCount = 2;
+            console.log("CIVILIANS:");
+            this._civilians.forEach(function (civilian) {
+                that.addChild(civilian);
+                console.log('position: x:' + civilian.position.x + ', y:' + civilian.position.y);
+                console.log('x:' + civilian.x + ', y:' + civilian.y);
+            });
+            console.log("BOXES");
+            this._boxes.forEach(function (box) {
+                that.addChild(box);
+                console.log('position: x:' + box.position.x + ', y:' + box.position.y);
+                console.log('x:' + box.x + ', y:' + box.y);
+            });
+            console.log("ENEMIES");
             this._enemies.forEach(function (enemy) {
                 that.addChild(enemy);
+                console.log('position: x:' + enemy.position.x + ', y:' + enemy.position.y);
+                console.log('x:' + enemy.x + ', y:' + enemy.y);
             });
             this.addChild(this._scoreLabel);
         };

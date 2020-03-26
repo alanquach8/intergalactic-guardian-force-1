@@ -25,6 +25,9 @@ module scenes
         private _civilians:objects.Civilian[];
         private _noOfCivilians:number;
 
+        private _boxes:objects.Box[];
+        private _noOfBoxes:number;
+
         private _isActive = false;
 
         // PUBLIC PROPERTIES
@@ -51,7 +54,8 @@ module scenes
             this._powerups = new Array();
             this._explosion = [];
             this._playerLivesThumbs = [];
-            this._noOfEnemies = 5;
+            this._noOfEnemies = 1;
+            // this._noOfEnemies = 5;
             this._gernadeManager = new objects.GrenadeManager();
             this._nextLevel = next;
             this._scoreLabel = new objects.Label(config.Game.SCORE.toString(),
@@ -61,6 +65,9 @@ module scenes
 
             this._civilians = new Array();
             this._noOfCivilians = 3;
+
+            this._boxes = new Array();
+            this._noOfBoxes = 3;
 
             (<HTMLInputElement>document.body.querySelector("#cheatCodeButton")).addEventListener("click", () => {
                 if(this._isActive){
@@ -238,7 +245,11 @@ module scenes
             }
 
             for(let i = 0; i< this._noOfCivilians; i++) {
-                this._civilians.push(new objects.Civilian(this.getRandomInt(640), 200+this.getRandomInt(200)));
+                this._civilians.push(new objects.Civilian(this.getRandomInt(610) + 15, 200+this.getRandomInt(200)));
+            }
+
+            for(let i = 0; i< this._noOfBoxes; i++) {
+                this._boxes.push(new objects.Box(this.getRandomInt(610) + 15, 200+this.getRandomInt(200)));
             }
            
             this.Main();
@@ -444,6 +455,30 @@ module scenes
 
 
 
+            this._boxes.forEach((box) => {
+                this._players.forEach((player) => {
+                    player.Bullets.forEach((bullet) => {
+                        managers.Collision.AABBCheck(bullet, box);
+                        if(box.isColliding) {
+                            box.Life--;
+                            if(box.Life == 0) {
+                                that._boxes.splice(that._boxes.indexOf(box));
+                                // SPAWN POWER UP
+                                let pu:number = this.getRandomInt(5); // 0-4
+                                console.log('PU' + pu);
+                                console.log(box.x + ' ' + box.y);
+                                if(pu < 3) { // 40% change box contains nothing
+                                    this.CreatePowerup(box.x, box.y, pu);
+                                }
+                                // SPAWN POWER UP
+                                that.removeChild(box);
+                            }
+                        }
+                    });
+                });
+                box.Update();
+            });
+
             this._civilians.forEach((civilian) => {
                 this._players.forEach((player) => {
                     managers.Collision.AABBCheck(player, civilian);
@@ -628,10 +663,6 @@ module scenes
             for(let i = 0; i<this.noOfPlayers; i++) {
                 this.addChild(this._players[i]);
             }
-
-            this._civilians.forEach((civilian) => {
-                that.addChild(civilian);
-            });
             
             this.AddSegways(1);
 
@@ -640,8 +671,25 @@ module scenes
 
             this._gernadeManager.GrenadeCount = 2;
 
+            console.log("CIVILIANS:")
+            this._civilians.forEach((civilian) => {
+                that.addChild(civilian);
+                console.log('position: x:' + civilian.position.x + ', y:' + civilian.position.y);
+                console.log('x:' + civilian.x + ', y:' + civilian.y);
+            });
+
+            console.log("BOXES");
+            this._boxes.forEach((box) => {
+                that.addChild(box);
+                console.log('position: x:' + box.position.x + ', y:' + box.position.y);
+                console.log('x:' + box.x + ', y:' + box.y);
+            });
+
+            console.log("ENEMIES");
             this._enemies.forEach((enemy)=>{
                 that.addChild(enemy);
+                console.log('position: x:' + enemy.position.x + ', y:' + enemy.position.y);
+                console.log('x:' + enemy.x + ', y:' + enemy.y);
             })
 
             this.addChild(this._scoreLabel);
