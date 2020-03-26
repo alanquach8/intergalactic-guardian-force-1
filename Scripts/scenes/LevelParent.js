@@ -42,6 +42,8 @@ var scenes;
             _this._nextLevel = next;
             _this._scoreLabel = new objects.Label(config.Game.SCORE.toString(), "40px", "Consolas", "#000000", 0, 0);
             _this._segways = [];
+            _this._civilians = new Array();
+            _this._noOfCivilians = 3;
             document.body.querySelector("#cheatCodeButton").addEventListener("click", function () {
                 if (_this._isActive) {
                     var code = document.body.querySelector("#cheatCode").value.split(" ");
@@ -227,6 +229,9 @@ var scenes;
                 enemy.LockTo = Math.floor(Math.random() * this.noOfPlayers);
                 this._enemies.push(enemy);
             }
+            for (var i = 0; i < this._noOfCivilians; i++) {
+                this._civilians.push(new objects.Civilian(this.getRandomInt(640), 200 + this.getRandomInt(200)));
+            }
             this.Main();
         };
         LevelParent.prototype.getRandomInt = function (max) {
@@ -409,6 +414,24 @@ var scenes;
                     }
                 }
             });
+            this._civilians.forEach(function (civilian) {
+                _this._players.forEach(function (player) {
+                    managers.Collision.AABBCheck(player, civilian);
+                    if (civilian.Life == 200) {
+                        civilian.Saved = true;
+                        that._civilians.splice(that._civilians.indexOf(civilian));
+                        that.removeChild(civilian);
+                    }
+                });
+                _this._enemies.forEach(function (enemy) {
+                    managers.Collision.AABBCheck(enemy, civilian);
+                    if (civilian.Life == 0) {
+                        that._civilians.splice(that._civilians.indexOf(civilian));
+                        that.removeChild(civilian);
+                    }
+                });
+                civilian.Update();
+            });
             this._enemies.forEach(function (enemy) {
                 enemy.Update(that._players[enemy.LockTo].x, that._players[enemy.LockTo].y);
                 var _loop_2 = function (i) {
@@ -561,6 +584,9 @@ var scenes;
             for (var i = 0; i < this.noOfPlayers; i++) {
                 this.addChild(this._players[i]);
             }
+            this._civilians.forEach(function (civilian) {
+                that.addChild(civilian);
+            });
             this.AddSegways(1);
             this.SetGrenades(2);
             this.UpdatePlayerLivesIndicator();
