@@ -35,6 +35,14 @@ var managers;
                 object1TopLeft.y + object1.height > object2TopLeft.y) {
                 if (!object2.isColliding) {
                     object2.isColliding = true;
+                    if (object1 instanceof objects.Enemy && object2 instanceof objects.Civilian) {
+                        object2.Life--;
+                        console.log("ENEMY CIVILIAN COLLISION");
+                    }
+                    if (object1 instanceof objects.Player && object2 instanceof objects.Civilian) {
+                        object2.Life++;
+                        console.log("PLAYER CIVILIAN COLLISION");
+                    }
                 }
             }
             else {
