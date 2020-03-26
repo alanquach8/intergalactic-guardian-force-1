@@ -19,10 +19,12 @@ module objects {
         private _damageMultiplier = 1;
         private _healthBarBack:objects.Rectangle;
         private _healthBarValue:objects.Rectangle;
+        private _maxState = 3;
+        private _deathImage = "./Assets/images/enemy/subboss/subboss_dead.png";
         
 
-        constructor(player:objects.Player, inactive:boolean=false){
-            super("./Assets/images/enemy/subboss/subboss.png", 64, -64, true);
+        constructor(player:objects.Player, inactive:boolean=false, image:string="./Assets/images/enemy/subboss/subboss.png"){
+            super(image, 64, -64, true);
             this._direction = new Vector2(0, 1);
             this._facing = 90;
             this._player = player;
@@ -39,6 +41,10 @@ module objects {
             this.UpdateHealthBar();
         }
 
+        public set DeathImage(path:string){
+            this._deathImage = path
+        }
+
         public UpdateHealthBar(){
             if (this.parent == null)
                 return;
@@ -53,8 +59,11 @@ module objects {
             this.parent.addChild(this._healthBarValue);
         }
 
-        get DamageMultiplier():number {
+        public get DamageMultiplier(): number{
             return this._damageMultiplier
+        }
+        public set DamageMultiplier(val:number){
+            this._damageMultiplier = val;
         }
 
         get Bullets():BulletSlime[]{
@@ -128,10 +137,14 @@ module objects {
             this._state = state;
         }
 
+        public set State(val:number){
+            this._state = val;
+        }
+
         public CycleState(){
             if (this._isAlive){
                 let num = this._state + 1
-                if (this._state + 1 > 3){
+                if (this._state + 1 > this._maxState){
                     num = 1
                 }
                 this.SetState(num);
@@ -141,7 +154,7 @@ module objects {
         public ChangeHP(delta:number){
             this._hp += delta;
             if(this._hp <= 0){
-                this.image = new createjs.Bitmap("./Assets/images/enemy/subboss/subboss_dead.png").image;
+                this.image = new createjs.Bitmap(this._deathImage).image;
                 this._state = -1;
                 this._isAlive = false
                 this.ExecuteDeathEvent();

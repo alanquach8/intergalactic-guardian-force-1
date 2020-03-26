@@ -33,6 +33,16 @@ var scenes;
                 _this.CanFinish = true;
             };
         };
+        Object.defineProperty(Level1.prototype, "Boss", {
+            get: function () {
+                return this._subBoss;
+            },
+            set: function (b) {
+                this._subBoss = b;
+            },
+            enumerable: true,
+            configurable: true
+        });
         Object.defineProperty(Level1.prototype, "SubBoss", {
             get: function () {
                 return this._subBoss;

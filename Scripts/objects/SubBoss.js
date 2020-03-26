@@ -16,9 +16,10 @@ var objects;
 (function (objects) {
     var SubBoss = /** @class */ (function (_super) {
         __extends(SubBoss, _super);
-        function SubBoss(player, inactive) {
+        function SubBoss(player, inactive, image) {
             if (inactive === void 0) { inactive = false; }
-            var _this = _super.call(this, "./Assets/images/enemy/subboss/subboss.png", 64, -64, true) || this;
+            if (image === void 0) { image = "./Assets/images/enemy/subboss/subboss.png"; }
+            var _this = _super.call(this, image, 64, -64, true) || this;
             _this._isAlive = true;
             _this._state = 1;
             _this._maHP = 100;
@@ -27,6 +28,8 @@ var objects;
             _this._bullets = [];
             _this._reloadSpeed = 10;
             _this._damageMultiplier = 1;
+            _this._maxState = 3;
+            _this._deathImage = "./Assets/images/enemy/subboss/subboss_dead.png";
             _this._direction = new objects.Vector2(0, 1);
             _this._facing = 90;
             _this._player = player;
@@ -39,6 +42,13 @@ var objects;
             _this.UpdateHealthBar();
             return _this;
         }
+        Object.defineProperty(SubBoss.prototype, "DeathImage", {
+            set: function (path) {
+                this._deathImage = path;
+            },
+            enumerable: true,
+            configurable: true
+        });
         SubBoss.prototype.UpdateHealthBar = function () {
             if (this.parent == null)
                 return;
@@ -54,6 +64,9 @@ var objects;
         Object.defineProperty(SubBoss.prototype, "DamageMultiplier", {
             get: function () {
                 return this._damageMultiplier;
+            },
+            set: function (val) {
+                this._damageMultiplier = val;
             },
             enumerable: true,
             configurable: true
@@ -134,10 +147,17 @@ var objects;
             }
             this._state = state;
         };
+        Object.defineProperty(SubBoss.prototype, "State", {
+            set: function (val) {
+                this._state = val;
+            },
+            enumerable: true,
+            configurable: true
+        });
         SubBoss.prototype.CycleState = function () {
             if (this._isAlive) {
                 var num = this._state + 1;
-                if (this._state + 1 > 3) {
+                if (this._state + 1 > this._maxState) {
                     num = 1;
                 }
                 this.SetState(num);
@@ -146,7 +166,7 @@ var objects;
         SubBoss.prototype.ChangeHP = function (delta) {
             this._hp += delta;
             if (this._hp <= 0) {
-                this.image = new createjs.Bitmap("./Assets/images/enemy/subboss/subboss_dead.png").image;
+                this.image = new createjs.Bitmap(this._deathImage).image;
                 this._state = -1;
                 this._isAlive = false;
                 this.ExecuteDeathEvent();

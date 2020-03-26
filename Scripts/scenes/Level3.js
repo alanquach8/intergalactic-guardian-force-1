@@ -26,6 +26,18 @@ var scenes;
             _super.prototype.ReachedLevelEnd.call(this);
             this.SubBoss.HP = 300;
         };
+        Level3.prototype.SpawnBoss = function () {
+            var _this = this;
+            this.Boss = new objects.Boss(this.Player);
+            this.Boss.scaleX = 1.5;
+            this.Boss.scaleY = 1.5;
+            this.addChild(this.Boss);
+            this.Boss.DeathEvent = function () {
+                _this.CanFinish = true;
+                _this.Boss.scaleX = 1.5;
+                _this.Boss.scaleY = 1.5;
+            };
+        };
         return Level3;
     }(scenes.Level1));
     scenes.Level3 = Level3;

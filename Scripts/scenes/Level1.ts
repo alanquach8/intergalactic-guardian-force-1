@@ -13,12 +13,19 @@ module scenes
             this.PlaySound("levels");
         }
 
-        SpawnBoss(){
+        public SpawnBoss(){
             this._subBoss = new objects.SubBoss(this.Player);
             this.addChild(this._subBoss)
             this._subBoss.DeathEvent = () : void => {
                 this.CanFinish = true;
             };
+        }
+
+        public set Boss(b:objects.SubBoss){
+            this._subBoss = b;
+        }
+        public get Boss(){
+            return this._subBoss;
         }
 
         public get SubBoss(){
