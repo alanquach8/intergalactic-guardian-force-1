@@ -10,6 +10,7 @@ module scenes
         END,
         QUOTE,
         LOOSE,
+        CHARACTER_SELECTION,
         NUM_OF_SCENES
     }
 }

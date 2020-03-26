@@ -59,17 +59,19 @@ module scenes
             this.addChild(this.companyLabel)
             this.addChild(this.play1);
             this.addChild(this.play2);
+
+            config.Game.PLAYER_IMAGES = [];
     
             this.play1.on("click", function() {
                // config.Game.SCENE_STATE = scenes.State.QUOTE;
                config.Game.NO_OF_PLAYERS = 1;
-               config.Game.SCENE_STATE = scenes.State.QUOTE;
+               config.Game.SCENE_STATE = scenes.State.CHARACTER_SELECTION;
             });
 
             this.play2.on("click", function() {
                 // config.Game.SCENE_STATE = scenes.State.QUOTE;
                 config.Game.NO_OF_PLAYERS = 2;
-                config.Game.SCENE_STATE = scenes.State.QUOTE;
+                config.Game.SCENE_STATE = scenes.State.CHARACTER_SELECTION;
              });
     
             

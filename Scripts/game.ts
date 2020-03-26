@@ -77,6 +77,9 @@ let game = (function(){
             case scenes.State.LOOSE:
                 currentScene = new scenes.Loose();
                 break;
+            case scenes.State.CHARACTER_SELECTION:
+                currentScene = new scenes.SelectCharacter();
+                break
         }
         // add the scene to the stage and setup the current scene
         stage.addChild(currentScene);

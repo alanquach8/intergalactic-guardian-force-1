@@ -29,12 +29,21 @@ module objects {
         private _pierceCount:number = 1;
 
         private _bullets:objects.Bullet[];
+
+        private _superHero = false;
         
         get PierceCount():number{
             return this._pierceCount;
         }
         set PierceCount(value:number){
             this._pierceCount = value;
+        }
+
+        get SuperHero():boolean{
+            return this._superHero;
+        }
+        set SuperHero(val:boolean){
+            this._superHero = val;
         }
 
         get Forward():boolean{
@@ -136,7 +145,7 @@ module objects {
         // CONSTRUCTOR
         constructor(playerId:number, imagePath:string="./Assets/images/player/top.png", x:number = 320, y:number = 250, isCentered:boolean = true) //TODO x, y Variables
         {
-            super(imagePath, x, y, true);
+            super(config.Game.PLAYER_IMAGES[playerId - 1], x, y, true);
             
             this._facing = 270; // initially looking up (-90degrees on canvas axis = 270degrees on normal axis)
             this._direction = new Vector2(0, -1);

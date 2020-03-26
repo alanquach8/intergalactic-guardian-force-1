@@ -28,6 +28,10 @@ var objects;
             _this.Start();
             return _this;
         }
+        Button.prototype.ScaleImage = function (factor) {
+            this.scaleX = factor;
+            this.scaleY = factor;
+        };
         // PUBLIC METHODS
         Button.prototype.HoverOver = function () {
             this.alpha = 0.7;
