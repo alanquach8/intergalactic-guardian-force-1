@@ -23,7 +23,7 @@ module objects
 
         // CONSTRUCTOR
         constructor(x:number = 200, y:number = 200) {
-            super("./Assets/images/box.png", x, y, true);
+            super("./Assets/images/environment/crate.png", x, y, true);
         }
 
         // PRIVATE METHODS

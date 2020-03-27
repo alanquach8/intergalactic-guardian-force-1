@@ -20,7 +20,7 @@ var objects;
         function Box(x, y) {
             if (x === void 0) { x = 200; }
             if (y === void 0) { y = 200; }
-            var _this = _super.call(this, "./Assets/images/box.png", x, y, true) || this;
+            var _this = _super.call(this, "./Assets/images/environment/crate.png", x, y, true) || this;
             // PRIVATE INSTANCE MEMBERS
             _this._life = 5;
             _this._broken = false;
