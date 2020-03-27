@@ -281,7 +281,7 @@ var scenes;
             ;
             switch (id) {
                 case 1:
-                    p = new objects.Powerup("./Assets/images/player/front.png", x, y);
+                    p = new objects.Powerup("./Assets/images/ui/front.png", x, y);
                     p.Scale = 0.5;
                     p.ActivationEvent = function () {
                         for (var i = 0; i < _this.noOfPlayers; i++) {
