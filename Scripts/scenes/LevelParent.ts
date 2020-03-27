@@ -164,6 +164,7 @@ module scenes
                             return;
                         }
                         let level = Number(code[1]);
+                        this.PauseSound("levels");
                         switch(level){
                             case 1:
                                 config.Game.SCENE_STATE = scenes.State.LEVEL1;
@@ -266,6 +267,8 @@ module scenes
             for(let i = 0; i< this._noOfBoxes; i++) {
                 this._boxes.push(new objects.Box(this.getRandomInt(610) + 15, 200+this.getRandomInt(200)));
             }
+            this.PlaySound("levels");
+
             this.Main();
         }  
 
@@ -441,6 +444,7 @@ module scenes
                 } else {
                     // game over
                     this._isActive = false;
+                    this.PauseSound("levels");
                     config.Game.SCENE_STATE = scenes.State.END;
                 }
             }
@@ -573,6 +577,7 @@ module scenes
                         that._players[i].Life--;
                         this.UpdatePlayerLivesIndicator();
                         if(that._players[i].Life == 0) {
+                            this.PauseSound("levels");
                             config.Game.SCENE_STATE = scenes.State.LOOSE;
                         } else {
                             that._players[i].Reset();
@@ -622,6 +627,7 @@ module scenes
                             if (this._players[i].y <= 0){
                                 if(this._canFinish){
                                     this._isActive = false;
+                                    this.PauseSound("levels");
                                     config.Game.SCENE_STATE = this._nextLevel;
                                 } else {
                                     this._players[i].y = 1
@@ -735,16 +741,6 @@ module scenes
 
         public get Enemies():objects.Enemy[]{
             return this._enemies;
-        }
-
-        public PlaySound(name:string){
-            let player = <HTMLAudioElement> document.body.querySelector("#" + name + "Sound");
-            player.play();
-        }
-        public PauseSound(name:string){
-            let player = <HTMLAudioElement> document.body.querySelector("#" + name + "Sound");
-            player.pause();
-        }
-        
+        }        
     }
 }

@@ -22,7 +22,6 @@ var scenes;
             _this._spawnedBoss = false;
             _this._subBoss = new objects.SubBoss(new objects.Player(0), true);
             _this.CanFinish = false;
-            _this.PlaySound("levels");
             return _this;
         }
         Level1.prototype.SpawnBoss = function () {

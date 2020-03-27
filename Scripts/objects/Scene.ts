@@ -34,5 +34,18 @@ module objects
          * @memberof Scene
          */
         public abstract Main():void;
+
+        public PlaySound(name:string){
+            let player = <HTMLAudioElement> document.body.querySelector("#" + name + "Sound");
+            player.play();
+        }
+        public PauseSound(name:string){
+            let player = <HTMLAudioElement> document.body.querySelector("#" + name + "Sound");
+            player.pause();
+        }
+        public RewindSound(name:string){
+            let player = <HTMLAudioElement> document.body.querySelector("#" + name + "Sound");
+            player.currentTime = 0
+        }
     }
 }

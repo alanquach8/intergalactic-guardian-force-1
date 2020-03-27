@@ -130,6 +130,7 @@ var scenes;
                             return;
                         }
                         var level = Number(code[1]);
+                        _this.PauseSound("levels");
                         switch (level) {
                             case 1:
                                 config.Game.SCENE_STATE = scenes.State.LEVEL1;
@@ -256,6 +257,7 @@ var scenes;
             for (var i = 0; i < this._noOfBoxes; i++) {
                 this._boxes.push(new objects.Box(this.getRandomInt(610) + 15, 200 + this.getRandomInt(200)));
             }
+            this.PlaySound("levels");
             this.Main();
         };
         LevelParent.prototype.getRandomInt = function (max) {
@@ -415,6 +417,7 @@ var scenes;
                 else {
                     // game over
                     this._isActive = false;
+                    this.PauseSound("levels");
                     config.Game.SCENE_STATE = scenes.State.END;
                 }
             }
@@ -536,6 +539,7 @@ var scenes;
                         that._players[i].Life--;
                         _this.UpdatePlayerLivesIndicator();
                         if (that._players[i].Life == 0) {
+                            _this.PauseSound("levels");
                             config.Game.SCENE_STATE = scenes.State.LOOSE;
                         }
                         else {
@@ -581,6 +585,7 @@ var scenes;
                             if (this_1._players[i].y <= 0) {
                                 if (this_1._canFinish) {
                                     this_1._isActive = false;
+                                    this_1.PauseSound("levels");
                                     config.Game.SCENE_STATE = this_1._nextLevel;
                                 }
                                 else {
@@ -682,14 +687,6 @@ var scenes;
             enumerable: true,
             configurable: true
         });
-        LevelParent.prototype.PlaySound = function (name) {
-            var player = document.body.querySelector("#" + name + "Sound");
-            player.play();
-        };
-        LevelParent.prototype.PauseSound = function (name) {
-            var player = document.body.querySelector("#" + name + "Sound");
-            player.pause();
-        };
         return LevelParent;
     }(objects.Scene));
     scenes.LevelParent = LevelParent;

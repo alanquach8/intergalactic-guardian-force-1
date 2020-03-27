@@ -20,6 +20,18 @@ var objects;
             return _super.call(this) || this;
             //this.Start();
         }
+        Scene.prototype.PlaySound = function (name) {
+            var player = document.body.querySelector("#" + name + "Sound");
+            player.play();
+        };
+        Scene.prototype.PauseSound = function (name) {
+            var player = document.body.querySelector("#" + name + "Sound");
+            player.pause();
+        };
+        Scene.prototype.RewindSound = function (name) {
+            var player = document.body.querySelector("#" + name + "Sound");
+            player.currentTime = 0;
+        };
         return Scene;
     }(createjs.Container));
     objects.Scene = Scene;
