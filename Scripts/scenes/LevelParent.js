@@ -264,7 +264,7 @@ var scenes;
                 this._civilians.push(new objects.Civilian(this.getRandomInt(610) + 15, 200 + this.getRandomInt(200)));
             }
             for (var i = 0; i < this._noOfBoxes; i++) {
-                this._boxes.push(new objects.Box(this.getRandomInt(610) + 15, 200 + this.getRandomInt(200)));
+                this._boxes.push(new objects.Box(this.getRandomInt(610) + 15, this.getRandomInt(1200) - 1000));
             }
             this.PlaySound("levels");
             this.Main();
