@@ -145,7 +145,7 @@ var scenes;
                         }
                     }
                     else if (code[0] == "help") {
-                        _this.CheatCodeFeedback("Cheat Codes Command Reference:<br>spawn &lt;segway|powerup|enemy&gt; [x] [y] [id]<br>Set &lt;grenades|lives|score&gt; &lt;value&gt;<br>Usage: level &lt;1|2|3&gt;<br>help", "green");
+                        _this.CheatCodeFeedback("Cheat Codes Command Reference:<br>spawn &lt;segway|powerup|enemy&gt; [x] [y] [id]<br>Set &lt;grenades|lives|score&gt; &lt;value&gt;<br>level &lt;1|2|3&gt;<br>help", "green");
                     }
                     else if (code[0] == "clear") {
                         _this.CheatCodeFeedback("");

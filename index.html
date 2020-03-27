@@ -21,6 +21,8 @@
                 <h4>Important Information</h4>
                 <button class="cheatCodes" onclick="ShowModal('storyModal')">Read Story</button>
                 <button class="cheatCodes" onclick="ShowModal('instructionModal')">Read Instructions</button>
+                <button class="cheatCodes" onclick="ShowModal('powerupsModal')" id="showStory">Power Ups</button>
+                <button class="cheatCodes" onclick="ShowModal('cheatCodeModal')" id="showStory">Cheat Codes</button>
                 <button class="cheatCodes" onclick="ShowModal('creditsModal')" id="showStory">Credits</button>
             </td>
             <td class="game-panel"><canvas id="canvas" width="640" height="480"></canvas></td>
@@ -157,6 +159,67 @@
             - Victoria R.<br>&nbsp;<br>
             <sub>Copyright &copy; 2020. MACK Address Games.<br>All rights reserved. Do not distribute.</sub>
         </p>
+    </div>
+  
+  </div>
+
+  <div id="powerupsModal" class="modal">
+
+    <!-- Modal content -->
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h4>Power Ups</h4>
+      <table>
+          <tr>
+              <td><img src="./Assets/images/ui/grenade.png" class="powerup-image"></td>
+              <th>Grenade</th>
+              <td>Adds a grenade to the player's total grenade pool</td>
+          </tr>
+          <tr>
+            <td><img src="./Assets/images/ui/front.png" class="powerup-image"></td>
+            <th>+1 Life</th>
+            <td>Adds a life to the player's total life pool</td>
+        </tr>
+        <tr>
+            <td><img src="./Assets/images/bullet/piercing_powerup.png" class="powerup-image"></td>
+            <th>Piercing Bullets</th>
+            <td>Allows bullets to pass through an enemy and hit enemies behind it. This ability can stack. Each item earned incruments the number of enemies which it can pass through.</td>
+        </tr>
+        <tr>
+            <td><img src="./Assets/images/environment/super_hero.png" class="powerup-image"></td>
+            <th>Super Hero</th>
+            <td>Enables "Super Hero Mode". This ability lasts 10s, and makes you invincible to minions. While enabled, a particle trail will follow you.</td>
+        </tr>
+      </table>
+    </div>
+  
+  </div>
+
+  
+  <div id="cheatCodeModal" class="modal">
+
+    <!-- Modal content -->
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h4>Cheat Code Command Reference</h4>
+      <table>
+          <tr>
+              <td class="code">spawn &lt;segway|powerup|enemy&gt; [x] [y] [id]</td>
+              <td>Spawns the specified item at the specified location. Use <i>id</i> to specify which item to spawn</td>
+          </tr>
+          <tr>
+            <td class="code">set &lt;grenades|lives|score&gt; &lt;value&gt;</td>
+            <td>Sets the specified item to the specified value</td>
+        </tr>
+        <tr>
+            <td class="code">level &lt;1|2|3&gt;</td>
+            <td>Moves the player to the specified level</td>
+        </tr>
+        <tr>
+            <td class="code">help</td>
+            <td>Displays a list of commands</td>
+        </tr>
+      </table>
     </div>
   
   </div>

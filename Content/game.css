@@ -134,3 +134,11 @@ button.cheatCodes{
     text-decoration: none;
     cursor: pointer;
   }
+
+  .powerup-image{
+      width: 50px;
+  }
+
+  .code{
+      font-family: "Lucida Console", Monaco, monospace;
+  }
