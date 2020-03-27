@@ -27,6 +27,7 @@ var scenes;
             _this._distance_left = 1000;
             _this._canFinish = true;
             _this._endEventFired = false;
+            _this._trailManager = new objects.TrailManager(_this);
             _this._isActive = false;
             // initialization
             // this._player = new objects.Player(1);
@@ -173,6 +174,24 @@ var scenes;
             enumerable: true,
             configurable: true
         });
+        Object.defineProperty(LevelParent.prototype, "TrailManager", {
+            get: function () {
+                return this._trailManager;
+            },
+            set: function (mngr) {
+                this._trailManager = mngr;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        LevelParent.prototype.EnableSuperHeroMode = function (player, duration) {
+            if (duration === void 0) { duration = 10; }
+            this.TrailManager.TrackForTime(player, duration);
+            player.SuperHero = true;
+            setTimeout(function () {
+                player.SuperHero = false;
+            }, duration * 1000);
+        };
         LevelParent.prototype.CheatCodeFeedback = function (text, color) {
             if (color === void 0) { color = "red"; }
             var feedback = document.body.querySelector("#cheatCodeFeedback");
@@ -244,7 +263,7 @@ var scenes;
             if (id === void 0) { id = -1; }
             if (id == -1) {
                 // n cases (in the switch statement below) + 1
-                id = this.getRandomInt(3);
+                id = this.getRandomInt(4);
             }
             if (x == -1) {
                 x = this.getRandomInt(480);
@@ -274,6 +293,15 @@ var scenes;
                     p.ActivationEvent = function () {
                         for (var i = 0; i < _this.noOfPlayers; i++) {
                             _this._players[i].PierceCount += 1;
+                        }
+                    };
+                    break;
+                case 3:
+                    p = new objects.Powerup("./Assets/images/environment/super_hero.png", x, y);
+                    //p.Scale = 0.5;
+                    p.ActivationEvent = function () {
+                        for (var i = 0; i < _this.noOfPlayers; i++) {
+                            _this.EnableSuperHeroMode(_this._players[i]);
                         }
                     };
                     break;
@@ -464,7 +492,7 @@ var scenes;
                 });
                 var _loop_3 = function (i) {
                     managers.Collision.AABBCheck(enemy, that._players[i]);
-                    if (that._players[i].isColliding && !that._players[i].IsReviving) {
+                    if (that._players[i].isColliding && !that._players[i].IsReviving && !that._players[i].SuperHero) {
                         if (that._players[i].IsRidingSegway) {
                             _this.AddExplosion(that._players[i].x, that._players[i].y);
                             _this._segways.forEach(function (seg) {
@@ -562,6 +590,7 @@ var scenes;
                                 _this._enemies.splice(_this._enemies.indexOf(enemy), 1);
                             }
                         });
+                        this_1.TrailManager.ShiftParticles(y_delta_1);
                         this_1.PlayerMovementUpdate(y_delta_1);
                     }
                 }
@@ -574,6 +603,7 @@ var scenes;
             this._scoreLabel = new objects.Label(config.Game.SCORE.toString(), "40px", "Consolas", "#000000", 0, 0);
             this.addChild(this._scoreLabel);
             this.UpdateLevel();
+            this._trailManager.Update();
         };
         LevelParent.prototype.Main = function () {
             var that = this;

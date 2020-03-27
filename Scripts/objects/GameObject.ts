@@ -10,6 +10,7 @@ module objects
         private _isColliding:boolean = false;
         private _isCentered:boolean = false;
         private _position:Vector2 = new Vector2(0, 0);
+        private _imagePath: string;
 
         // PROPERTIES
         get width():number
@@ -110,6 +111,7 @@ module objects
                     x:number = 0, y:number = 0, centered:boolean = false)
         {
             super(imagePath);
+            this._imagePath = imagePath;
             this.isColliding = false;
 
             // wait for the  image to load before calculating its width and height
@@ -135,5 +137,9 @@ module objects
         public abstract Update():void;
 
         public abstract Reset():void;
+
+        public get ImagePath(): string{
+            return this._imagePath;
+        }
     }
 }

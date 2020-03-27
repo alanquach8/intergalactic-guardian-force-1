@@ -39,6 +39,7 @@ var objects;
             _this._isColliding = false;
             _this._isCentered = false;
             _this._position = new objects.Vector2(0, 0);
+            _this._imagePath = imagePath;
             _this.isColliding = false;
             // wait for the  image to load before calculating its width and height
             _this.image.addEventListener('load', function () {
@@ -130,6 +131,13 @@ var objects;
                     this.regX = 0;
                     this.regY = 0;
                 }
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(GameObject.prototype, "ImagePath", {
+            get: function () {
+                return this._imagePath;
             },
             enumerable: true,
             configurable: true

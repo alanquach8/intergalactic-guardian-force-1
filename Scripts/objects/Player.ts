@@ -61,7 +61,6 @@ module objects {
             this._isRidingSegway = value;
         }
         
-        
         // PUBLIC PROPERTIES
         get IsReviving():boolean{
             return this._isReviving;

@@ -21,6 +21,7 @@ module scenes
         private _endEventFired = false;
         private _scoreLabel: objects.Label;
         private _segways: objects.Segway[];
+        private _trailManager = new objects.TrailManager(this);
 
         private _civilians:objects.Civilian[];
         private _noOfCivilians:number;
@@ -35,6 +36,13 @@ module scenes
         }
         public get PlayerLives():number{
             return this._players[0].Life;
+        }
+
+        public get TrailManager(): objects.TrailManager{
+            return this._trailManager;
+        }
+        public set TrailManager(mngr: objects.TrailManager){
+            this._trailManager = mngr;
         }
 
         // CONSTRUCTOR
@@ -185,6 +193,14 @@ module scenes
             this.Start();
         }
 
+        public EnableSuperHeroMode(player:objects.Player, duration:number=10){
+            this.TrailManager.TrackForTime(player, duration);
+            player.SuperHero = true;
+            setTimeout(() => {
+                player.SuperHero = false;
+            }, duration * 1000);
+        }
+
         public CheatCodeFeedback(text:string, color:string="red"){
             let feedback = document.body.querySelector("#cheatCodeFeedback")
             if (feedback != null){
@@ -240,7 +256,6 @@ module scenes
             for(let i = 0; i< this._noOfCivilians; i++) {
                 this._civilians.push(new objects.Civilian(this.getRandomInt(640), 200+this.getRandomInt(200)));
             }
-           
             this.Main();
         }  
 
@@ -252,7 +267,7 @@ module scenes
 
             if(id == -1){
                 // n cases (in the switch statement below) + 1
-                id = this.getRandomInt(3)
+                id = this.getRandomInt(4)
             }
 
             if(x == -1){
@@ -288,6 +303,18 @@ module scenes
                         }
                     };
                     break; 
+
+                case 3:
+                    p = new objects.Powerup("./Assets/images/environment/super_hero.png", x, y);
+                    //p.Scale = 0.5;
+                    p.ActivationEvent = () => {
+                        for(let i = 0; i<this.noOfPlayers; i++) {
+                            this.EnableSuperHeroMode(this._players[i])
+                        }
+                    };
+                    break; 
+
+
             }
             if(p != undefined){
                 this._powerups.push(p);
@@ -499,7 +526,7 @@ module scenes
                 // Enemy and Player Collision Check
                 for(let i = 0; i<this.noOfPlayers; i++) {
                     managers.Collision.AABBCheck(enemy, that._players[i]);
-                    if(that._players[i].isColliding && !that._players[i].IsReviving){
+                    if(that._players[i].isColliding && !that._players[i].IsReviving && !that._players[i].SuperHero){
                         if(that._players[i].IsRidingSegway){
                             this.AddExplosion(that._players[i].x, that._players[i].y);
                             this._segways.forEach(seg => {
@@ -604,6 +631,8 @@ module scenes
                                 this._enemies.splice(this._enemies.indexOf(enemy), 1);
                             }
                         });
+
+                        this.TrailManager.ShiftParticles(y_delta);
     
                         this.PlayerMovementUpdate(y_delta);
                     }
@@ -615,6 +644,7 @@ module scenes
             "40px", "Consolas", "#000000", 0, 0);
             this.addChild(this._scoreLabel);
             this.UpdateLevel();
+            this._trailManager.Update();
         }
 
         public Main(): void {
