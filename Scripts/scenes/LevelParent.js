@@ -454,7 +454,7 @@ var scenes;
                         if (box.isColliding) {
                             box.Life--;
                             if (box.Life == 0) {
-                                that._boxes.splice(that._boxes.indexOf(box));
+                                that._boxes.splice(that._boxes.indexOf(box), 1);
                                 // SPAWN POWER UP
                                 var pu = _this.getRandomInt(5); // 0-4
                                 console.log('PU' + pu);
@@ -465,6 +465,8 @@ var scenes;
                                 // SPAWN POWER UP
                                 that.removeChild(box);
                             }
+                            player.Bullets.splice(player.Bullets.indexOf(bullet), 1);
+                            that.removeChild(bullet);
                         }
                     });
                 });
