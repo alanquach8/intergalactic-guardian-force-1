@@ -26,6 +26,8 @@ module scenes
         private _musicStopped = false;
         private _musicStopControl: objects.Button;
 
+        private _exitButton: objects.Button;
+
         private _civilians:objects.Civilian[];
         private _noOfCivilians:number;
 
@@ -79,7 +81,9 @@ module scenes
             this._boxes = new Array();
             this._noOfBoxes = 3;
 
-            this._musicStopControl = new objects.Button("./Assets/images/ui/controls/unmuted.png", 600, 10, false);
+            this._musicStopControl = new objects.Button("./Assets/images/ui/controls/unmuted.png", 563, 10, false);
+
+            this._exitButton = new objects.Button("./Assets/images/ui/controls/exit.png", 600, 10, false);
 
             (<HTMLInputElement>document.body.querySelector("#cheatCodeButton")).addEventListener("click", () => {
                 if(this._isActive){
@@ -742,6 +746,7 @@ module scenes
 
             this.addChild(this._scoreLabel);
             this.addChild(this._musicStopControl);
+            this.addChild(this._exitButton);
 
             this._musicStopControl.on("click", () => {
                 this._musicStopped = !this._musicStopped
@@ -754,6 +759,12 @@ module scenes
                     
 
                 }
+            });
+
+            this._exitButton.on("click", () => {
+                this.PauseSound("levels");
+                this.RewindSound("menu");
+                config.Game.SCENE_STATE = scenes.State.START;
             });
         }
 

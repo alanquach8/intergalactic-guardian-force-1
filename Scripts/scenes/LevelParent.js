@@ -48,7 +48,8 @@ var scenes;
             _this._noOfCivilians = 3;
             _this._boxes = new Array();
             _this._noOfBoxes = 3;
-            _this._musicStopControl = new objects.Button("./Assets/images/ui/controls/unmuted.png", 600, 10, false);
+            _this._musicStopControl = new objects.Button("./Assets/images/ui/controls/unmuted.png", 563, 10, false);
+            _this._exitButton = new objects.Button("./Assets/images/ui/controls/exit.png", 600, 10, false);
             document.body.querySelector("#cheatCodeButton").addEventListener("click", function () {
                 if (_this._isActive) {
                     var code = document.body.querySelector("#cheatCode").value.split(" ");
@@ -678,6 +679,7 @@ var scenes;
             });
             this.addChild(this._scoreLabel);
             this.addChild(this._musicStopControl);
+            this.addChild(this._exitButton);
             this._musicStopControl.on("click", function () {
                 _this._musicStopped = !_this._musicStopped;
                 if (_this._musicStopped) {
@@ -688,6 +690,11 @@ var scenes;
                     _this.PlaySound("levels");
                     _this._musicStopControl.image = new createjs.Bitmap("./Assets/images/ui/controls/unmuted.png").image;
                 }
+            });
+            this._exitButton.on("click", function () {
+                _this.PauseSound("levels");
+                _this.RewindSound("menu");
+                config.Game.SCENE_STATE = scenes.State.START;
             });
         };
         Object.defineProperty(LevelParent.prototype, "Enemies", {
