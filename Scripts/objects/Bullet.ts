@@ -78,7 +78,6 @@ module objects {
             }
 
             public ShouldImpactDelete():boolean{
-                console.log(this._collidedWith.length)
                 return this._collidedWith.length >= this._pierceCount
             }
 

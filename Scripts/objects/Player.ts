@@ -159,7 +159,6 @@ module objects {
                 this.x = 440;
             }
             window.addEventListener('keyup', (e) => {
-                console.log(e.code);
                 switch(e.code) {
                     case this._controlArray[0]:
                         this._forward = false;

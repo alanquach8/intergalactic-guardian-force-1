@@ -19,9 +19,10 @@ module scenes
 
             
             window.addEventListener('keydown', (e: KeyboardEvent) => {
-                if (config.Game.SCENE_STATE == scenes.State.QUOTE)
+                if (config.Game.SCENE_STATE == scenes.State.QUOTE){
                     this.PauseSound("menu");
                     config.Game.SCENE_STATE = scenes.State.LEVEL1;
+                }
             });
 
 

@@ -86,7 +86,6 @@ var objects;
             this._collidedWith.push(e);
         };
         Bullet.prototype.ShouldImpactDelete = function () {
-            console.log(this._collidedWith.length);
             return this._collidedWith.length >= this._pierceCount;
         };
         return Bullet;

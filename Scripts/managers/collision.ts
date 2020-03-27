@@ -49,11 +49,9 @@ module managers
                     object2.isColliding = true;
                     if(object1 instanceof objects.Enemy && object2 instanceof objects.Civilian) {
                         object2.Life--;
-                        console.log("ENEMY CIVILIAN COLLISION");
                     }
                     if(object1 instanceof objects.Player && object2 instanceof objects.Civilian) {
                         object2.Life++;
-                        console.log("PLAYER CIVILIAN COLLISION");
                     }
                 }
             }

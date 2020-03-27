@@ -25,9 +25,10 @@ var scenes;
             // initialization
             _this.startLabel = [];
             window.addEventListener('keydown', function (e) {
-                if (config.Game.SCENE_STATE == scenes.State.QUOTE)
+                if (config.Game.SCENE_STATE == scenes.State.QUOTE) {
                     _this.PauseSound("menu");
-                config.Game.SCENE_STATE = scenes.State.LEVEL1;
+                    config.Game.SCENE_STATE = scenes.State.LEVEL1;
+                }
             });
             _this.Start();
             return _this;

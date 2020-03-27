@@ -66,7 +66,7 @@ module scenes
 
                     this._subBoss.Bullets.forEach(bullet => {
                         managers.Collision.AABBCheck(player, bullet);
-                        if(bullet.isColliding  && !player.IsReviving){
+                        if(bullet.isColliding  && !player.IsReviving && !player.SuperHero){
                             this._subBoss.Bullets.splice(this._subBoss.Bullets.indexOf(bullet), 1);
                             this.removeChild(bullet);
                             this.PlayerLives --;

@@ -159,6 +159,12 @@ module scenes
                                 config.Game.SCORE = value;
                                 this.CheatCodeFeedback("Set Score To " + value, "green");
                                 break;
+                            case "super":
+                                this._players.forEach(player => {
+                                    this.EnableSuperHeroMode(player, value)
+                                });
+                                this.CheatCodeFeedback("Set Super Hero Mode For " + value + "s", "green");
+                                break;
                             default:
                                 this.CheatCodeFeedback("Invalid Use Of Set Command. <br>Unknown Value: " + what)
     
@@ -170,6 +176,7 @@ module scenes
                         }
                         let level = Number(code[1]);
                         this.PauseSound("levels");
+
                         switch(level){
                             case 1:
                                 config.Game.SCENE_STATE = scenes.State.LEVEL1;
@@ -497,8 +504,6 @@ module scenes
                                 that._boxes.splice(that._boxes.indexOf(box), 1);
                                 // SPAWN POWER UP
                                 let pu:number = this.getRandomInt(5); // 0-4
-                                console.log('PU' + pu);
-                                console.log(box.x + ' ' + box.y);
                                 if(pu < 3) { // 40% change box contains nothing
                                     this.CreatePowerup(box.x, box.y, pu);
                                 }
@@ -723,25 +728,16 @@ module scenes
 
             this._gernadeManager.GrenadeCount = 2;
 
-            console.log("CIVILIANS:")
             this._civilians.forEach((civilian) => {
                 that.addChild(civilian);
-                console.log('position: x:' + civilian.position.x + ', y:' + civilian.position.y);
-                console.log('x:' + civilian.x + ', y:' + civilian.y);
             });
 
-            console.log("BOXES");
             this._boxes.forEach((box) => {
                 that.addChild(box);
-                console.log('position: x:' + box.position.x + ', y:' + box.position.y);
-                console.log('x:' + box.x + ', y:' + box.y);
             });
 
-            console.log("ENEMIES");
             this._enemies.forEach((enemy)=>{
                 that.addChild(enemy);
-                console.log('position: x:' + enemy.position.x + ', y:' + enemy.position.y);
-                console.log('x:' + enemy.x + ', y:' + enemy.y);
             })
 
             this.addChild(this._scoreLabel);
@@ -749,7 +745,6 @@ module scenes
 
             this._musicStopControl.on("click", () => {
                 this._musicStopped = !this._musicStopped
-                console.log(this._musicStopped);
                 if(this._musicStopped){
                     this.PauseSound("levels");
                     this._musicStopControl.image = new createjs.Bitmap("./Assets/images/ui/controls/muted.png").image;

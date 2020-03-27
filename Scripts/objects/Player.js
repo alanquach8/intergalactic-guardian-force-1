@@ -54,7 +54,6 @@ var objects;
                 _this.x = 440;
             }
             window.addEventListener('keyup', function (e) {
-                console.log(e.code);
                 switch (e.code) {
                     case _this._controlArray[0]:
                         _this._forward = false;

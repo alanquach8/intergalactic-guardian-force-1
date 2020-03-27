@@ -75,7 +75,7 @@ var scenes;
                     });
                     _this._subBoss.Bullets.forEach(function (bullet) {
                         managers.Collision.AABBCheck(player, bullet);
-                        if (bullet.isColliding && !player.IsReviving) {
+                        if (bullet.isColliding && !player.IsReviving && !player.SuperHero) {
                             _this._subBoss.Bullets.splice(_this._subBoss.Bullets.indexOf(bullet), 1);
                             _this.removeChild(bullet);
                             _this.PlayerLives--;

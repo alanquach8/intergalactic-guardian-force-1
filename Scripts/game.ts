@@ -53,6 +53,7 @@ let game = (function(){
             stage.removeAllChildren();
         }
 
+        console.log("Switched to level: " + scenes.State[config.Game.SCENE_STATE])
         // State Machine
         switch(config.Game.SCENE_STATE)
         {

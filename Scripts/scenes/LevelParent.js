@@ -107,20 +107,26 @@ var scenes;
                             return;
                         }
                         var what = code[1];
-                        var value = Number(code[2]);
+                        var value_1 = Number(code[2]);
                         switch (what) {
                             case "grenades":
-                                _this.SetGrenades(value);
-                                _this.CheatCodeFeedback("Set Number Of Grenades To " + value, "green");
+                                _this.SetGrenades(value_1);
+                                _this.CheatCodeFeedback("Set Number Of Grenades To " + value_1, "green");
                                 break;
                             case "lives":
-                                _this._players[0].Life = value;
+                                _this._players[0].Life = value_1;
                                 _this.UpdatePlayerLivesIndicator();
-                                _this.CheatCodeFeedback("Set Number Of Lives To " + value, "green");
+                                _this.CheatCodeFeedback("Set Number Of Lives To " + value_1, "green");
                                 break;
                             case "score":
-                                config.Game.SCORE = value;
-                                _this.CheatCodeFeedback("Set Score To " + value, "green");
+                                config.Game.SCORE = value_1;
+                                _this.CheatCodeFeedback("Set Score To " + value_1, "green");
+                                break;
+                            case "super":
+                                _this._players.forEach(function (player) {
+                                    _this.EnableSuperHeroMode(player, value_1);
+                                });
+                                _this.CheatCodeFeedback("Set Super Hero Mode For " + value_1 + "s", "green");
                                 break;
                             default:
                                 _this.CheatCodeFeedback("Invalid Use Of Set Command. <br>Unknown Value: " + what);
@@ -462,8 +468,6 @@ var scenes;
                                 that._boxes.splice(that._boxes.indexOf(box), 1);
                                 // SPAWN POWER UP
                                 var pu = _this.getRandomInt(5); // 0-4
-                                console.log('PU' + pu);
-                                console.log(box.x + ' ' + box.y);
                                 if (pu < 3) { // 40% change box contains nothing
                                     _this.CreatePowerup(box.x, box.y, pu);
                                 }
@@ -663,29 +667,19 @@ var scenes;
             this.SetGrenades(2);
             this.UpdatePlayerLivesIndicator();
             this._gernadeManager.GrenadeCount = 2;
-            console.log("CIVILIANS:");
             this._civilians.forEach(function (civilian) {
                 that.addChild(civilian);
-                console.log('position: x:' + civilian.position.x + ', y:' + civilian.position.y);
-                console.log('x:' + civilian.x + ', y:' + civilian.y);
             });
-            console.log("BOXES");
             this._boxes.forEach(function (box) {
                 that.addChild(box);
-                console.log('position: x:' + box.position.x + ', y:' + box.position.y);
-                console.log('x:' + box.x + ', y:' + box.y);
             });
-            console.log("ENEMIES");
             this._enemies.forEach(function (enemy) {
                 that.addChild(enemy);
-                console.log('position: x:' + enemy.position.x + ', y:' + enemy.position.y);
-                console.log('x:' + enemy.x + ', y:' + enemy.y);
             });
             this.addChild(this._scoreLabel);
             this.addChild(this._musicStopControl);
             this._musicStopControl.on("click", function () {
                 _this._musicStopped = !_this._musicStopped;
-                console.log(_this._musicStopped);
                 if (_this._musicStopped) {
                     _this.PauseSound("levels");
                     _this._musicStopControl.image = new createjs.Bitmap("./Assets/images/ui/controls/muted.png").image;
