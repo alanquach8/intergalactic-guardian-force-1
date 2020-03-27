@@ -429,7 +429,7 @@ module scenes
 
             // add more enemies if one dies
             if(this._enemies.length < this._noOfEnemies){
-                let enemy = new objects.Enemy();
+                let enemy = new objects.Enemy(new objects.Vector2(this._players[0].x, this._players[0].y));
                 enemy.LockTo = Math.floor(Math.random() * this.noOfPlayers);
                 this._enemies.push(enemy);
                 this.addChild(this._enemies[this._enemies.length-1]);

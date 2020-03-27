@@ -54,7 +54,7 @@ module objects
         }
 
         // CONSTRUCTOR
-        constructor(playerPosition:Vector2 = new Vector2(10, 10), containerWidth:number = 640, containerHeight:number = 480, startx:number=-1, starty:number=-1)
+        constructor(playerPosition:Vector2 = new Vector2(320, 240), containerWidth:number = 640, containerHeight:number = 480, startx:number=-1, starty:number=-1)
         {
 
             super("./Assets/images/enemy/minion/minion.png", 200, 200, true);
@@ -100,10 +100,10 @@ module objects
             do{
                 // generate random point within the range of stage
                 rx = Math.floor(Math.random() * (width - 20)) + 1;
-                ry = Math.floor(Math.random() * (height - 20)) + 1;
+                ry = Math.floor(Math.random() * (height - 380)) + 1;
                 
             }// check to make it far from player by 200 pixels radius
-            while((rx > px + 100 || rx < px - 100) && ry > py + 100 || ry < py - 100 );
+            while((rx > px + 100 || rx < px - 100) && ry > py - 100 );
             
             return new Vector2(rx, ry);
         }
