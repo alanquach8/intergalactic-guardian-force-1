@@ -23,6 +23,9 @@ module scenes
         private _segways: objects.Segway[];
         private _trailManager = new objects.TrailManager(this);
 
+        private _musicStopped = false;
+        private _musicStopControl: objects.Button;
+
         private _civilians:objects.Civilian[];
         private _noOfCivilians:number;
 
@@ -75,6 +78,8 @@ module scenes
 
             this._boxes = new Array();
             this._noOfBoxes = 3;
+
+            this._musicStopControl = new objects.Button("./Assets/images/ui/controls/unmuted.png", 600, 10, false);
 
             (<HTMLInputElement>document.body.querySelector("#cheatCodeButton")).addEventListener("click", () => {
                 if(this._isActive){
@@ -740,6 +745,21 @@ module scenes
             })
 
             this.addChild(this._scoreLabel);
+            this.addChild(this._musicStopControl);
+
+            this._musicStopControl.on("click", () => {
+                this._musicStopped = !this._musicStopped
+                console.log(this._musicStopped);
+                if(this._musicStopped){
+                    this.PauseSound("levels");
+                    this._musicStopControl.image = new createjs.Bitmap("./Assets/images/ui/controls/muted.png").image;
+                } else {
+                    this.PlaySound("levels")
+                    this._musicStopControl.image = new createjs.Bitmap("./Assets/images/ui/controls/unmuted.png").image;
+                    
+
+                }
+            });
         }
 
         public get Enemies():objects.Enemy[]{

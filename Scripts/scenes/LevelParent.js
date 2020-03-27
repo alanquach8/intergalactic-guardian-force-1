@@ -28,6 +28,7 @@ var scenes;
             _this._canFinish = true;
             _this._endEventFired = false;
             _this._trailManager = new objects.TrailManager(_this);
+            _this._musicStopped = false;
             _this._isActive = false;
             // initialization
             // this._player = new objects.Player(1);
@@ -47,6 +48,7 @@ var scenes;
             _this._noOfCivilians = 3;
             _this._boxes = new Array();
             _this._noOfBoxes = 3;
+            _this._musicStopControl = new objects.Button("./Assets/images/ui/controls/unmuted.png", 600, 10, false);
             document.body.querySelector("#cheatCodeButton").addEventListener("click", function () {
                 if (_this._isActive) {
                     var code = document.body.querySelector("#cheatCode").value.split(" ");
@@ -649,6 +651,7 @@ var scenes;
             this._trailManager.Update();
         };
         LevelParent.prototype.Main = function () {
+            var _this = this;
             var that = this;
             this.addChild(new objects.Rectangle(0, 0, 15, 480, "DarkGrey"));
             this.addChild(new objects.Rectangle(625, 0, 15, 480, "DarkGrey"));
@@ -679,6 +682,19 @@ var scenes;
                 console.log('x:' + enemy.x + ', y:' + enemy.y);
             });
             this.addChild(this._scoreLabel);
+            this.addChild(this._musicStopControl);
+            this._musicStopControl.on("click", function () {
+                _this._musicStopped = !_this._musicStopped;
+                console.log(_this._musicStopped);
+                if (_this._musicStopped) {
+                    _this.PauseSound("levels");
+                    _this._musicStopControl.image = new createjs.Bitmap("./Assets/images/ui/controls/muted.png").image;
+                }
+                else {
+                    _this.PlaySound("levels");
+                    _this._musicStopControl.image = new createjs.Bitmap("./Assets/images/ui/controls/unmuted.png").image;
+                }
+            });
         };
         Object.defineProperty(LevelParent.prototype, "Enemies", {
             get: function () {
