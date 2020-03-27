@@ -18,7 +18,7 @@ var objects;
         __extends(Enemy, _super);
         // CONSTRUCTOR
         function Enemy(playerPosition, containerWidth, containerHeight, startx, starty) {
-            if (playerPosition === void 0) { playerPosition = new objects.Vector2(10, 10); }
+            if (playerPosition === void 0) { playerPosition = new objects.Vector2(320, 240); }
             if (containerWidth === void 0) { containerWidth = 640; }
             if (containerHeight === void 0) { containerHeight = 480; }
             if (startx === void 0) { startx = -1; }
@@ -159,9 +159,9 @@ var objects;
             do {
                 // generate random point within the range of stage
                 rx = Math.floor(Math.random() * (width - 20)) + 1;
-                ry = Math.floor(Math.random() * (height - 20)) + 1;
+                ry = Math.floor(Math.random() * (height - 380)) + 1;
             } // check to make it far from player by 200 pixels radius
-             while ((rx > px + 100 || rx < px - 100) && ry > py + 100 || ry < py - 100);
+             while ((rx > px + 100 || rx < px - 100) && ry > py - 100);
             return new objects.Vector2(rx, ry);
         };
         /**

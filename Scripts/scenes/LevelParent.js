@@ -405,7 +405,7 @@ var scenes;
             var that = this;
             // add more enemies if one dies
             if (this._enemies.length < this._noOfEnemies) {
-                var enemy = new objects.Enemy();
+                var enemy = new objects.Enemy(new objects.Vector2(this._players[0].x, this._players[0].y));
                 enemy.LockTo = Math.floor(Math.random() * this.noOfPlayers);
                 this._enemies.push(enemy);
                 this.addChild(this._enemies[this._enemies.length - 1]);
@@ -476,18 +476,18 @@ var scenes;
                 box.Update();
             });
             this._civilians.forEach(function (civilian) {
-                _this._players.forEach(function (player) {
+                that._players.forEach(function (player) {
                     managers.Collision.AABBCheck(player, civilian);
-                    if (civilian.Life == 200) {
+                    if (that._civilians.indexOf(civilian) > -1 && civilian.Life > 150) {
                         civilian.Saved = true;
-                        that._civilians.splice(that._civilians.indexOf(civilian));
+                        that._civilians.splice(that._civilians.indexOf(civilian), 1);
                         that.removeChild(civilian);
                     }
                 });
-                _this._enemies.forEach(function (enemy) {
+                that._enemies.forEach(function (enemy) {
                     managers.Collision.AABBCheck(enemy, civilian);
-                    if (civilian.Life == 0) {
-                        that._civilians.splice(that._civilians.indexOf(civilian));
+                    if (that._civilians.indexOf(civilian) > -1 && civilian.Life < 1) {
+                        that._civilians.splice(that._civilians.indexOf(civilian), 1);
                         that.removeChild(civilian);
                     }
                 });

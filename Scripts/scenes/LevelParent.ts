@@ -432,7 +432,7 @@ module scenes
 
             // add more enemies if one dies
             if(this._enemies.length < this._noOfEnemies){
-                let enemy = new objects.Enemy();
+                let enemy = new objects.Enemy(new objects.Vector2(this._players[0].x, this._players[0].y));
                 enemy.LockTo = Math.floor(Math.random() * this.noOfPlayers);
                 this._enemies.push(enemy);
                 this.addChild(this._enemies[this._enemies.length-1]);
@@ -509,19 +509,22 @@ module scenes
             });
 
             this._civilians.forEach((civilian) => {
-                this._players.forEach((player) => {
+
+                that._players.forEach((player) => {
                     managers.Collision.AABBCheck(player, civilian);
-                    if(civilian.Life == 200) {
+                    if(that._civilians.indexOf(civilian) > -1 && civilian.Life > 150) {
+                        
                         civilian.Saved = true;
-                        that._civilians.splice(that._civilians.indexOf(civilian));
+                        that._civilians.splice(that._civilians.indexOf(civilian), 1);
                         that.removeChild(civilian);
                     }
                 });
 
-                this._enemies.forEach((enemy) => {
+                that._enemies.forEach((enemy) => {
                     managers.Collision.AABBCheck(enemy, civilian);
-                    if(civilian.Life == 0) {
-                        that._civilians.splice(that._civilians.indexOf(civilian));
+                    if(that._civilians.indexOf(civilian) > -1 && civilian.Life < 1) {
+                        
+                        that._civilians.splice(that._civilians.indexOf(civilian), 1);
                         that.removeChild(civilian);
                     }
                 });
