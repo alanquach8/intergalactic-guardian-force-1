@@ -656,7 +656,17 @@ module scenes
                             enemy.y -= y_delta;
                             enemy.position = new objects.Vector2(enemy.x, enemy.y);
                         });
-    
+
+                        this._boxes.forEach(box => {
+                            box.y -= y_delta;
+                            box.position = new objects.Vector2(box.x, box.y);
+                        });
+
+                        this._civilians.forEach(c => {
+                            c.y -= y_delta;
+                            c.position = new objects.Vector2(c.x, c.y);
+                        });
+                        
                         this._enemies.forEach(enemy => {
                             enemy.y -= y_delta;
                             enemy.position = new objects.Vector2(enemy.x, enemy.y);
