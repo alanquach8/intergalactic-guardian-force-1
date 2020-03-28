@@ -39,7 +39,7 @@ var scenes;
             _this._powerups = new Array();
             _this._explosion = [];
             _this._playerLivesThumbs = [];
-            _this._noOfEnemies = 1;
+            _this._noOfEnemies = 5;
             _this._gernadeManager = new objects.GrenadeManager();
             _this._nextLevel = next;
             _this._scoreLabel = new objects.Label(config.Game.SCORE.toString(), "40px", "Consolas", "#000000", 0, 0);
