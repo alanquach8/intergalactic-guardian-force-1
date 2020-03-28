@@ -53,6 +53,26 @@ module managers
                     if(object1 instanceof objects.Player && object2 instanceof objects.Civilian) {
                         object2.Life++;
                     }
+
+                    if(object1 instanceof objects.Player && object2 instanceof objects.Box) {
+                        
+                        if(object1TopLeft.x+object1.width < object2TopLeft.x+1 && object1TopLeft.x+object1.width > object2TopLeft.x-1) {
+                            // colliding at left
+                            object1.BoxCollision = "left";
+                        }
+                        if(object1TopLeft.x > object2TopLeft.x+object2.width-1 && object1TopLeft.x < object2TopLeft.x+object2.width+1) {
+                            // colliding at right
+                            object1.BoxCollision = "right";
+                        }
+                        if(object1TopLeft.y+object1.height > object2TopLeft.y-1 && object1TopLeft.y+object1.height < object2TopLeft.y+1) {
+                            // colliding at top
+                            object1.BoxCollision = "top";
+                        }
+                        if(object1TopLeft.y > object2TopLeft.y+object2.height-1 && object1TopLeft.y < object2TopLeft.y+object2.height+1) {
+                            // colliding at bottom
+                            object1.BoxCollision = "bottom";
+                        }
+                    }
                 }
             }
             else

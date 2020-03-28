@@ -67,7 +67,7 @@ module scenes
             this._powerups = new Array();
             this._explosion = [];
             this._playerLivesThumbs = [];
-            this._noOfEnemies = 5;
+            this._noOfEnemies = 1;
             this._gernadeManager = new objects.GrenadeManager();
             this._nextLevel = next;
             this._scoreLabel = new objects.Label(config.Game.SCORE.toString(),
@@ -500,6 +500,8 @@ module scenes
             })
             this._boxes.forEach((box) => {
                 this._players.forEach((player) => {
+                    managers.Collision.AABBCheck(player, box);
+                    console.log(player.BoxCollision);
                     player.Bullets.forEach((bullet) => {
                         managers.Collision.AABBCheck(bullet, box);
                         if(box.isColliding) {
@@ -521,6 +523,18 @@ module scenes
                 });
                 box.Update();
             });
+
+            let boxCollision = false;
+            this._boxes.forEach((box) => {
+                if(box.isColliding) {
+                    boxCollision = true;
+                }
+            });
+            if(!boxCollision) {
+                this._players.forEach((player) => {
+                    player.BoxCollision = "";
+                });
+            }
 
             this._civilians.forEach((civilian) => {
 

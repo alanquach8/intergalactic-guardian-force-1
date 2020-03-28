@@ -23,6 +23,8 @@ var objects;
             if (y === void 0) { y = 250; }
             if (isCentered === void 0) { isCentered = true; }
             var _this = _super.call(this, config.Game.PLAYER_IMAGES[playerId - 1], x, y, true) || this;
+            // PRIVATE INSTANCE MEMBERS
+            _this._boxCollision = "";
             _this._speed = 0.5;
             _this._stationarySpeed = 1;
             _this._rotate = 0.5; // degrees
@@ -138,6 +140,16 @@ var objects;
             enumerable: true,
             configurable: true
         });
+        Object.defineProperty(Player.prototype, "BoxCollision", {
+            get: function () {
+                return this._boxCollision;
+            },
+            set: function (value) {
+                this._boxCollision = value;
+            },
+            enumerable: true,
+            configurable: true
+        });
         Object.defineProperty(Player.prototype, "IsReviving", {
             // PUBLIC PROPERTIES
             get: function () {
@@ -246,8 +258,36 @@ var objects;
         };
         Player.prototype.Update = function () {
             if (this._forward) {
-                this.y += this.Direction.y * this.Speed;
-                this.x += this.Direction.x * this.Speed;
+                if (this.BoxCollision == "") {
+                    this.y += this.Direction.y * this.Speed;
+                    this.x += this.Direction.x * this.Speed;
+                }
+                else {
+                    if (this.BoxCollision == "right") {
+                        this.y += this.Direction.y * this.Speed;
+                        if ((this.Direction.x * this.Speed) + this.x > this.x) {
+                            this.x += this.Direction.x * this.Speed;
+                        }
+                    }
+                    if (this.BoxCollision == "left") {
+                        this.y += this.Direction.y * this.Speed;
+                        if ((this.Direction.x * this.Speed) + this.x < this.x) {
+                            this.x += this.Direction.x * this.Speed;
+                        }
+                    }
+                    if (this.BoxCollision == "top") {
+                        this.x += this.Direction.x * this.Speed;
+                        if ((this.Direction.y * this.Speed) + this.y < this.y) {
+                            this.y += this.Direction.y * this.Speed;
+                        }
+                    }
+                    if (this.BoxCollision == "bottom") {
+                        this.x += this.Direction.x * this.Speed;
+                        if ((this.Direction.y * this.Speed) + this.y > this.y) {
+                            this.y += this.Direction.y * this.Speed;
+                        }
+                    }
+                }
                 if (this.x <= this._wallBuffer)
                     this.x -= this.Direction.x * this.Speed;
                 if (this.x >= 640 - this._wallBuffer)
@@ -256,8 +296,36 @@ var objects;
                     this.y -= this.Direction.y * this.Speed;
             }
             if (this._backward) {
-                this.y -= this.Direction.y * this.Speed;
-                this.x -= this.Direction.x * this.Speed;
+                if (this.BoxCollision == "") {
+                    this.y -= this.Direction.y * this.Speed;
+                    this.x -= this.Direction.x * this.Speed;
+                }
+                else {
+                    if (this.BoxCollision == "right") {
+                        this.y -= this.Direction.y * this.Speed;
+                        if (this.x - (this.Direction.x * this.Speed) > this.x) {
+                            this.x -= this.Direction.x * this.Speed;
+                        }
+                    }
+                    if (this.BoxCollision == "left") {
+                        this.y -= this.Direction.y * this.Speed;
+                        if (this.x - (this.Direction.x * this.Speed) < this.x) {
+                            this.x -= this.Direction.x * this.Speed;
+                        }
+                    }
+                    if (this.BoxCollision == "top") {
+                        this.x -= this.Direction.x * this.Speed;
+                        if (this.y - (this.Direction.y * this.Speed) < this.y) {
+                            this.y -= this.Direction.y * this.Speed;
+                        }
+                    }
+                    if (this.BoxCollision == "bottom") {
+                        this.x -= this.Direction.x * this.Speed;
+                        if (this.y - (this.Direction.y * this.Speed) > this.y) {
+                            this.y -= this.Direction.y * this.Speed;
+                        }
+                    }
+                }
                 if (this.x <= this._wallBuffer)
                     this.x += this.Direction.x * this.Speed;
                 if (this.x >= 640 - this._wallBuffer)

@@ -39,7 +39,7 @@ var scenes;
             _this._powerups = new Array();
             _this._explosion = [];
             _this._playerLivesThumbs = [];
-            _this._noOfEnemies = 5;
+            _this._noOfEnemies = 1;
             _this._gernadeManager = new objects.GrenadeManager();
             _this._nextLevel = next;
             _this._scoreLabel = new objects.Label(config.Game.SCORE.toString(), "40px", "Consolas", "#000000", 0, 0);
@@ -461,6 +461,8 @@ var scenes;
             });
             this._boxes.forEach(function (box) {
                 _this._players.forEach(function (player) {
+                    managers.Collision.AABBCheck(player, box);
+                    console.log(player.BoxCollision);
                     player.Bullets.forEach(function (bullet) {
                         managers.Collision.AABBCheck(bullet, box);
                         if (box.isColliding) {
@@ -482,6 +484,17 @@ var scenes;
                 });
                 box.Update();
             });
+            var boxCollision = false;
+            this._boxes.forEach(function (box) {
+                if (box.isColliding) {
+                    boxCollision = true;
+                }
+            });
+            if (!boxCollision) {
+                this._players.forEach(function (player) {
+                    player.BoxCollision = "";
+                });
+            }
             this._civilians.forEach(function (civilian) {
                 that._players.forEach(function (player) {
                     managers.Collision.AABBCheck(player, civilian);
