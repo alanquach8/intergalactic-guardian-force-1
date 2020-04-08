@@ -6,6 +6,8 @@ module config
         public static SCENE_STATE: scenes.State;
 
         public static SCORE: number = 0;
+        public static LIVES: number = -1;
+        public static GRENADES: number = -1;
 
         public static NO_OF_PLAYERS: number = 2;
         public static PLAYER_IMAGES:string[] = [];

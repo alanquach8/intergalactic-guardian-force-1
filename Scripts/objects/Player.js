@@ -25,8 +25,8 @@ var objects;
             var _this = _super.call(this, config.Game.PLAYER_IMAGES[playerId - 1], x, y, true) || this;
             _this._speed = 0.5;
             _this._stationarySpeed = 1;
-            _this._rotate = 0.5; // degrees
-            _this._stationaryRotate = 1;
+            _this._rotate = 0.75; // degrees
+            _this._stationaryRotate = 1.25;
             _this._life = 10;
             _this._reloadSpeed = 10;
             _this._reloadCounter = 0;
