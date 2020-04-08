@@ -9,8 +9,8 @@ module objects {
         private _speed:number = 0.5;
         private _stationarySpeed:number = 1;
         private _facing:number; // used in calculating direction player is facing (degrees)
-        private _rotate:number = 0.5; // degrees
-        private _stationaryRotate:number = 1;
+        private _rotate:number = 0.75; // degrees
+        private _stationaryRotate:number = 1.25;
         private _life:number = 10;
         private _reloadSpeed:number = 10;
         private _reloadCounter:number = 0;

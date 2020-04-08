@@ -140,8 +140,14 @@ var scenes;
                             return;
                         }
                         var level = Number(code[1]);
+
                         // this.PauseSound("levels");
                         (_a = _this._backgroundTheme) === null || _a === void 0 ? void 0 : _a.stop();
+
+                        _this.PauseSound("levels");
+                        config.Game.LIVES = _this._players[0].Life;
+                        config.Game.GRENADES = _this._gernadeManager.GrenadeCount;
+
                         switch (level) {
                             case 1:
                                 config.Game.SCENE_STATE = scenes.State.LEVEL1;
@@ -535,6 +541,12 @@ var scenes;
                                 if (enemy.hitPoints == 0) {
                                     that.KillEnemy(enemy);
                                     config.Game.SCORE++;
+                                    if (config.Game.SCORE % 100 == 0) {
+                                        for (var i_1 = 0; i_1 < _this.noOfPlayers; i_1++) {
+                                            _this._players[i_1].Life += 1;
+                                        }
+                                        _this.UpdatePlayerLivesIndicator();
+                                    }
                                 }
                                 if (bullet.ShouldImpactDelete()) {
                                     that._players[i].Bullets.splice(that._players[i].Bullets.indexOf(bullet), 1);
@@ -656,6 +668,11 @@ var scenes;
                         this_1._civilians.forEach(function (c) {
                             c.y -= y_delta_1;
                             c.position = new objects.Vector2(c.x, c.y);
+                            if (c.y > 500) {
+                                config.Game.SCORE -= 10;
+                                _this._civilians.splice(_this._civilians.indexOf(c), 1);
+                                _this.removeChild(c);
+                            }
                         });
                         this_1._enemies.forEach(function (enemy) {
                             enemy.y -= y_delta_1;
@@ -690,9 +707,18 @@ var scenes;
                 this.addChild(this._players[i]);
             }
             this.AddSegways(1);
-            this.SetGrenades(2);
+            if (config.Game.LIVES != -1) {
+                this.SetGrenades(config.Game.GRENADES);
+                this._gernadeManager.GrenadeCount = config.Game.GRENADES;
+                this._players.forEach(function (player) {
+                    player.Life = config.Game.LIVES;
+                });
+            }
+            else {
+                this.SetGrenades(2);
+                this._gernadeManager.GrenadeCount = 2;
+            }
             this.UpdatePlayerLivesIndicator();
-            this._gernadeManager.GrenadeCount = 2;
             this._civilians.forEach(function (civilian) {
                 that.addChild(civilian);
             });

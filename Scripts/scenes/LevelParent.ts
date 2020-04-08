@@ -184,6 +184,9 @@ module scenes
                         // this.PauseSound("levels");
                         this._backgroundTheme?.stop();
 
+                        config.Game.LIVES = this._players[0].Life;
+                        config.Game.GRENADES = this._gernadeManager.GrenadeCount;
+
                         switch(level){
                             case 1:
                                 config.Game.SCENE_STATE = scenes.State.LEVEL1;
@@ -584,6 +587,12 @@ module scenes
                                 if(enemy.hitPoints == 0) {
                                     that.KillEnemy(enemy);
                                     config.Game.SCORE++;
+                                    if(config.Game.SCORE % 100 == 0){
+                                        for(let i = 0; i<this.noOfPlayers; i++) {
+                                            this._players[i].Life += 1;
+                                        }
+                                        this.UpdatePlayerLivesIndicator();
+                                    }
                                 }
         
                                 if (bullet.ShouldImpactDelete()){
@@ -712,6 +721,12 @@ module scenes
                         this._civilians.forEach(c => {
                             c.y -= y_delta;
                             c.position = new objects.Vector2(c.x, c.y);
+                            if (c.y > 500){
+                                config.Game.SCORE -= 10;
+                                this._civilians.splice(this._civilians.indexOf(c), 1);
+                                this.removeChild(c);
+                                
+                            }
                         });
                         
                         this._enemies.forEach(enemy => {
@@ -752,11 +767,20 @@ module scenes
             
             this.AddSegways(1);
 
-            this.SetGrenades(2);
+            if(config.Game.LIVES != -1){
+                this.SetGrenades(config.Game.GRENADES);
+                this._gernadeManager.GrenadeCount = config.Game.GRENADES;
+
+                this._players.forEach(player => {
+                    player.Life = config.Game.LIVES
+                });
+            } else {
+                this.SetGrenades(2);
+                this._gernadeManager.GrenadeCount = 2
+            }
             this.UpdatePlayerLivesIndicator();
 
-            this._gernadeManager.GrenadeCount = 2;
-
+            
             this._civilians.forEach((civilian) => {
                 that.addChild(civilian);
             });
