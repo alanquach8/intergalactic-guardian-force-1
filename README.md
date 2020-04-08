@@ -1,1 +1,1 @@
-"# Intergalactice Guardian Force I" 
+# Intergalactic Guardian Force I

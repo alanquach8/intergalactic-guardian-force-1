@@ -266,7 +266,7 @@ var scenes;
                 this._civilians.push(new objects.Civilian(this.getRandomInt(610) + 15, 200 + this.getRandomInt(200)));
             }
             for (var i = 0; i < this._noOfBoxes; i++) {
-                this._boxes.push(new objects.Box(this.getRandomInt(610) + 15, 200 + this.getRandomInt(200)));
+                this._boxes.push(new objects.Box(this.getRandomInt(610) + 15, this.getRandomInt(1200) - 1000));
             }
             this.PlaySound("levels");
             this.Main();
@@ -463,6 +463,8 @@ var scenes;
             });
             this._boxes.forEach(function (box) {
                 _this._players.forEach(function (player) {
+                    managers.Collision.AABBCheck(player, box);
+                    console.log(player.BoxCollision);
                     player.Bullets.forEach(function (bullet) {
                         managers.Collision.AABBCheck(bullet, box);
                         if (box.isColliding) {
@@ -484,6 +486,17 @@ var scenes;
                 });
                 box.Update();
             });
+            var boxCollision = false;
+            this._boxes.forEach(function (box) {
+                if (box.isColliding) {
+                    boxCollision = true;
+                }
+            });
+            if (!boxCollision) {
+                this._players.forEach(function (player) {
+                    player.BoxCollision = "";
+                });
+            }
             this._civilians.forEach(function (civilian) {
                 that._players.forEach(function (player) {
                     managers.Collision.AABBCheck(player, civilian);

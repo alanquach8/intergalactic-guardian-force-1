@@ -284,7 +284,7 @@ module scenes
             }
 
             for(let i = 0; i< this._noOfBoxes; i++) {
-                this._boxes.push(new objects.Box(this.getRandomInt(610) + 15, 200+this.getRandomInt(200)));
+                this._boxes.push(new objects.Box(this.getRandomInt(610) + 15, this.getRandomInt(1200) - 1000));
             }
             this.PlaySound("levels");
 
@@ -503,6 +503,8 @@ module scenes
             })
             this._boxes.forEach((box) => {
                 this._players.forEach((player) => {
+                    managers.Collision.AABBCheck(player, box);
+                    console.log(player.BoxCollision);
                     player.Bullets.forEach((bullet) => {
                         managers.Collision.AABBCheck(bullet, box);
                         if(box.isColliding) {
@@ -524,6 +526,18 @@ module scenes
                 });
                 box.Update();
             });
+
+            let boxCollision = false;
+            this._boxes.forEach((box) => {
+                if(box.isColliding) {
+                    boxCollision = true;
+                }
+            });
+            if(!boxCollision) {
+                this._players.forEach((player) => {
+                    player.BoxCollision = "";
+                });
+            }
 
             this._civilians.forEach((civilian) => {
 
