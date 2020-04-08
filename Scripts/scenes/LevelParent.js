@@ -652,6 +652,11 @@ var scenes;
                         this_1._civilians.forEach(function (c) {
                             c.y -= y_delta_1;
                             c.position = new objects.Vector2(c.x, c.y);
+                            if (c.y > 500) {
+                                config.Game.SCORE -= 10;
+                                _this._civilians.splice(_this._civilians.indexOf(c), 1);
+                                _this.removeChild(c);
+                            }
                         });
                         this_1._enemies.forEach(function (enemy) {
                             enemy.y -= y_delta_1;

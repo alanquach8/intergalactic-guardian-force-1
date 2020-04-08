@@ -710,6 +710,12 @@ module scenes
                         this._civilians.forEach(c => {
                             c.y -= y_delta;
                             c.position = new objects.Vector2(c.x, c.y);
+                            if (c.y > 500){
+                                config.Game.SCORE -= 10;
+                                this._civilians.splice(this._civilians.indexOf(c), 1);
+                                this.removeChild(c);
+                                
+                            }
                         });
                         
                         this._enemies.forEach(enemy => {
