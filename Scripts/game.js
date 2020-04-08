@@ -6,6 +6,18 @@ var game = (function () {
     var stage;
     var currentSceneState;
     var currentScene;
+    var assets;
+    var assetManifest = [
+        { id: "menu_theme", src: "./Assets/sound/background/menu.mp3" },
+        { id: "background_theme", src: "./Assets/sound/background/levels.mp3" }
+    ];
+    function Preload() {
+        assets = new createjs.LoadQueue(); // asset container
+        config.Game.ASSETS = assets; // make a reference to the assets in the global config
+        assets.installPlugin(createjs.Sound); // supports sound preloading
+        assets.loadManifest(assetManifest);
+        assets.on("complete", Start);
+    }
     /**
      * Perform Initialization in the Start function
      *
@@ -73,6 +85,6 @@ var game = (function () {
         stage.addChild(currentScene);
         currentSceneState = config.Game.SCENE_STATE;
     }
-    window.addEventListener("load", Start);
+    window.addEventListener("load", Preload);
 })();
 //# sourceMappingURL=game.js.map

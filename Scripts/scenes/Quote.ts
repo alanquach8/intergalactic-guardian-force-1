@@ -20,7 +20,7 @@ module scenes
             
             window.addEventListener('keydown', (e: KeyboardEvent) => {
                 if (config.Game.SCENE_STATE == scenes.State.QUOTE){
-                    this.PauseSound("menu");
+                    // this.PauseSound("menu");
                     config.Game.SCENE_STATE = scenes.State.LEVEL1;
                 }
             });
@@ -61,8 +61,8 @@ module scenes
             }
             // -10 used to allow for some delay on animation completion
             if (this.quote_alpha <= -0.25){
-                this.PauseSound("menu");
-                this.RewindSound("levels");
+                // this.PauseSound("menu");
+                // this.RewindSound("levels");
                 config.Game.SCENE_STATE = scenes.State.LEVEL1;
             } 
             

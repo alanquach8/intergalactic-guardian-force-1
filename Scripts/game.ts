@@ -6,8 +6,23 @@ let game = (function(){
 
     let currentSceneState:scenes.State;
     let currentScene:objects.Scene;
-   
 
+    let assets: createjs.LoadQueue;
+
+    let assetManifest = 
+    [
+        {id:"menu_theme", src:"./Assets/sound/background/menu.mp3"},
+        {id:"background_theme", src:"./Assets/sound/background/levels.mp3"}
+    ];
+   
+    function Preload():void
+    {
+        assets = new createjs.LoadQueue(); // asset container
+        config.Game.ASSETS = assets; // make a reference to the assets in the global config
+        assets.installPlugin(createjs.Sound); // supports sound preloading
+        assets.loadManifest(assetManifest);
+        assets.on("complete", Start);
+    }
     /**
      * Perform Initialization in the Start function
      *
@@ -88,5 +103,5 @@ let game = (function(){
 
     }
 
-    window.addEventListener("load", Start);
+    window.addEventListener("load", Preload);
 })();

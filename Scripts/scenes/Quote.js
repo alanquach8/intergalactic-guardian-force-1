@@ -26,7 +26,7 @@ var scenes;
             _this.startLabel = [];
             window.addEventListener('keydown', function (e) {
                 if (config.Game.SCENE_STATE == scenes.State.QUOTE) {
-                    _this.PauseSound("menu");
+                    // this.PauseSound("menu");
                     config.Game.SCENE_STATE = scenes.State.LEVEL1;
                 }
             });
@@ -60,8 +60,8 @@ var scenes;
             }
             // -10 used to allow for some delay on animation completion
             if (this.quote_alpha <= -0.25) {
-                this.PauseSound("menu");
-                this.RewindSound("levels");
+                // this.PauseSound("menu");
+                // this.RewindSound("levels");
                 config.Game.SCENE_STATE = scenes.State.LEVEL1;
             }
         };

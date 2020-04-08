@@ -36,6 +36,8 @@ module scenes
 
         private _isActive = false;
 
+        private _backgroundTheme?: createjs.AbstractSoundInstance;
+
         // PUBLIC PROPERTIES
 
         public set PlayerLives(val:number){
@@ -179,7 +181,8 @@ module scenes
                             return;
                         }
                         let level = Number(code[1]);
-                        this.PauseSound("levels");
+                        // this.PauseSound("levels");
+                        this._backgroundTheme?.stop();
 
                         switch(level){
                             case 1:
@@ -283,7 +286,9 @@ module scenes
             for(let i = 0; i< this._noOfBoxes; i++) {
                 this._boxes.push(new objects.Box(this.getRandomInt(610) + 15, this.getRandomInt(1200) - 1000));
             }
-            this.PlaySound("levels");
+            // this.PlaySound("levels");
+            this._backgroundTheme = createjs.Sound.play("background_theme");
+            this._backgroundTheme.loop = -1; // loop forever
 
             this.Main();
         }  
@@ -460,7 +465,8 @@ module scenes
                 } else {
                     // game over
                     this._isActive = false;
-                    this.PauseSound("levels");
+                    // this.PauseSound("levels");
+                    this._backgroundTheme?.stop();
                     config.Game.SCENE_STATE = scenes.State.END;
                 }
             }
@@ -608,7 +614,8 @@ module scenes
                         that._players[i].Life--;
                         this.UpdatePlayerLivesIndicator();
                         if(that._players[i].Life == 0) {
-                            this.PauseSound("levels");
+                            // this.PauseSound("levels");
+                            this._backgroundTheme?.stop();
                             config.Game.SCENE_STATE = scenes.State.LOOSE;
                         } else {
                             that._players[i].Reset();
@@ -658,7 +665,8 @@ module scenes
                             if (this._players[i].y <= 0){
                                 if(this._canFinish){
                                     this._isActive = false;
-                                    this.PauseSound("levels");
+                                    // this.PauseSound("levels");
+                                    this._backgroundTheme?.stop();
                                     config.Game.SCENE_STATE = this._nextLevel;
                                 } else {
                                     this._players[i].y = 1
@@ -765,10 +773,12 @@ module scenes
             this._musicStopControl.on("click", () => {
                 this._musicStopped = !this._musicStopped
                 if(this._musicStopped){
-                    this.PauseSound("levels");
+                    // this.PauseSound("levels");
+                    this._backgroundTheme?.stop();
                     this._musicStopControl.image = new createjs.Bitmap("./Assets/images/ui/controls/muted.png").image;
                 } else {
-                    this.PlaySound("levels")
+                    // this.PlaySound("levels");
+                    this._backgroundTheme?.play()
                     this._musicStopControl.image = new createjs.Bitmap("./Assets/images/ui/controls/unmuted.png").image;
                     
 
@@ -776,8 +786,9 @@ module scenes
             });
 
             this._exitButton.on("click", () => {
-                this.PauseSound("levels");
-                this.RewindSound("menu");
+                // this.PauseSound("levels");
+                // this.RewindSound("menu");
+                this._backgroundTheme?.stop();
                 config.Game.SCENE_STATE = scenes.State.START;
             });
         }
