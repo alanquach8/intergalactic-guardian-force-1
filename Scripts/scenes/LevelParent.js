@@ -387,6 +387,9 @@ var scenes;
         LevelParent.prototype.KillEnemy = function (enemy) {
             enemy.Die();
             this._deadEnemies.push(enemy);
+            var sound;
+            sound = createjs.Sound.play("enemy_dying");
+            sound.volume = 0.5;
             this._enemies.splice(this._enemies.indexOf(enemy), 1);
         };
         Object.defineProperty(LevelParent.prototype, "CanFinish", {

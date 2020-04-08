@@ -354,6 +354,9 @@ var objects;
                     bullet.PierceCount = this._pierceCount;
                     this._bullets.push(bullet);
                     this.parent.addChild(bullet);
+                    var sound = void 0;
+                    sound = createjs.Sound.play("shoot");
+                    sound.volume = 0.5;
                     this._reloadCounter = this._reloadSpeed;
                 }
                 else {

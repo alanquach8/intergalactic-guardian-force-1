@@ -12,7 +12,12 @@ let game = (function(){
     let assetManifest = 
     [
         {id:"menu_theme", src:"./Assets/sound/background/menu.mp3"},
-        {id:"background_theme", src:"./Assets/sound/background/levels.mp3"}
+        {id:"background_theme", src:"./Assets/sound/background/levels.mp3"},
+
+        {id:"shoot", src:"./Assets/sound/effect/shoot.wav"},
+        {id:"enemy_dying", src:"./Assets/sound/effect/enemy_dying.wav"},
+        {id:"boss_dying", src:"./Assets/sound/effect/boss_dying.wav"},
+        {id:"box_break", src:"./Assets/sound/effect/box_break.wav"}
     ];
    
     function Preload():void

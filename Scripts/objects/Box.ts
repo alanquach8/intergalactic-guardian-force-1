@@ -39,6 +39,9 @@ module objects
         public Update(): void {
             if(this._life == 0) {
                 this._broken = true;
+                let sound: createjs.AbstractSoundInstance;
+                sound = createjs.Sound.play("box_break");
+                sound.volume = 0.5;
             }
             
         }

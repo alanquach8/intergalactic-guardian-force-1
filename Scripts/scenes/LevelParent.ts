@@ -418,6 +418,9 @@ module scenes
         public KillEnemy(enemy:objects.Enemy): void{
             enemy.Die();
             this._deadEnemies.push(enemy);
+            let sound:createjs.AbstractSoundInstance;
+            sound = createjs.Sound.play("enemy_dying");
+            sound.volume = 0.5;
             this._enemies.splice(this._enemies.indexOf(enemy), 1);
         }
 
