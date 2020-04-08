@@ -45,16 +45,20 @@ var scenes;
             this.aButton.ScaleImage(3);
             this.cButton.ScaleImage(3);
             this.kButton.ScaleImage(3);
+            this.menuTheme = createjs.Sound.play("menu_theme");
+            this.menuTheme.loop = -1; // loop forever
             this.Main();
         };
         SelectCharacter.prototype.Update = function () {
         };
         SelectCharacter.prototype.SetSelection = function (letter) {
+            var _a;
             config.Game.PLAYER_IMAGES.push("./Assets/images/player/" + letter + "/top.png");
             if (config.Game.PLAYER_IMAGES.length == 1 && config.Game.NO_OF_PLAYERS == 2) {
                 this.RefreshTitle();
             }
             else {
+                (_a = this.menuTheme) === null || _a === void 0 ? void 0 : _a.stop();
                 config.Game.SCENE_STATE = scenes.State.QUOTE;
             }
         };

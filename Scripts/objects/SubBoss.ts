@@ -157,6 +157,8 @@ module objects {
                 this.image = new createjs.Bitmap(this._deathImage).image;
                 this._state = -1;
                 this._isAlive = false
+                let sound:createjs.AbstractSoundInstance;
+                sound = createjs.Sound.play("boss_dying");
                 this.ExecuteDeathEvent();
                 config.Game.SCORE += this._maHP;
             }

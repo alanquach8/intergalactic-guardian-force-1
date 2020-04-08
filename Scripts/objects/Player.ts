@@ -331,6 +331,9 @@ module objects {
                     bullet.PierceCount = this._pierceCount;
                     this._bullets.push(bullet);
                     this.parent.addChild(bullet);
+                    let sound:createjs.AbstractSoundInstance;
+                    sound = createjs.Sound.play("shoot");
+                    sound.volume = 0.5;
                     this._reloadCounter = this._reloadSpeed;
                 } else {
                     this._reloadCounter--;

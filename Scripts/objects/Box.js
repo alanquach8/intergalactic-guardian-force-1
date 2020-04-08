@@ -56,6 +56,9 @@ var objects;
         Box.prototype.Update = function () {
             if (this._life == 0) {
                 this._broken = true;
+                var sound = void 0;
+                sound = createjs.Sound.play("box_break");
+                sound.volume = 0.5;
             }
         };
         Box.prototype.Reset = function () {

@@ -51,6 +51,7 @@ var scenes;
             _this._musicStopControl = new objects.Button("./Assets/images/ui/controls/unmuted.png", 563, 10, false);
             _this._exitButton = new objects.Button("./Assets/images/ui/controls/exit.png", 600, 10, false);
             document.body.querySelector("#cheatCodeButton").addEventListener("click", function () {
+                var _a;
                 if (_this._isActive) {
                     var code = document.body.querySelector("#cheatCode").value.split(" ");
                     if (code.length == 0) {
@@ -139,9 +140,14 @@ var scenes;
                             return;
                         }
                         var level = Number(code[1]);
+
+                        // this.PauseSound("levels");
+                        (_a = _this._backgroundTheme) === null || _a === void 0 ? void 0 : _a.stop();
+
                         _this.PauseSound("levels");
                         config.Game.LIVES = _this._players[0].Life;
                         config.Game.GRENADES = _this._gernadeManager.GrenadeCount;
+
                         switch (level) {
                             case 1:
                                 config.Game.SCENE_STATE = scenes.State.LEVEL1;
@@ -268,7 +274,9 @@ var scenes;
             for (var i = 0; i < this._noOfBoxes; i++) {
                 this._boxes.push(new objects.Box(this.getRandomInt(610) + 15, this.getRandomInt(1200) - 1000));
             }
-            this.PlaySound("levels");
+            // this.PlaySound("levels");
+            this._backgroundTheme = createjs.Sound.play("background_theme");
+            this._backgroundTheme.loop = -1; // loop forever
             this.Main();
         };
         LevelParent.prototype.getRandomInt = function (max) {
@@ -385,6 +393,9 @@ var scenes;
         LevelParent.prototype.KillEnemy = function (enemy) {
             enemy.Die();
             this._deadEnemies.push(enemy);
+            var sound;
+            sound = createjs.Sound.play("enemy_dying");
+            sound.volume = 0.5;
             this._enemies.splice(this._enemies.indexOf(enemy), 1);
         };
         Object.defineProperty(LevelParent.prototype, "CanFinish", {
@@ -411,6 +422,7 @@ var scenes;
         };
         LevelParent.prototype.Update = function () {
             var _this = this;
+            var _a, _b;
             this._isActive = true;
             // Reference to the Play Scene Object
             var that = this;
@@ -428,7 +440,8 @@ var scenes;
                 else {
                     // game over
                     this._isActive = false;
-                    this.PauseSound("levels");
+                    // this.PauseSound("levels");
+                    (_a = this._backgroundTheme) === null || _a === void 0 ? void 0 : _a.stop();
                     config.Game.SCENE_STATE = scenes.State.END;
                 }
             }
@@ -516,6 +529,7 @@ var scenes;
                 civilian.Update();
             });
             this._enemies.forEach(function (enemy) {
+                var _a;
                 enemy.Update(that._players[enemy.LockTo].x, that._players[enemy.LockTo].y);
                 var _loop_2 = function (i) {
                     that._players[i].Bullets.forEach(function (bullet) {
@@ -567,7 +581,8 @@ var scenes;
                         that._players[i].Life--;
                         _this.UpdatePlayerLivesIndicator();
                         if (that._players[i].Life == 0) {
-                            _this.PauseSound("levels");
+                            // this.PauseSound("levels");
+                            (_a = _this._backgroundTheme) === null || _a === void 0 ? void 0 : _a.stop();
                             config.Game.SCENE_STATE = scenes.State.LOOSE;
                         }
                         else {
@@ -613,7 +628,8 @@ var scenes;
                             if (this_1._players[i].y <= 0) {
                                 if (this_1._canFinish) {
                                     this_1._isActive = false;
-                                    this_1.PauseSound("levels");
+                                    // this.PauseSound("levels");
+                                    (_b = this_1._backgroundTheme) === null || _b === void 0 ? void 0 : _b.stop();
                                     config.Game.SCENE_STATE = this_1._nextLevel;
                                 }
                                 else {
@@ -716,19 +732,24 @@ var scenes;
             this.addChild(this._musicStopControl);
             this.addChild(this._exitButton);
             this._musicStopControl.on("click", function () {
+                var _a, _b;
                 _this._musicStopped = !_this._musicStopped;
                 if (_this._musicStopped) {
-                    _this.PauseSound("levels");
+                    // this.PauseSound("levels");
+                    (_a = _this._backgroundTheme) === null || _a === void 0 ? void 0 : _a.stop();
                     _this._musicStopControl.image = new createjs.Bitmap("./Assets/images/ui/controls/muted.png").image;
                 }
                 else {
-                    _this.PlaySound("levels");
+                    // this.PlaySound("levels");
+                    (_b = _this._backgroundTheme) === null || _b === void 0 ? void 0 : _b.play();
                     _this._musicStopControl.image = new createjs.Bitmap("./Assets/images/ui/controls/unmuted.png").image;
                 }
             });
             this._exitButton.on("click", function () {
-                _this.PauseSound("levels");
-                _this.RewindSound("menu");
+                var _a;
+                // this.PauseSound("levels");
+                // this.RewindSound("menu");
+                (_a = _this._backgroundTheme) === null || _a === void 0 ? void 0 : _a.stop();
                 config.Game.SCENE_STATE = scenes.State.START;
             });
         };

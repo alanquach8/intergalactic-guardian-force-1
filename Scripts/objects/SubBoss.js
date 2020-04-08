@@ -169,6 +169,8 @@ var objects;
                 this.image = new createjs.Bitmap(this._deathImage).image;
                 this._state = -1;
                 this._isAlive = false;
+                var sound = void 0;
+                sound = createjs.Sound.play("boss_dying");
                 this.ExecuteDeathEvent();
                 config.Game.SCORE += this._maHP;
             }

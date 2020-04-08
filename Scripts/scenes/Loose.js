@@ -30,8 +30,8 @@ var scenes;
         Loose.prototype.Start = function () {
             this.endLabel = new objects.Label("You Loose!", "80px", "Consolas", "Green", 320, 200, true);
             this.endButton = new objects.Button("./Assets/images/ui/buttons/menu.png", 320, 400, true);
-            this.RewindSound("menu");
-            this.PlaySound("menu");
+            // this.RewindSound("menu");
+            // this.PlaySound("menu");
             this.Main();
         };
         Loose.prototype.Update = function () {

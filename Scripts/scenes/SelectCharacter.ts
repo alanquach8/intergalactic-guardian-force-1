@@ -8,6 +8,7 @@ module scenes
         aButton:objects.Button;
         cButton:objects.Button;
         kButton:objects.Button;
+        menuTheme?:createjs.AbstractSoundInstance;
 
         // PUBLIC PROPERTIES
 
@@ -46,6 +47,8 @@ module scenes
             this.aButton.ScaleImage(3);
             this.cButton.ScaleImage(3);
             this.kButton.ScaleImage(3);
+            this.menuTheme = createjs.Sound.play("menu_theme");
+            this.menuTheme.loop = -1; // loop forever
 
             this.Main();
         }        
@@ -60,6 +63,7 @@ module scenes
                 this.RefreshTitle();
             }
             else{
+                this.menuTheme?.stop();
                 config.Game.SCENE_STATE = scenes.State.QUOTE;
             }
 
