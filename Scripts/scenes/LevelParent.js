@@ -17,7 +17,7 @@ var scenes;
     var LevelParent = /** @class */ (function (_super) {
         __extends(LevelParent, _super);
         // CONSTRUCTOR
-        function LevelParent(next) {
+        function LevelParent(next, image) {
             var _this = _super.call(this) || this;
             // PRIVATE INSTANCE MEMBERS
             // private _player:objects.Player;
@@ -40,6 +40,7 @@ var scenes;
             _this._explosion = [];
             _this._playerLivesThumbs = [];
             _this._noOfEnemies = 5;
+            _this._backgroundImage = new objects.Background(image, 0, -1020, false);
             _this._gernadeManager = new objects.GrenadeManager();
             _this._nextLevel = next;
             _this._scoreLabel = new objects.Label(config.Game.SCORE.toString(), "40px", "Consolas", "#000000", 0, 0);
@@ -140,14 +141,10 @@ var scenes;
                             return;
                         }
                         var level = Number(code[1]);
-
                         // this.PauseSound("levels");
                         (_a = _this._backgroundTheme) === null || _a === void 0 ? void 0 : _a.stop();
-
-                        _this.PauseSound("levels");
                         config.Game.LIVES = _this._players[0].Life;
                         config.Game.GRENADES = _this._gernadeManager.GrenadeCount;
-
                         switch (level) {
                             case 1:
                                 config.Game.SCENE_STATE = scenes.State.LEVEL1;
@@ -643,6 +640,8 @@ var scenes;
                             }
                             this_1._players[i].y = this_1._scrollBuffer;
                         }
+                        this_1._backgroundImage.y -= y_delta_1;
+                        this_1._backgroundImage.position = new objects.Vector2(this_1._backgroundImage.x, this_1._backgroundImage.y);
                         this_1._powerups.forEach(function (power) {
                             power.y -= y_delta_1;
                             power.position = new objects.Vector2(power.x, power.y);
@@ -700,9 +699,11 @@ var scenes;
         LevelParent.prototype.Main = function () {
             var _this = this;
             var that = this;
+            this.addChild(this._backgroundImage);
+            console.log('adding background image');
             this.addChild(new objects.Rectangle(0, 0, 15, 480, "DarkGrey"));
             this.addChild(new objects.Rectangle(625, 0, 15, 480, "DarkGrey"));
-            this.addChild(new objects.Rectangle(15, 0, 610, 480, "GhostWhite"));
+            // this.addChild(new objects.Rectangle(15, 0, 610, 480, "GhostWhite"))
             for (var i = 0; i < this.noOfPlayers; i++) {
                 this.addChild(this._players[i]);
             }

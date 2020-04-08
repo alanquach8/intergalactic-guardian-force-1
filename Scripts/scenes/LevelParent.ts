@@ -37,6 +37,7 @@ module scenes
         private _isActive = false;
 
         private _backgroundTheme?: createjs.AbstractSoundInstance;
+        private _backgroundImage: objects.Background;
 
         // PUBLIC PROPERTIES
 
@@ -56,7 +57,7 @@ module scenes
         }
 
         // CONSTRUCTOR
-        constructor(next:scenes.State)
+        constructor(next:scenes.State, image:string)
         {
             super();
 
@@ -70,6 +71,7 @@ module scenes
             this._explosion = [];
             this._playerLivesThumbs = [];
             this._noOfEnemies = 5;
+            this._backgroundImage = new objects.Background(image, 0, -1020, false);
             this._gernadeManager = new objects.GrenadeManager();
             this._nextLevel = next;
             this._scoreLabel = new objects.Label(config.Game.SCORE.toString(),
@@ -691,6 +693,8 @@ module scenes
                             this._players[i].y = this._scrollBuffer;
                         }
                     
+                        this._backgroundImage.y -= y_delta;
+                        this._backgroundImage.position = new objects.Vector2(this._backgroundImage.x, this._backgroundImage.y);
                         this._powerups.forEach(power => {
                             power.y -= y_delta;
                             power.position = new objects.Vector2(power.x, power.y);
@@ -755,11 +759,13 @@ module scenes
 
         public Main(): void {
             let that = this;
+            this.addChild(this._backgroundImage);
+            console.log('adding background image');
 
             
             this.addChild(new objects.Rectangle(0, 0, 15, 480, "DarkGrey"))
             this.addChild(new objects.Rectangle(625, 0, 15, 480, "DarkGrey"))
-            this.addChild(new objects.Rectangle(15, 0, 610, 480, "GhostWhite"))
+            // this.addChild(new objects.Rectangle(15, 0, 610, 480, "GhostWhite"))
             
             for(let i = 0; i<this.noOfPlayers; i++) {
                 this.addChild(this._players[i]);
