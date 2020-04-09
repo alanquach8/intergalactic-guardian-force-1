@@ -17,7 +17,7 @@ var scenes;
     var Level3 = /** @class */ (function (_super) {
         __extends(Level3, _super);
         function Level3() {
-            var _this = _super.call(this, scenes.State.END) || this;
+            var _this = _super.call(this, scenes.State.END, "./Assets/images/environment/background3.png") || this;
             _this.MaximumEnemies = 8;
             _this.DistanceLeft = 50;
             return _this;

@@ -64,7 +64,7 @@ var game = (function () {
                 currentScene = new scenes.Start();
                 break;
             case scenes.State.LEVEL1:
-                currentScene = new scenes.Level1();
+                currentScene = new scenes.Level1(scenes.State.LEVEL2, "./Assets/images/environment/background.png");
                 break;
             case scenes.State.LEVEL2:
                 currentScene = new scenes.Level2();

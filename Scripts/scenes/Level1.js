@@ -16,9 +16,9 @@ var scenes;
 (function (scenes) {
     var Level1 = /** @class */ (function (_super) {
         __extends(Level1, _super);
-        function Level1(scene) {
+        function Level1(scene, image) {
             if (scene === void 0) { scene = scenes.State.LEVEL2; }
-            var _this = _super.call(this, scene) || this;
+            var _this = _super.call(this, scene, image) || this;
             _this._spawnedBoss = false;
             _this._subBoss = new objects.SubBoss(new objects.Player(0), true);
             _this.CanFinish = false;

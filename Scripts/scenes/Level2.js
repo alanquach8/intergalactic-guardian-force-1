@@ -18,7 +18,7 @@ var scenes;
         __extends(Level2, _super);
         function Level2(scene) {
             if (scene === void 0) { scene = scenes.State.LEVEL3; }
-            var _this = _super.call(this, scene) || this;
+            var _this = _super.call(this, scene, "./Assets/images/environment/background3.png") || this;
             _this.MaximumEnemies = 8;
             return _this;
         }

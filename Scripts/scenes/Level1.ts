@@ -5,10 +5,10 @@ module scenes
         private _subBoss: objects.SubBoss;
         private _spawnedBoss = false;
 
-        constructor(scene=scenes.State.LEVEL2){
+        constructor(scene=scenes.State.LEVEL2, image:string){
             
-            super(scene);
-            this._subBoss = new objects.SubBoss(new objects.Player(0), true)
+            super(scene, image);
+            this._subBoss = new objects.SubBoss(new objects.Player(0), true);
             this.CanFinish = false;
         }
 

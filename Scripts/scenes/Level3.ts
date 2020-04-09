@@ -3,7 +3,7 @@ module scenes
     export class Level3 extends Level1
     {
         constructor(){
-            super(scenes.State.END);
+            super(scenes.State.END, "./Assets/images/environment/background3.png");
             this.MaximumEnemies = 8;
             this.DistanceLeft = 50;
         }
