@@ -140,14 +140,10 @@ var scenes;
                             return;
                         }
                         var level = Number(code[1]);
-
                         // this.PauseSound("levels");
                         (_a = _this._backgroundTheme) === null || _a === void 0 ? void 0 : _a.stop();
-
-                        _this.PauseSound("levels");
                         config.Game.LIVES = _this._players[0].Life;
                         config.Game.GRENADES = _this._gernadeManager.GrenadeCount;
-
                         switch (level) {
                             case 1:
                                 config.Game.SCENE_STATE = scenes.State.LEVEL1;
